@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
+//This script will go in a Camera Pivot Object, this Pivot need's to be a child of the target
+//The main camera doesn't need any parent objects
 public class CameraController : MonoBehaviour
 {
     public static CameraController Instance { get; private set; }
@@ -9,18 +9,18 @@ public class CameraController : MonoBehaviour
     [Header("Input Settings")]
     public bool isActive = true;
     public float sensivity;
-    [SerializeField] private float maxAngle;
+    public float maxAngle;
 
     [Header("Camera Settings")]
-    [SerializeField, Range(0f, 15f)] private float distance = 5f;
-    public LayerMask cameraCollisionMask;
-    [SerializeField, Range(0f, 1f)] private float focusCentering = 0.5f;
-    [SerializeField, Min(0f)] private float focusRadius = 1f;
+    [Range(0f, 15f)] public float distance = 5f;
+    [Range(0f, 1f)] public float focusCentering = 0.5f;
+    [Min(0f)] public float focusRadius = 1f;
+    public Rigidbody camRigid; //The position and rotation is set with the rigidbody, not transform - this make a smooth movement with the player controller
+    public LayerMask cameraCollisionMask; //The surfaces that the camera will avoid pass through
 
-    //Calculation variables
-    private Vector2 cameraInput;
-    private Vector3 focusPoint;
-    private float yaw, pitch;
+    private Vector2 cameraInput; //Input received from Engine
+    private Vector3 focusPoint; //Target position
+    private float yaw, pitch; //Input translated into transform rotation 
 
     private void Awake() {
         if(Instance == null) 
@@ -31,22 +31,26 @@ public class CameraController : MonoBehaviour
 
     private void Start() {
         //Receive input system from character controller script
-        CharacterController.Instance.inputs.Gameplay.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
-        CharacterController.Instance.inputs.Gameplay.Camera.canceled += ctx => cameraInput = Vector2.zero;
+        CharacterController.Instance.inputs.Character.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
+        CharacterController.Instance.inputs.Character.Camera.canceled += ctx => cameraInput = Vector2.zero;
         focusPoint = transform.parent.position;
     }
 
     //Calculate the camera smooth follow position to the transform parent
-    private void LateUpdate() {
-        if(!isActive) return;
+    private void Update() {
+        if(isActive) CalculateInput();
+        ApplyMotion();
+    }
 
+    //Input calculation logic, also calculates the camera movement based on the player movement
+    private void CalculateInput() {
         //Receive input 
-        yaw += cameraInput.x * sensivity * Time.deltaTime;
-        pitch -= cameraInput.y * sensivity * Time.deltaTime;
+        yaw += cameraInput.x * sensivity * Time.fixedDeltaTime;
+        pitch -= cameraInput.y * sensivity * Time.fixedDeltaTime;
         pitch = Mathf.Clamp(pitch, -maxAngle, maxAngle);
 
         //Smooth following camera logic
-        Vector3 targetPoint = transform.parent.position;
+        Vector3 targetPoint = transform.position;
         if (focusRadius > 0f)
         {
             float t = 1f;
@@ -62,12 +66,14 @@ public class CameraController : MonoBehaviour
         }
         else
             focusPoint = targetPoint;
+
+        transform.localEulerAngles = new Vector3(pitch, yaw);
     }
 
-    private void FixedUpdate() {
+    //Besides this being applied in the Update method, the movement is setted to the Camera Rigidbody
+    //That makes the player movement and camera movement work smoothly together with rigidbody
+    private void ApplyMotion() {
         //Apply rotation
-        transform.localEulerAngles = new Vector3(pitch, yaw);
-
         Quaternion lookRotation = transform.rotation;
         Vector3 lookDirection = lookRotation * Vector3.forward;
         Vector3 lookPosition;
@@ -79,6 +85,6 @@ public class CameraController : MonoBehaviour
             lookPosition = focusPoint - lookDirection * distance;
 
         //Apply position
-        transform.SetPositionAndRotation(lookPosition, lookRotation);
+        camRigid.Move(lookPosition, lookRotation);
     }
 }

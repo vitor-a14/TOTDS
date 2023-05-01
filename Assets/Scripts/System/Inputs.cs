@@ -24,7 +24,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     ""name"": ""Inputs"",
     ""maps"": [
         {
-            ""name"": ""Gameplay"",
+            ""name"": ""Character"",
             ""id"": ""533c204d-0a64-4082-8df9-b84b2cd27a69"",
             ""actions"": [
                 {
@@ -274,15 +274,15 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         }
     ]
 }");
-        // Gameplay
-        m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
-        m_Gameplay_Camera = m_Gameplay.FindAction("Camera", throwIfNotFound: true);
-        m_Gameplay_Movement = m_Gameplay.FindAction("Movement", throwIfNotFound: true);
-        m_Gameplay_Jump = m_Gameplay.FindAction("Jump", throwIfNotFound: true);
-        m_Gameplay_Walk = m_Gameplay.FindAction("Walk", throwIfNotFound: true);
-        m_Gameplay_InstanceA = m_Gameplay.FindAction("Instance A", throwIfNotFound: true);
-        m_Gameplay_InstanceB = m_Gameplay.FindAction("Instance B", throwIfNotFound: true);
-        m_Gameplay_DebugButton = m_Gameplay.FindAction("DebugButton", throwIfNotFound: true);
+        // Character
+        m_Character = asset.FindActionMap("Character", throwIfNotFound: true);
+        m_Character_Camera = m_Character.FindAction("Camera", throwIfNotFound: true);
+        m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
+        m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
+        m_Character_Walk = m_Character.FindAction("Walk", throwIfNotFound: true);
+        m_Character_InstanceA = m_Character.FindAction("Instance A", throwIfNotFound: true);
+        m_Character_InstanceB = m_Character.FindAction("Instance B", throwIfNotFound: true);
+        m_Character_DebugButton = m_Character.FindAction("DebugButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -341,36 +341,36 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Gameplay
-    private readonly InputActionMap m_Gameplay;
-    private List<IGameplayActions> m_GameplayActionsCallbackInterfaces = new List<IGameplayActions>();
-    private readonly InputAction m_Gameplay_Camera;
-    private readonly InputAction m_Gameplay_Movement;
-    private readonly InputAction m_Gameplay_Jump;
-    private readonly InputAction m_Gameplay_Walk;
-    private readonly InputAction m_Gameplay_InstanceA;
-    private readonly InputAction m_Gameplay_InstanceB;
-    private readonly InputAction m_Gameplay_DebugButton;
-    public struct GameplayActions
+    // Character
+    private readonly InputActionMap m_Character;
+    private List<ICharacterActions> m_CharacterActionsCallbackInterfaces = new List<ICharacterActions>();
+    private readonly InputAction m_Character_Camera;
+    private readonly InputAction m_Character_Movement;
+    private readonly InputAction m_Character_Jump;
+    private readonly InputAction m_Character_Walk;
+    private readonly InputAction m_Character_InstanceA;
+    private readonly InputAction m_Character_InstanceB;
+    private readonly InputAction m_Character_DebugButton;
+    public struct CharacterActions
     {
         private @Inputs m_Wrapper;
-        public GameplayActions(@Inputs wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Camera => m_Wrapper.m_Gameplay_Camera;
-        public InputAction @Movement => m_Wrapper.m_Gameplay_Movement;
-        public InputAction @Jump => m_Wrapper.m_Gameplay_Jump;
-        public InputAction @Walk => m_Wrapper.m_Gameplay_Walk;
-        public InputAction @InstanceA => m_Wrapper.m_Gameplay_InstanceA;
-        public InputAction @InstanceB => m_Wrapper.m_Gameplay_InstanceB;
-        public InputAction @DebugButton => m_Wrapper.m_Gameplay_DebugButton;
-        public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
+        public CharacterActions(@Inputs wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Camera => m_Wrapper.m_Character_Camera;
+        public InputAction @Movement => m_Wrapper.m_Character_Movement;
+        public InputAction @Jump => m_Wrapper.m_Character_Jump;
+        public InputAction @Walk => m_Wrapper.m_Character_Walk;
+        public InputAction @InstanceA => m_Wrapper.m_Character_InstanceA;
+        public InputAction @InstanceB => m_Wrapper.m_Character_InstanceB;
+        public InputAction @DebugButton => m_Wrapper.m_Character_DebugButton;
+        public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(GameplayActions set) { return set.Get(); }
-        public void AddCallbacks(IGameplayActions instance)
+        public static implicit operator InputActionMap(CharacterActions set) { return set.Get(); }
+        public void AddCallbacks(ICharacterActions instance)
         {
-            if (instance == null || m_Wrapper.m_GameplayActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_GameplayActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_CharacterActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CharacterActionsCallbackInterfaces.Add(instance);
             @Camera.started += instance.OnCamera;
             @Camera.performed += instance.OnCamera;
             @Camera.canceled += instance.OnCamera;
@@ -394,7 +394,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @DebugButton.canceled += instance.OnDebugButton;
         }
 
-        private void UnregisterCallbacks(IGameplayActions instance)
+        private void UnregisterCallbacks(ICharacterActions instance)
         {
             @Camera.started -= instance.OnCamera;
             @Camera.performed -= instance.OnCamera;
@@ -419,21 +419,21 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @DebugButton.canceled -= instance.OnDebugButton;
         }
 
-        public void RemoveCallbacks(IGameplayActions instance)
+        public void RemoveCallbacks(ICharacterActions instance)
         {
-            if (m_Wrapper.m_GameplayActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_CharacterActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(IGameplayActions instance)
+        public void SetCallbacks(ICharacterActions instance)
         {
-            foreach (var item in m_Wrapper.m_GameplayActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_CharacterActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_GameplayActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_CharacterActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public GameplayActions @Gameplay => new GameplayActions(this);
+    public CharacterActions @Character => new CharacterActions(this);
     private int m_GamepadSchemeIndex = -1;
     public InputControlScheme GamepadScheme
     {
@@ -443,7 +443,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             return asset.controlSchemes[m_GamepadSchemeIndex];
         }
     }
-    public interface IGameplayActions
+    public interface ICharacterActions
     {
         void OnCamera(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
