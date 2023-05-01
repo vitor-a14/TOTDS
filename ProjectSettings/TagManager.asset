@@ -3,12 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Celestial Body
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Celestial Body
   - Water
   - UI
   - 
