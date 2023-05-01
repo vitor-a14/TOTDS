@@ -39,6 +39,9 @@ public class CameraController : MonoBehaviour
     //Calculate the camera smooth follow position to the transform parent
     private void Update() {
         if(isActive) CalculateInput();
+    }
+
+    private void FixedUpdate() {
         ApplyMotion();
     }
 

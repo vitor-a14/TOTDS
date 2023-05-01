@@ -123,6 +123,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &153511913 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f1d1ac5db89e191488597bf1f11217c6,
+    type: 3}
+  m_PrefabInstance: {fileID: 2107087329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1005,10 +1011,12 @@ MonoBehaviour:
   rigidDrag: 5
   characterModel: {fileID: 2107087330}
   jumpForce: 8
-  groundDistanceCheck: 2
+  groundDistanceCheck: 1
   walkableLayers:
     serializedVersion: 2
     m_Bits: 8
+  direction: {x: 0, y: 0, z: 0}
+  onGround: 0
 --- !u!1 &1302882020
 GameObject:
   m_ObjectHideFlags: 0
@@ -1132,7 +1140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  sensivity: 5
+  sensivity: 15
   maxAngle: 65
   distance: 5
   focusCentering: 0.9
@@ -1566,7 +1574,15 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1d1ac5db89e191488597bf1f11217c6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2107087331}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f1d1ac5db89e191488597bf1f11217c6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2107087332}
   m_SourcePrefab: {fileID: 100100000, guid: f1d1ac5db89e191488597bf1f11217c6, type: 3}
 --- !u!4 &2107087330 stripped
 Transform:
@@ -1574,6 +1590,39 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2107087329}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &2107087331
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153511913}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3dbaf10bc582f534b98cef2e0ac5289e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2107087332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 153511913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b9ac0eab3a8f34881b1c22381979d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2121808184
 GameObject:
   m_ObjectHideFlags: 0

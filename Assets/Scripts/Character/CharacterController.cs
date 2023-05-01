@@ -20,9 +20,10 @@ public class CharacterController : PhysicsObject
     public LayerMask walkableLayers;
 
     private Vector2 input;
-    private Vector3 direction, processedDirection;
+    private Vector3 processedDirection;
     private Vector3 surfaceNormal;
-    private bool onGround;
+    [HideInInspector] public Vector3 direction;
+    [HideInInspector] public bool onGround;
 
     private void Awake() {
         if(Instance == null) 
