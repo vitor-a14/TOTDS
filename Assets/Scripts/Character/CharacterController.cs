@@ -12,6 +12,7 @@ public class CharacterController : PhysicsObject
     public Transform cam;
     public float movementSpeed;
     public float rigidDrag;
+    public Transform characterModel;
 
     [Header("Jump Settings")]
     public float jumpForce;
@@ -49,12 +50,10 @@ public class CharacterController : PhysicsObject
         input = Vector2.ClampMagnitude(input, 1f);
         direction = (forward * input.y + right * input.x) * movementSpeed;
 
-        /*
-        if (input != Vector2.zero)
-        {
-            Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, -gravityDirection);
-            model.rotation = Quaternion.Slerp(model.rotation, modelRotation, 15f * Time.deltaTime);
-        } */
+        if (input != Vector2.zero) {
+            Quaternion modelRotation = Quaternion.LookRotation(-direction.normalized, gravityDirection);
+            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+        } 
 
         CheckGround();
     }
@@ -66,7 +65,7 @@ public class CharacterController : PhysicsObject
 
     private void ApplyMotion() {
         rigid.MovePosition(rigid.position + processedDirection * Time.deltaTime);
-        
+
         if (onGround) {
             rigid.drag = rigidDrag;
             processedDirection = Vector3.ProjectOnPlane(direction, surfaceNormal);
