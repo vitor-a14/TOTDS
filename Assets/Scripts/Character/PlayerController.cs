@@ -1,14 +1,14 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterController : PhysicsObject
+public class PlayerController : PhysicsObject
 {
-    public static CharacterController Instance { get; private set; }
+    public static PlayerController Instance { get; private set; }
 
     [HideInInspector] public Inputs inputs;
 
     [Header("Movement Settings")]
+    public bool canMove = true;
     public Transform cam;
     public float movementSpeed;
     public float rigidDrag;
@@ -16,14 +16,34 @@ public class CharacterController : PhysicsObject
 
     [Header("Jump Settings")]
     public float jumpForce;
+    public float aditionalJumpForce;
     public float groundDistanceCheck;
     public LayerMask walkableLayers;
+    public float holdJumpTime;
 
+    private float jumpingTimer;
     private Vector2 input;
     private Vector3 processedDirection;
     private Vector3 surfaceNormal;
     [HideInInspector] public Vector3 direction;
-    [HideInInspector] public bool onGround;
+    public bool jumping;
+
+    private bool _onGround = false;
+    //To detect if the player hit the ground and activate a callback to the animation
+    public bool onGround 
+    {
+        get { return _onGround; }
+        set
+        {
+            if (_onGround != value && value == true) {
+                _onGround = value;
+                StartCoroutine(CharacterAnimation.Instance.LandingWindow());
+            }
+            else {
+                _onGround = value;
+            }
+        }
+    }
 
     private void Awake() {
         if(Instance == null) 
@@ -44,6 +64,8 @@ public class CharacterController : PhysicsObject
     }
 
     private void Update() {
+        if(!canMove) return;
+
         Vector3 gravityDirection = GetGravityDirection();
         Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
         Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
@@ -52,9 +74,10 @@ public class CharacterController : PhysicsObject
         direction = (forward * input.y + right * input.x) * movementSpeed;
 
         if (input != Vector2.zero) {
+            CharacterAnimation.Instance.landing = false;
             Quaternion modelRotation = Quaternion.LookRotation(-direction.normalized, gravityDirection);
             characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-        } 
+        }
 
         CheckGround();
     }
@@ -62,6 +85,7 @@ public class CharacterController : PhysicsObject
     private void FixedUpdate() {
         UpdatePhysics();
         ApplyMotion();
+        JumpAditionalForce();
     }
 
     private void ApplyMotion() {
@@ -76,14 +100,6 @@ public class CharacterController : PhysicsObject
         }
     }
 
-    private void Jump() {
-        if (onGround) {
-            rigid.drag = 0f;
-            rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
-            onGround = false;
-        }
-    }
-
     private void CheckGround() {
         RaycastHit hit;
         if (Physics.SphereCast(transform.position, 0.1f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
@@ -93,4 +109,30 @@ public class CharacterController : PhysicsObject
             onGround = false;
         }
     }
+
+    //If the player is holding the jump button, the character will jump higher
+    private void JumpAditionalForce() {
+        if(!jumping) return;
+
+        if(jumpingTimer < holdJumpTime) {
+            jumpingTimer += Time.deltaTime;
+            rigid.AddForce(transform.up * aditionalJumpForce, ForceMode.Acceleration);
+        }
+    }
+
+    private void Jump() {
+        if (onGround) {
+            rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+            rigid.drag = 0f;
+            jumpingTimer = 0f;
+            StartCoroutine(JumpWindow());
+        }
+    }
+
+    //Time window to know if the player is pressing the jumping button and apply a higher jump force
+    private IEnumerator JumpWindow() {
+        jumping = true;
+        yield return new WaitForSeconds(1f);
+        jumping = false;
+    }  
 }

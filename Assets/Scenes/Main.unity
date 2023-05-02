@@ -189,8 +189,8 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 100000
-  field of view: 60
+  far clip plane: 10000
+  field of view: 65
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1006,17 +1006,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 1
+  canMove: 1
   cam: {fileID: 330585546}
   movementSpeed: 5
   rigidDrag: 5
   characterModel: {fileID: 2107087330}
   jumpForce: 8
+  aditionalJumpForce: 10
   groundDistanceCheck: 1
   walkableLayers:
     serializedVersion: 2
     m_Bits: 8
+  holdJumpTime: 1
   direction: {x: 0, y: 0, z: 0}
-  onGround: 0
+  jumping: 0
 --- !u!1 &1302882020
 GameObject:
   m_ObjectHideFlags: 0
@@ -1623,6 +1626,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b9ac0eab3a8f34881b1c22381979d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  landing: 0
+  stoping: 0
 --- !u!1 &2121808184
 GameObject:
   m_ObjectHideFlags: 0

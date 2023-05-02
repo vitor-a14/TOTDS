@@ -31,8 +31,8 @@ public class CameraController : MonoBehaviour
 
     private void Start() {
         //Receive input system from character controller script
-        CharacterController.Instance.inputs.Character.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
-        CharacterController.Instance.inputs.Character.Camera.canceled += ctx => cameraInput = Vector2.zero;
+        PlayerController.Instance.inputs.Character.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
+        PlayerController.Instance.inputs.Character.Camera.canceled += ctx => cameraInput = Vector2.zero;
         focusPoint = transform.parent.position;
     }
 
