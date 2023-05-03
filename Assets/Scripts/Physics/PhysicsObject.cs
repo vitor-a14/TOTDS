@@ -9,7 +9,7 @@ public class PhysicsObject : MonoBehaviour
     private float rotationSpeed = 45f;
 
     protected Rigidbody rigid;
-    private Vector3 mainForceDirection = Vector3.zero;
+    protected Vector3 mainForceDirection = Vector3.zero;
 
     private void Start() {
         InitializePhysics();
@@ -26,8 +26,6 @@ public class PhysicsObject : MonoBehaviour
     }
 
     protected void UpdatePhysics() {
-        if(!isActive) return;
-
         //Variable that will store the greatest force attraction
         Vector3 greatestForce = Vector3.zero;
 
@@ -42,7 +40,8 @@ public class PhysicsObject : MonoBehaviour
                 greatestForce = force;
 
             mainForceDirection = -greatestForce.normalized;
-            rigid.AddForce(force);
+            if(!isActive) return;
+                rigid.AddForce(force);
         }
 
         //Rotate the object towards the greatest force attractor
