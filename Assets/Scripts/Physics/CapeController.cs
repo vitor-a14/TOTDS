@@ -5,8 +5,9 @@ public class CapeController : PhysicsObject
     public Cloth cloth;
     //If you want to use start method, don't forget to call InitializePhysics
 
-    void LateUpdate()
+    private void LateUpdate()
     {
-        cloth.externalAcceleration = -mainForceDirection * 6;
+        Physics.clothGravity = -mainForceDirection * 6;
+        Debug.Log(Physics.clothGravity);
     }
 }
