@@ -6,7 +6,7 @@ public class PhysicsObject : MonoBehaviour
     [Header("Physics Settings")]
     public bool isActive = true;
     public bool autoRotate = false;
-    private float rotationSpeed = 45f;
+    private float rotationSpeed = 85f;
 
     protected Rigidbody rigid;
     protected Vector3 mainForceDirection = Vector3.zero;

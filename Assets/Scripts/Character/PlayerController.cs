@@ -28,7 +28,7 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public Vector3 direction;
     public bool jumping;
 
-    private bool _onGround = false;
+    private bool _onGround = true;
     //To detect if the player hit the ground and activate a callback to the animation
     public bool onGround 
     {
