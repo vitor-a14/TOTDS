@@ -70,7 +70,7 @@ public class PlayerController : PhysicsObject
         Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
         Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
 
-        input = Vector2.ClampMagnitude(input, 1f);
+        input = ClampMagnitude(input, 0.4f, 1.0f);
         direction = (forward * input.y + right * input.x) * movementSpeed;
 
         if (input != Vector2.zero) {
@@ -135,4 +135,11 @@ public class PlayerController : PhysicsObject
         yield return new WaitForSeconds(1f);
         jumping = false;
     }  
+
+    //A custom clamp magnite with min and max. The built in unity ClampMagnitude only has the max parameter
+    public Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)
+    {
+        float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
+        return vector.normalized * magnitude;
+    }
 }

@@ -62,33 +62,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Instance A"",
-                    ""type"": ""Button"",
-                    ""id"": ""a881376a-82ec-49d5-8c51-ad5570591868"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Instance B"",
-                    ""type"": ""Button"",
-                    ""id"": ""9c108c7f-701d-4e27-935a-f28532cd5327"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""DebugButton"",
-                    ""type"": ""Button"",
-                    ""id"": ""c0983f58-0db1-4b8d-be83-7de1b20a3762"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -97,7 +70,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""id"": ""0d2431a4-6332-40b9-b787-8694f45a33f0"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": ""StickDeadzone(min=0.125)"",
+                    ""processors"": ""StickDeadzone(min=0.3)"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Movement"",
                     ""isComposite"": false,
@@ -161,7 +134,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dece63d7-8ea2-48d6-9a78-fd8537bd021c"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -185,7 +158,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""id"": ""c0dd6986-9e9f-4d60-af1d-a7c139829799"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": ""StickDeadzone(min=0.125)"",
+                    ""processors"": ""StickDeadzone(min=0.3)"",
                     ""groups"": ""Gamepad"",
                     ""action"": ""Camera"",
                     ""isComposite"": false,
@@ -223,39 +196,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""action"": ""Walk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9f1caa67-4c64-41af-9b5b-1c943c0548a2"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Instance B"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""e8d037cb-9c2b-4ca3-bcf1-299ec7cb87bc"",
-                    ""path"": ""<Keyboard>/k"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""DebugButton"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""03982885-db76-4025-b299-2d4bc9e202ab"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Instance A"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -280,9 +220,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
         m_Character_Walk = m_Character.FindAction("Walk", throwIfNotFound: true);
-        m_Character_InstanceA = m_Character.FindAction("Instance A", throwIfNotFound: true);
-        m_Character_InstanceB = m_Character.FindAction("Instance B", throwIfNotFound: true);
-        m_Character_DebugButton = m_Character.FindAction("DebugButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -348,9 +285,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Jump;
     private readonly InputAction m_Character_Walk;
-    private readonly InputAction m_Character_InstanceA;
-    private readonly InputAction m_Character_InstanceB;
-    private readonly InputAction m_Character_DebugButton;
     public struct CharacterActions
     {
         private @Inputs m_Wrapper;
@@ -359,9 +293,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Jump => m_Wrapper.m_Character_Jump;
         public InputAction @Walk => m_Wrapper.m_Character_Walk;
-        public InputAction @InstanceA => m_Wrapper.m_Character_InstanceA;
-        public InputAction @InstanceB => m_Wrapper.m_Character_InstanceB;
-        public InputAction @DebugButton => m_Wrapper.m_Character_DebugButton;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -383,15 +314,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Walk.started += instance.OnWalk;
             @Walk.performed += instance.OnWalk;
             @Walk.canceled += instance.OnWalk;
-            @InstanceA.started += instance.OnInstanceA;
-            @InstanceA.performed += instance.OnInstanceA;
-            @InstanceA.canceled += instance.OnInstanceA;
-            @InstanceB.started += instance.OnInstanceB;
-            @InstanceB.performed += instance.OnInstanceB;
-            @InstanceB.canceled += instance.OnInstanceB;
-            @DebugButton.started += instance.OnDebugButton;
-            @DebugButton.performed += instance.OnDebugButton;
-            @DebugButton.canceled += instance.OnDebugButton;
         }
 
         private void UnregisterCallbacks(ICharacterActions instance)
@@ -408,15 +330,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Walk.started -= instance.OnWalk;
             @Walk.performed -= instance.OnWalk;
             @Walk.canceled -= instance.OnWalk;
-            @InstanceA.started -= instance.OnInstanceA;
-            @InstanceA.performed -= instance.OnInstanceA;
-            @InstanceA.canceled -= instance.OnInstanceA;
-            @InstanceB.started -= instance.OnInstanceB;
-            @InstanceB.performed -= instance.OnInstanceB;
-            @InstanceB.canceled -= instance.OnInstanceB;
-            @DebugButton.started -= instance.OnDebugButton;
-            @DebugButton.performed -= instance.OnDebugButton;
-            @DebugButton.canceled -= instance.OnDebugButton;
         }
 
         public void RemoveCallbacks(ICharacterActions instance)
@@ -449,8 +362,5 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnWalk(InputAction.CallbackContext context);
-        void OnInstanceA(InputAction.CallbackContext context);
-        void OnInstanceB(InputAction.CallbackContext context);
-        void OnDebugButton(InputAction.CallbackContext context);
     }
 }

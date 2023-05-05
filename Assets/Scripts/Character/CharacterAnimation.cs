@@ -43,9 +43,9 @@ public class CharacterAnimation : MonoBehaviour
             if(landing) 
                 return land_hash;
             else {
-                if(PlayerController.Instance.direction.magnitude > PlayerController.Instance.movementSpeed / 2) 
+                if(PlayerController.Instance.direction.magnitude > PlayerController.Instance.movementSpeed / 1.9f) 
                     return run_hash;
-                else if(PlayerController.Instance.direction.magnitude < PlayerController.Instance.movementSpeed / 2 && PlayerController.Instance.direction.magnitude != 0) 
+                else if(PlayerController.Instance.direction.magnitude < PlayerController.Instance.movementSpeed / 1.9f && PlayerController.Instance.direction.magnitude != 0) 
                     return walk_hash;
                 else 
                     return idle_hash;

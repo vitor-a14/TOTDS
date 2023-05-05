@@ -1192,7 +1192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  sensivity: 10
+  sensivity: 150
   maxAngle: 65
   distance: 5
   focusCentering: 0.9
@@ -28629,7 +28629,7 @@ Cloth:
   m_CollisionMassScale: 15
   m_UseContinuousCollision: 1
   m_UseVirtualParticles: 1
-  m_SolverFrequency: 140
+  m_SolverFrequency: 130
   m_SleepThreshold: 0.1
   m_Coefficients:
   - maxDistance: 0.0001
