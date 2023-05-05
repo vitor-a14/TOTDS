@@ -8,6 +8,5 @@ public class CapeController : PhysicsObject
     private void LateUpdate()
     {
         Physics.clothGravity = -mainForceDirection * 6;
-        Debug.Log(Physics.clothGravity);
     }
 }
