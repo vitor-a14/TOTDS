@@ -227,6 +227,15 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""3e940e85-fbf4-47e0-bf5f-684119a6a350"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -317,6 +326,28 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""action"": ""Down"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""41e5f358-d60e-42f7-9c88-10e8fee9151f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""358005a9-8a83-4fd2-b160-1bab2eef0465"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -347,6 +378,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Communication_Down = m_Communication.FindAction("Down", throwIfNotFound: true);
         m_Communication_Left = m_Communication.FindAction("Left", throwIfNotFound: true);
         m_Communication_Right = m_Communication.FindAction("Right", throwIfNotFound: true);
+        m_Communication_Interact = m_Communication.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -482,6 +514,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Communication_Down;
     private readonly InputAction m_Communication_Left;
     private readonly InputAction m_Communication_Right;
+    private readonly InputAction m_Communication_Interact;
     public struct CommunicationActions
     {
         private @Inputs m_Wrapper;
@@ -490,6 +523,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Down => m_Wrapper.m_Communication_Down;
         public InputAction @Left => m_Wrapper.m_Communication_Left;
         public InputAction @Right => m_Wrapper.m_Communication_Right;
+        public InputAction @Interact => m_Wrapper.m_Communication_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Communication; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -511,6 +545,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Right.started += instance.OnRight;
             @Right.performed += instance.OnRight;
             @Right.canceled += instance.OnRight;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(ICommunicationActions instance)
@@ -527,6 +564,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Right.started -= instance.OnRight;
             @Right.performed -= instance.OnRight;
             @Right.canceled -= instance.OnRight;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(ICommunicationActions instance)
@@ -566,5 +606,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnDown(InputAction.CallbackContext context);
         void OnLeft(InputAction.CallbackContext context);
         void OnRight(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }

@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Celestial Body
+  - Interactable
+  - Listener
   layers:
   - Default
   - TransparentFX
