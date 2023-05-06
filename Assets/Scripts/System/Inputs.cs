@@ -55,7 +55,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Walk"",
+                    ""name"": ""ShiftWalk"",
                     ""type"": ""Button"",
                     ""id"": ""7e406d75-7cfd-45f1-85b8-ced6e640ed3b"",
                     ""expectedControlType"": ""Button"",
@@ -182,18 +182,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Walk"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d6bcb9a4-8e72-4bf8-8406-cb5f96af2ad2"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Walk"",
+                    ""action"": ""ShiftWalk"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -219,7 +208,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Character_Camera = m_Character.FindAction("Camera", throwIfNotFound: true);
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
-        m_Character_Walk = m_Character.FindAction("Walk", throwIfNotFound: true);
+        m_Character_ShiftWalk = m_Character.FindAction("ShiftWalk", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -284,7 +273,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Character_Camera;
     private readonly InputAction m_Character_Movement;
     private readonly InputAction m_Character_Jump;
-    private readonly InputAction m_Character_Walk;
+    private readonly InputAction m_Character_ShiftWalk;
     public struct CharacterActions
     {
         private @Inputs m_Wrapper;
@@ -292,7 +281,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Camera => m_Wrapper.m_Character_Camera;
         public InputAction @Movement => m_Wrapper.m_Character_Movement;
         public InputAction @Jump => m_Wrapper.m_Character_Jump;
-        public InputAction @Walk => m_Wrapper.m_Character_Walk;
+        public InputAction @ShiftWalk => m_Wrapper.m_Character_ShiftWalk;
         public InputActionMap Get() { return m_Wrapper.m_Character; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -311,9 +300,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
-            @Walk.started += instance.OnWalk;
-            @Walk.performed += instance.OnWalk;
-            @Walk.canceled += instance.OnWalk;
+            @ShiftWalk.started += instance.OnShiftWalk;
+            @ShiftWalk.performed += instance.OnShiftWalk;
+            @ShiftWalk.canceled += instance.OnShiftWalk;
         }
 
         private void UnregisterCallbacks(ICharacterActions instance)
@@ -327,9 +316,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
-            @Walk.started -= instance.OnWalk;
-            @Walk.performed -= instance.OnWalk;
-            @Walk.canceled -= instance.OnWalk;
+            @ShiftWalk.started -= instance.OnShiftWalk;
+            @ShiftWalk.performed -= instance.OnShiftWalk;
+            @ShiftWalk.canceled -= instance.OnShiftWalk;
         }
 
         public void RemoveCallbacks(ICharacterActions instance)
@@ -361,6 +350,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnCamera(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
-        void OnWalk(InputAction.CallbackContext context);
+        void OnShiftWalk(InputAction.CallbackContext context);
     }
 }

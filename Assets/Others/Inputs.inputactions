@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Walk",
+                    "name": "ShiftWalk",
                     "type": "Button",
                     "id": "7e406d75-7cfd-45f1-85b8-ced6e640ed3b",
                     "expectedControlType": "Button",
@@ -160,18 +160,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Walk",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "d6bcb9a4-8e72-4bf8-8406-cb5f96af2ad2",
-                    "path": "<Gamepad>/leftShoulder",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Walk",
+                    "action": "ShiftWalk",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

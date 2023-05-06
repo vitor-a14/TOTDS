@@ -5,8 +5,9 @@ public class CapeController : PhysicsObject
     public Cloth cloth;
     //If you want to use start method, don't forget to call InitializePhysics
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
+        UpdatePhysics();
         Physics.clothGravity = -mainForceDirection * 6;
     }
 }

@@ -28,6 +28,7 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public Vector3 direction;
     public bool jumping;
 
+    private bool shiftWalk = false;
     private bool _onGround = true;
     //To detect if the player hit the ground and activate a callback to the animation
     public bool onGround 
@@ -57,6 +58,8 @@ public class PlayerController : PhysicsObject
         inputs.Character.Movement.performed += ctx => input = ctx.ReadValue<Vector2>();
         inputs.Character.Movement.canceled += ctx => input = Vector2.zero;
         inputs.Character.Jump.performed += ctx => Jump();
+        inputs.Character.ShiftWalk.performed += ctx => shiftWalk = true;
+        inputs.Character.ShiftWalk.canceled += ctx => shiftWalk = false; 
     }
 
     private void Start() {
@@ -71,7 +74,8 @@ public class PlayerController : PhysicsObject
         Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
 
         input = ClampMagnitude(input, 0.4f, 1.0f);
-        direction = (forward * input.y + right * input.x) * movementSpeed;
+        Vector2 processedInput = shiftWalk ? Vector2.ClampMagnitude(input, 0.4f) : input;
+        direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
 
         if (input != Vector2.zero) {
             CharacterAnimation.Instance.landing = false;
