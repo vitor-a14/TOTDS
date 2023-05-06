@@ -187,6 +187,138 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Communication"",
+            ""id"": ""056f080f-6bc7-4ac5-a550-cb84c9a57308"",
+            ""actions"": [
+                {
+                    ""name"": ""Up"",
+                    ""type"": ""Button"",
+                    ""id"": ""0851a958-9831-4d7c-9faf-65eb58723c83"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Down"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5805d87-0f11-42cb-a80b-6f5fb791ee6d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""bb6bd13d-13e9-423c-aac0-25af0f4d5786"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""392c5cf0-d968-40a5-a04f-a56d8932735c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b836cb1a-340a-43bb-8c80-d2bd020b2dd7"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""98af9826-7455-4781-8b8d-207eecb7f150"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""acc04bea-8793-437b-a7c7-97f3f78acbb9"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2b708555-73ee-4095-8222-c6766906a48a"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9c392ea5-823f-48e3-b8d6-29b58c74e399"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b1b01c02-7fa8-43c9-a335-24af9428bbe0"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""980d50e1-065d-47c9-af84-43a3720ba327"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5b56244d-9b85-4cd5-8ecd-7278e5f71b3f"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -209,6 +341,12 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Character_Movement = m_Character.FindAction("Movement", throwIfNotFound: true);
         m_Character_Jump = m_Character.FindAction("Jump", throwIfNotFound: true);
         m_Character_ShiftWalk = m_Character.FindAction("ShiftWalk", throwIfNotFound: true);
+        // Communication
+        m_Communication = asset.FindActionMap("Communication", throwIfNotFound: true);
+        m_Communication_Up = m_Communication.FindAction("Up", throwIfNotFound: true);
+        m_Communication_Down = m_Communication.FindAction("Down", throwIfNotFound: true);
+        m_Communication_Left = m_Communication.FindAction("Left", throwIfNotFound: true);
+        m_Communication_Right = m_Communication.FindAction("Right", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -336,6 +474,76 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         }
     }
     public CharacterActions @Character => new CharacterActions(this);
+
+    // Communication
+    private readonly InputActionMap m_Communication;
+    private List<ICommunicationActions> m_CommunicationActionsCallbackInterfaces = new List<ICommunicationActions>();
+    private readonly InputAction m_Communication_Up;
+    private readonly InputAction m_Communication_Down;
+    private readonly InputAction m_Communication_Left;
+    private readonly InputAction m_Communication_Right;
+    public struct CommunicationActions
+    {
+        private @Inputs m_Wrapper;
+        public CommunicationActions(@Inputs wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Up => m_Wrapper.m_Communication_Up;
+        public InputAction @Down => m_Wrapper.m_Communication_Down;
+        public InputAction @Left => m_Wrapper.m_Communication_Left;
+        public InputAction @Right => m_Wrapper.m_Communication_Right;
+        public InputActionMap Get() { return m_Wrapper.m_Communication; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CommunicationActions set) { return set.Get(); }
+        public void AddCallbacks(ICommunicationActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CommunicationActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CommunicationActionsCallbackInterfaces.Add(instance);
+            @Up.started += instance.OnUp;
+            @Up.performed += instance.OnUp;
+            @Up.canceled += instance.OnUp;
+            @Down.started += instance.OnDown;
+            @Down.performed += instance.OnDown;
+            @Down.canceled += instance.OnDown;
+            @Left.started += instance.OnLeft;
+            @Left.performed += instance.OnLeft;
+            @Left.canceled += instance.OnLeft;
+            @Right.started += instance.OnRight;
+            @Right.performed += instance.OnRight;
+            @Right.canceled += instance.OnRight;
+        }
+
+        private void UnregisterCallbacks(ICommunicationActions instance)
+        {
+            @Up.started -= instance.OnUp;
+            @Up.performed -= instance.OnUp;
+            @Up.canceled -= instance.OnUp;
+            @Down.started -= instance.OnDown;
+            @Down.performed -= instance.OnDown;
+            @Down.canceled -= instance.OnDown;
+            @Left.started -= instance.OnLeft;
+            @Left.performed -= instance.OnLeft;
+            @Left.canceled -= instance.OnLeft;
+            @Right.started -= instance.OnRight;
+            @Right.performed -= instance.OnRight;
+            @Right.canceled -= instance.OnRight;
+        }
+
+        public void RemoveCallbacks(ICommunicationActions instance)
+        {
+            if (m_Wrapper.m_CommunicationActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICommunicationActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CommunicationActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CommunicationActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CommunicationActions @Communication => new CommunicationActions(this);
     private int m_GamepadSchemeIndex = -1;
     public InputControlScheme GamepadScheme
     {
@@ -351,5 +559,12 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnShiftWalk(InputAction.CallbackContext context);
+    }
+    public interface ICommunicationActions
+    {
+        void OnUp(InputAction.CallbackContext context);
+        void OnDown(InputAction.CallbackContext context);
+        void OnLeft(InputAction.CallbackContext context);
+        void OnRight(InputAction.CallbackContext context);
     }
 }

@@ -60,6 +60,11 @@ public class PlayerController : PhysicsObject
         inputs.Character.Jump.performed += ctx => Jump();
         inputs.Character.ShiftWalk.performed += ctx => shiftWalk = true;
         inputs.Character.ShiftWalk.canceled += ctx => shiftWalk = false; 
+
+        inputs.Communication.Up.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.UP);        
+        inputs.Communication.Down.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.DOWN);        
+        inputs.Communication.Right.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.RIGHT);        
+        inputs.Communication.Left.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.LEFT);        
     }
 
     private void Start() {
