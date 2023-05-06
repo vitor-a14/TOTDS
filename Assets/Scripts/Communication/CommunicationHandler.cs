@@ -24,17 +24,17 @@ public class CommunicationHandler : MonoBehaviour
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
     }
 
+    //Clear queue after a time of non interactions were spelled
     private void LateUpdate() {
         queueTimer += Time.deltaTime;
         queueTimer = Mathf.Clamp(queueTimer, 0, queueDuration);
+        if(queueTimer >= queueDuration)
+            interactions.Clear();
     }
 
     //If the player inputs a interaction with the keys, this function is called (setup in PlayerController)
     //Add the interaction to the queue and make sure to fit the size
     public void AddInteraction(Interaction interaction) {
-        if(queueTimer >= queueDuration)
-            interactions.Clear();
-
         if(interactions.Count >= interactionsQueueSize)
             interactions.Dequeue();
 
@@ -58,6 +58,7 @@ public class CommunicationHandler : MonoBehaviour
             i++;
         }
 
+        interactions.Clear(); //if the code get this far this means the result will be true, them we can clear the queue
         return true;
     }
 }
