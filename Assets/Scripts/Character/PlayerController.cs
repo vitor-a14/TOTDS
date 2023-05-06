@@ -9,6 +9,7 @@ public class PlayerController : PhysicsObject
 
     [Header("Movement Settings")]
     public bool canMove = true;
+    public bool reading = false;
     public Transform cam;
     public float movementSpeed;
     public float rigidDrag;
@@ -65,7 +66,15 @@ public class PlayerController : PhysicsObject
         inputs.Communication.Down.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.DOWN);        
         inputs.Communication.Right.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.RIGHT);        
         inputs.Communication.Left.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.LEFT);      
-        inputs.Communication.Interact.performed += ctx => CommunicationHandler.Instance.InteractWithCurrentTarget();
+        inputs.Communication.Interact.performed += ctx => InteractHandler();
+    }
+
+    private void InteractHandler() {
+        if(reading) {
+            CommunicationHandler.Instance.readingTarget.ShowMessage();
+        } else {
+            CommunicationHandler.Instance.InteractWithCurrentTarget();
+        }
     }
 
     private void Start() {
@@ -73,7 +82,10 @@ public class PlayerController : PhysicsObject
     }
 
     private void Update() {
-        if(!canMove) return;
+        if(!canMove || reading) {
+            direction = Vector3.zero;
+            return;
+        }
 
         Vector3 gravityDirection = GetGravityDirection();
         Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
@@ -122,7 +134,7 @@ public class PlayerController : PhysicsObject
 
     //If the player is holding the jump button, the character will jump higher
     private void JumpAditionalForce() {
-        if(!jumping) return;
+        if(!jumping || !canMove || reading) return;
 
         if(jumpingTimer < holdJumpTime) {
             jumpingTimer += Time.deltaTime;
@@ -131,6 +143,8 @@ public class PlayerController : PhysicsObject
     }
 
     private void Jump() {
+        if(!canMove || reading) return;
+
         if (onGround) {
             rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
             rigid.drag = 0f;

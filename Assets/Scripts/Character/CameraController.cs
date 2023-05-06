@@ -38,7 +38,9 @@ public class CameraController : MonoBehaviour
 
     //Calculate the camera smooth follow position to the transform parent
     private void FixedUpdate() {
-        if(isActive) CalculateInput();
+        if(isActive && !PlayerController.Instance.reading) 
+            CalculateInput();
+            
         ApplyMotion();
     }
 
