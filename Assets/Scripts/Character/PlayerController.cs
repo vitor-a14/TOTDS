@@ -22,6 +22,7 @@ public class PlayerController : PhysicsObject
     public LayerMask walkableLayers;
     public float holdJumpTime;
 
+    private bool shiftWalk = false; //only for keyboard
     private float jumpingTimer;
     private Vector2 input;
     private Vector3 processedDirection;
@@ -29,9 +30,8 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public Vector3 direction;
     public bool jumping;
 
-    private bool shiftWalk = false;
-    private bool _onGround = true;
     //To detect if the player hit the ground and activate a callback to the animation
+    private bool _onGround = true; //only for structure, use the variable below instead
     public bool onGround 
     {
         get { return _onGround; }
@@ -47,6 +47,7 @@ public class PlayerController : PhysicsObject
         }
     }
 
+    //Instance and input setup
     private void Awake() {
         if(Instance == null) 
             Instance = this;
@@ -69,7 +70,11 @@ public class PlayerController : PhysicsObject
         inputs.Communication.Interact.performed += ctx => InteractHandler();
     }
 
+    //Handle screen message show. If the player is already in reading mode, go to next message until it's gone
+    //If player is not in reading mode, show the reading screen
     private void InteractHandler() {
+        if(!canMove) return; //validate this line
+
         if(reading) {
             CommunicationHandler.Instance.readingTarget.ShowMessage();
         } else {

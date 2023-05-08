@@ -77,12 +77,12 @@ public class CommunicationHandler : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if(other.tag == "Interactable")
+        if(other.GetComponent<Interactable>() != null)
             simpleInteractionTarget = other.GetComponent<Interactable>();
     }
 
     private void OnTriggerExit(Collider other) {
-        if(other.tag == "Interactable")
+        if(other.GetComponent<Interactable>() != null)
             simpleInteractionTarget = null;
     }
 }
