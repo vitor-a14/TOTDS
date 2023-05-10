@@ -330,7 +330,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""41e5f358-d60e-42f7-9c88-10e8fee9151f"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -383,24 +383,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Up"",
-                    ""type"": ""Button"",
-                    ""id"": ""185a75da-4778-4915-b8cc-4ff90ff3565d"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Down"",
-                    ""type"": ""Button"",
-                    ""id"": ""dae91afa-7bf5-4254-868f-dd6570e963b9"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Boost"",
                     ""type"": ""Button"",
                     ""id"": ""48973c21-4a87-4ba9-97a4-327ae100ccff"",
@@ -443,7 +425,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""425354e3-c321-49fc-939e-ec80480574a3"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -474,26 +456,59 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""47a3f9f4-a172-43d3-90c5-97ee0d0ae4fa"",
-                    ""path"": """",
+                    ""name"": ""2D Vector"",
+                    ""id"": ""71f7d20d-bcf8-49e3-9e25-0e9ffbcb6a52"",
+                    ""path"": ""2DVector"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Up"",
-                    ""isComposite"": false,
+                    ""action"": ""Rotate"",
+                    ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""b2b34d54-34d0-4670-9cee-2754e6ac6b92"",
-                    ""path"": """",
+                    ""name"": ""up"",
+                    ""id"": ""045e3eac-959a-4fd4-8e8a-c75b5dd69a99"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Down"",
+                    ""action"": ""Rotate"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""0871a5ef-0bb8-425d-a848-f344c09da9a2"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""d38bf493-7899-4933-bd1a-d97fd56a959c"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""4b590f23-7dce-476b-8e39-68384f15abc7"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -618,6 +633,39 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""1D Axis"",
+                    ""id"": ""5dbc8235-7041-42d0-85f8-fea8f8cbf1a5"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""c0823f53-c4fb-450d-ad8e-cf47bccace1e"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""d304ce01-de1c-4839-9a86-6afed91f5d2a"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
                     ""id"": ""faf54b7b-2ca4-46e6-98ff-f8997f9e41bd"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -642,6 +690,39 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""name"": ""positive"",
                     ""id"": ""dd0dd369-f00a-4543-b86d-a0124aa18dae"",
                     ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""d27a66c1-b1dd-445c-bca1-2d7865a2724f"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""68bd3230-1501-4da8-b6e9-5f788752bf9c"",
+                    ""path"": ""<Keyboard>/ctrl"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""8ee96541-868c-484f-8767-80070c8303e5"",
+                    ""path"": ""<Keyboard>/shift"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -684,8 +765,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Bird_Exit = m_Bird.FindAction("Exit", throwIfNotFound: true);
         m_Bird_Move = m_Bird.FindAction("Move", throwIfNotFound: true);
         m_Bird_Rotate = m_Bird.FindAction("Rotate", throwIfNotFound: true);
-        m_Bird_Up = m_Bird.FindAction("Up", throwIfNotFound: true);
-        m_Bird_Down = m_Bird.FindAction("Down", throwIfNotFound: true);
         m_Bird_Boost = m_Bird.FindAction("Boost", throwIfNotFound: true);
         m_Bird_Roll = m_Bird.FindAction("Roll", throwIfNotFound: true);
         m_Bird_Altitude = m_Bird.FindAction("Altitude", throwIfNotFound: true);
@@ -901,8 +980,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Bird_Exit;
     private readonly InputAction m_Bird_Move;
     private readonly InputAction m_Bird_Rotate;
-    private readonly InputAction m_Bird_Up;
-    private readonly InputAction m_Bird_Down;
     private readonly InputAction m_Bird_Boost;
     private readonly InputAction m_Bird_Roll;
     private readonly InputAction m_Bird_Altitude;
@@ -913,8 +990,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Exit => m_Wrapper.m_Bird_Exit;
         public InputAction @Move => m_Wrapper.m_Bird_Move;
         public InputAction @Rotate => m_Wrapper.m_Bird_Rotate;
-        public InputAction @Up => m_Wrapper.m_Bird_Up;
-        public InputAction @Down => m_Wrapper.m_Bird_Down;
         public InputAction @Boost => m_Wrapper.m_Bird_Boost;
         public InputAction @Roll => m_Wrapper.m_Bird_Roll;
         public InputAction @Altitude => m_Wrapper.m_Bird_Altitude;
@@ -936,12 +1011,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Rotate.started += instance.OnRotate;
             @Rotate.performed += instance.OnRotate;
             @Rotate.canceled += instance.OnRotate;
-            @Up.started += instance.OnUp;
-            @Up.performed += instance.OnUp;
-            @Up.canceled += instance.OnUp;
-            @Down.started += instance.OnDown;
-            @Down.performed += instance.OnDown;
-            @Down.canceled += instance.OnDown;
             @Boost.started += instance.OnBoost;
             @Boost.performed += instance.OnBoost;
             @Boost.canceled += instance.OnBoost;
@@ -964,12 +1033,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Rotate.started -= instance.OnRotate;
             @Rotate.performed -= instance.OnRotate;
             @Rotate.canceled -= instance.OnRotate;
-            @Up.started -= instance.OnUp;
-            @Up.performed -= instance.OnUp;
-            @Up.canceled -= instance.OnUp;
-            @Down.started -= instance.OnDown;
-            @Down.performed -= instance.OnDown;
-            @Down.canceled -= instance.OnDown;
             @Boost.started -= instance.OnBoost;
             @Boost.performed -= instance.OnBoost;
             @Boost.canceled -= instance.OnBoost;
@@ -1025,8 +1088,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnExit(InputAction.CallbackContext context);
         void OnMove(InputAction.CallbackContext context);
         void OnRotate(InputAction.CallbackContext context);
-        void OnUp(InputAction.CallbackContext context);
-        void OnDown(InputAction.CallbackContext context);
         void OnBoost(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
         void OnAltitude(InputAction.CallbackContext context);

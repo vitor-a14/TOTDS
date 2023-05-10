@@ -21,6 +21,9 @@ public class CameraController : MonoBehaviour
     private Vector2 cameraInput; //Input received from Engine
     private Vector3 focusPoint; //Target position
     private float yaw, pitch; //Input translated into transform rotation 
+    [HideInInspector] public Vector3 lookPosition;
+    [HideInInspector] public Quaternion lookRotation;
+    [HideInInspector] public bool inCameraTransition = false;
 
     private void Awake() {
         if(Instance == null) 
@@ -40,7 +43,7 @@ public class CameraController : MonoBehaviour
     private void FixedUpdate() {
         if(isActive && !PlayerController.Instance.reading) 
             CalculateInput();
-            
+
         ApplyMotion();
     }
 
@@ -76,9 +79,8 @@ public class CameraController : MonoBehaviour
     //That makes the player movement and camera movement work smoothly together with rigidbody
     private void ApplyMotion() {
         //Apply rotation
-        Quaternion lookRotation = transform.rotation;
+        lookRotation = transform.rotation;
         Vector3 lookDirection = lookRotation * Vector3.forward;
-        Vector3 lookPosition;
 
         //Camera collision logic
         if (Physics.Raycast(focusPoint, -lookDirection, out RaycastHit hit, distance, cameraCollisionMask))
@@ -87,6 +89,7 @@ public class CameraController : MonoBehaviour
             lookPosition = focusPoint - lookDirection * distance;
 
         //Apply position
-        camRigid.Move(lookPosition, lookRotation);
+        if(!inCameraTransition)
+            camRigid.Move(lookPosition, lookRotation);
     }
 }

@@ -21,6 +21,7 @@ public class BirdController : Interactable
     public Vector3 cameraOffset;
     public float cameraFollowSpeed, cameraRotationSpeed;
     [SerializeField] private Transform cam;
+    private bool inCameraTransition = false;
 
     [Header("Dependencies")]
     [SerializeField] private Transform player;
@@ -82,6 +83,7 @@ public class BirdController : Interactable
     }
 
     private void ProcessCameraMovement() {
+        if(inCameraTransition) return;
         Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
         Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
         cam.rotation = Quaternion.Slerp(cam.rotation, transform.rotation, cameraRotationSpeed * Time.fixedDeltaTime);
@@ -114,17 +116,7 @@ public class BirdController : Interactable
     public void EnterPilotMode() {
         if(!PlayerController.Instance.canMove && PlayerController.Instance.reading) return;
         StartCoroutine(EnterPilotModeCoroutine());
-    }
-
-    //This method can only be called in the bird mode
-    public void ExitPilotMode() {
-        if(!piloting) return;
-        StartCoroutine(ExitPilotModeCoroutine());
-    }
-
-    private IEnumerator EnterPilotModeCoroutine() {
-        yield return new WaitForSeconds(changeModeDuration); 
-        piloting = true;
+        CameraController.Instance.isActive = false;
         PlayerController.Instance.inputs.Disable();
         inputs.Enable();
         player.SetParent(transform);
@@ -133,15 +125,67 @@ public class BirdController : Interactable
         physics.rigid.freezeRotation = true;
     }
 
-    private IEnumerator ExitPilotModeCoroutine() {
-        yield return new WaitForSeconds(changeModeDuration); 
-        piloting = false;
+    //This method can only be called in the bird mode
+    public void ExitPilotMode() {
+        if(!piloting) return;
+        StartCoroutine(ExitPilotModeCoroutine());
+        CameraController.Instance.isActive = true;
         player.gameObject.SetActive(true);
         player.SetParent(null);
         PlayerController.Instance.inputs.Enable();
         inputs.Disable();
         physics.isActive = true;
         physics.rigid.freezeRotation = false;
+    }
+
+    private IEnumerator EnterPilotModeCoroutine() {
+        yield return new WaitForEndOfFrame();
+
+        piloting = true;
+        inCameraTransition = true;
+        float elapsedTime = 0;
+        float smoothElapsedTime = 0;
+        Vector3 startPos = cam.position;
+        Quaternion startRot = cam.rotation;
+
+        while (elapsedTime < changeModeDuration)
+        {
+            Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
+            Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
+            cam.rotation = Quaternion.Slerp(startRot, transform.rotation, smoothElapsedTime);
+            cam.position = Vector3.Slerp(startPos, camPos, smoothElapsedTime);
+            elapsedTime += Time.fixedDeltaTime;
+            smoothElapsedTime = elapsedTime / changeModeDuration;
+            smoothElapsedTime = smoothElapsedTime * smoothElapsedTime * (3f - 2f * smoothElapsedTime);
+            yield return null;
+        }  
+
+        inCameraTransition = false;
+    }
+
+    private IEnumerator ExitPilotModeCoroutine() {
+        yield return new WaitForEndOfFrame();
+        piloting = false;
+        CameraController.Instance.inCameraTransition = true;
+
+        float elapsedTime = 0;
+        float smoothElapsedTime = 0;
+        Vector3 startPos = cam.position;
+        Quaternion startRot = cam.rotation;
+
+        while (elapsedTime < changeModeDuration)
+        {
+            Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
+            Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
+            cam.rotation = Quaternion.Slerp(startRot, CameraController.Instance.lookRotation, smoothElapsedTime);
+            cam.position = Vector3.Slerp(startPos, CameraController.Instance.lookPosition, smoothElapsedTime);
+            elapsedTime += Time.fixedDeltaTime;
+            smoothElapsedTime = elapsedTime / changeModeDuration;
+            smoothElapsedTime = smoothElapsedTime * smoothElapsedTime * (3f - 2f * smoothElapsedTime);
+            yield return null;
+        } 
+
+        CameraController.Instance.inCameraTransition = false; 
     }
     
     //Input process logic

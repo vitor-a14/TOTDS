@@ -2370,13 +2370,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   piloting: 0
-  changeModeDuration: 0.2
+  changeModeDuration: 15
   movementSpeed: 12
   torqueSpeed: 2
   boostForce: 80
   boostSpeed: 5
   boostCooldown: 2
-  exitBoostModeTrigger: 0
+  exitBoostModeTrigger: 10
   speedMode: 0
   canCheckBoostModeStatus: 1
   cameraOffset: {x: 0, y: 5, z: 20}
