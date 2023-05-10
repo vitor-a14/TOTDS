@@ -417,6 +417,15 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Altitude"",
+                    ""type"": ""Value"",
+                    ""id"": ""84a59424-5a1a-4a9d-af31-8b7d9e777934"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -606,6 +615,39 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""action"": ""Roll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""faf54b7b-2ca4-46e6-98ff-f8997f9e41bd"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""c2506bb7-9fe9-4a10-992e-f49553c03f9e"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""dd0dd369-f00a-4543-b86d-a0124aa18dae"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Altitude"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -646,6 +688,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Bird_Down = m_Bird.FindAction("Down", throwIfNotFound: true);
         m_Bird_Boost = m_Bird.FindAction("Boost", throwIfNotFound: true);
         m_Bird_Roll = m_Bird.FindAction("Roll", throwIfNotFound: true);
+        m_Bird_Altitude = m_Bird.FindAction("Altitude", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -862,6 +905,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Bird_Down;
     private readonly InputAction m_Bird_Boost;
     private readonly InputAction m_Bird_Roll;
+    private readonly InputAction m_Bird_Altitude;
     public struct BirdActions
     {
         private @Inputs m_Wrapper;
@@ -873,6 +917,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Down => m_Wrapper.m_Bird_Down;
         public InputAction @Boost => m_Wrapper.m_Bird_Boost;
         public InputAction @Roll => m_Wrapper.m_Bird_Roll;
+        public InputAction @Altitude => m_Wrapper.m_Bird_Altitude;
         public InputActionMap Get() { return m_Wrapper.m_Bird; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -903,6 +948,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Roll.started += instance.OnRoll;
             @Roll.performed += instance.OnRoll;
             @Roll.canceled += instance.OnRoll;
+            @Altitude.started += instance.OnAltitude;
+            @Altitude.performed += instance.OnAltitude;
+            @Altitude.canceled += instance.OnAltitude;
         }
 
         private void UnregisterCallbacks(IBirdActions instance)
@@ -928,6 +976,9 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Roll.started -= instance.OnRoll;
             @Roll.performed -= instance.OnRoll;
             @Roll.canceled -= instance.OnRoll;
+            @Altitude.started -= instance.OnAltitude;
+            @Altitude.performed -= instance.OnAltitude;
+            @Altitude.canceled -= instance.OnAltitude;
         }
 
         public void RemoveCallbacks(IBirdActions instance)
@@ -978,5 +1029,6 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnDown(InputAction.CallbackContext context);
         void OnBoost(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
+        void OnAltitude(InputAction.CallbackContext context);
     }
 }

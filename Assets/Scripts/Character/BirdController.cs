@@ -27,6 +27,7 @@ public class BirdController : Interactable
     [SerializeField] private PhysicsObject physics;
     private Inputs inputs;
     private Vector2 inputMove, inputRotate;
+    private float inputAltitude;
     private float inputRoll;
     private Vector3 direction, torqueRotation;
 
@@ -37,6 +38,8 @@ public class BirdController : Interactable
         inputs.Bird.Exit.performed += ctx => ExitPilotMode();
         inputs.Bird.Move.performed += ctx => inputMove = ctx.ReadValue<Vector2>();
         inputs.Bird.Move.canceled += ctx => inputMove = Vector2.zero;
+        inputs.Bird.Altitude.performed += ctx => inputAltitude = ctx.ReadValue<float>();
+        inputs.Bird.Altitude.canceled += ctx => inputAltitude = 0;
         inputs.Bird.Rotate.performed += ctx => inputRotate = ctx.ReadValue<Vector2>();
         inputs.Bird.Rotate.canceled += ctx => inputRotate = Vector2.zero;
         inputs.Bird.Roll.performed += ctx => inputRoll = ctx.ReadValue<float>();
@@ -60,7 +63,7 @@ public class BirdController : Interactable
     private void BirdInput() {
         inputMove = ClampMagnitude(inputMove, 0.4f, 1.0f);
         inputRotate = ClampMagnitude(inputRotate, 0.4f, 1.0f);
-        direction = (transform.forward * inputMove.y + transform.right * inputMove.x) * movementSpeed;
+        direction = (transform.forward * inputMove.y + transform.right * inputMove.x + transform.up * inputAltitude) * movementSpeed;
         torqueRotation = (Vector3.up * inputRotate.x + Vector3.forward * -inputRoll + Vector3.right * -inputRotate.y) * torqueSpeed;
     }
 
