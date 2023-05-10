@@ -134,7 +134,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dece63d7-8ea2-48d6-9a78-fd8537bd021c"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -341,7 +341,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""358005a9-8a83-4fd2-b160-1bab2eef0465"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -399,13 +399,31 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Boost"",
+                    ""type"": ""Button"",
+                    ""id"": ""48973c21-4a87-4ba9-97a4-327ae100ccff"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Roll"",
+                    ""type"": ""Value"",
+                    ""id"": ""a52b8e24-524c-4ab3-a885-94c556841f05"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""31937e92-41fa-4929-b12a-e0f6ae8c5f0e"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -427,10 +445,10 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""b4ddc1ab-a274-405e-9fde-bb0f1d1ae52c"",
-                    ""path"": ""<Joystick>/stick"",
+                    ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
+                    ""processors"": ""StickDeadzone(min=0.3)"",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Rotate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -471,10 +489,10 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""3af61103-1e03-4d19-a1b6-3cc01cf83100"",
-                    ""path"": ""<Joystick>/stick"",
+                    ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
+                    ""processors"": ""StickDeadzone(min=0.3)"",
+                    ""groups"": ""Gamepad"",
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -533,6 +551,61 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9c30c656-705c-4c0e-8141-a2aa890ff864"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""68abc007-bd97-4ec2-9841-6779673584a7"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Boost"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""f88f9742-77ce-41c4-89f3-813d07d0992b"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""003949f8-f89b-48dc-86d7-ae47a0452561"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""bd32acab-6d66-4402-a706-52075c1b97d4"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Roll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -571,6 +644,8 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Bird_Rotate = m_Bird.FindAction("Rotate", throwIfNotFound: true);
         m_Bird_Up = m_Bird.FindAction("Up", throwIfNotFound: true);
         m_Bird_Down = m_Bird.FindAction("Down", throwIfNotFound: true);
+        m_Bird_Boost = m_Bird.FindAction("Boost", throwIfNotFound: true);
+        m_Bird_Roll = m_Bird.FindAction("Roll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -785,6 +860,8 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Bird_Rotate;
     private readonly InputAction m_Bird_Up;
     private readonly InputAction m_Bird_Down;
+    private readonly InputAction m_Bird_Boost;
+    private readonly InputAction m_Bird_Roll;
     public struct BirdActions
     {
         private @Inputs m_Wrapper;
@@ -794,6 +871,8 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         public InputAction @Rotate => m_Wrapper.m_Bird_Rotate;
         public InputAction @Up => m_Wrapper.m_Bird_Up;
         public InputAction @Down => m_Wrapper.m_Bird_Down;
+        public InputAction @Boost => m_Wrapper.m_Bird_Boost;
+        public InputAction @Roll => m_Wrapper.m_Bird_Roll;
         public InputActionMap Get() { return m_Wrapper.m_Bird; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -818,6 +897,12 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Down.started += instance.OnDown;
             @Down.performed += instance.OnDown;
             @Down.canceled += instance.OnDown;
+            @Boost.started += instance.OnBoost;
+            @Boost.performed += instance.OnBoost;
+            @Boost.canceled += instance.OnBoost;
+            @Roll.started += instance.OnRoll;
+            @Roll.performed += instance.OnRoll;
+            @Roll.canceled += instance.OnRoll;
         }
 
         private void UnregisterCallbacks(IBirdActions instance)
@@ -837,6 +922,12 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
             @Down.started -= instance.OnDown;
             @Down.performed -= instance.OnDown;
             @Down.canceled -= instance.OnDown;
+            @Boost.started -= instance.OnBoost;
+            @Boost.performed -= instance.OnBoost;
+            @Boost.canceled -= instance.OnBoost;
+            @Roll.started -= instance.OnRoll;
+            @Roll.performed -= instance.OnRoll;
+            @Roll.canceled -= instance.OnRoll;
         }
 
         public void RemoveCallbacks(IBirdActions instance)
@@ -885,5 +976,7 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnRotate(InputAction.CallbackContext context);
         void OnUp(InputAction.CallbackContext context);
         void OnDown(InputAction.CallbackContext context);
+        void OnBoost(InputAction.CallbackContext context);
+        void OnRoll(InputAction.CallbackContext context);
     }
 }

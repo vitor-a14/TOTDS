@@ -8,7 +8,7 @@ public class PhysicsObject : MonoBehaviour
     public bool autoRotate = false;
     private float rotationSpeed = 85f;
 
-    protected Rigidbody rigid;
+    [HideInInspector] public Rigidbody rigid;
     protected Vector3 mainForceDirection = Vector3.zero;
 
     private void Start() {

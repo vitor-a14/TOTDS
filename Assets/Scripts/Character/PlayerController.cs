@@ -166,7 +166,7 @@ public class PlayerController : PhysicsObject
     }  
 
     //A custom clamp magnite with min and max. The built in unity ClampMagnitude only has the max parameter
-    public Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)
+    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)
     {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;

@@ -953,6 +953,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
 --- !u!54 &490702082
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1233,6 +1234,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
 --- !u!54 &915892373
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1484,6 +1486,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 1
+  rigid: {fileID: 0}
   canMove: 1
   reading: 0
   cam: {fileID: 330585546}
@@ -1495,7 +1498,7 @@ MonoBehaviour:
   groundDistanceCheck: 1
   walkableLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8
   holdJumpTime: 1
   direction: {x: 0, y: 0, z: 0}
   jumping: 0
@@ -2042,6 +2045,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
 --- !u!54 &1513618185
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2334,9 +2338,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1837898417}
   serializedVersion: 4
-  m_Mass: 50
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_Mass: 100
+  m_Drag: 2
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2367,7 +2371,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   piloting: 0
   changeModeDuration: 0.2
+  movementSpeed: 12
+  torqueSpeed: 2
+  boostForce: 80
+  boostSpeed: 5
+  boostCooldown: 2
+  exitBoostModeTrigger: 0
+  speedMode: 0
+  canCheckBoostModeStatus: 1
+  cameraOffset: {x: 0, y: 5, z: 20}
+  cameraFollowSpeed: 6
+  cameraRotationSpeed: 20
+  cam: {fileID: 330585546}
   player: {fileID: 1101617369}
+  physics: {fileID: 1837898427}
 --- !u!135 &1837898426
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2403,6 +2420,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
 --- !u!1 &1887663607
 GameObject:
   m_ObjectHideFlags: 0
@@ -2583,6 +2601,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
 --- !u!54 &1910997649
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -30640,6 +30659,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActive: 1
   autoRotate: 0
+  rigid: {fileID: 0}
   cloth: {fileID: 0}
 --- !u!54 &8805233353116411204
 Rigidbody:
