@@ -23,7 +23,7 @@ public class CameraController : MonoBehaviour
     private float yaw, pitch; //Input translated into transform rotation 
     [HideInInspector] public Vector3 lookPosition;
     [HideInInspector] public Quaternion lookRotation;
-    [HideInInspector] public bool inCameraTransition = false;
+    [HideInInspector] public bool inCameraTransition = false; //This is used when transitioning between the bird mode and character mode
 
     private void Awake() {
         if(Instance == null) 

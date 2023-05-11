@@ -12,10 +12,10 @@ public class BirdController : Interactable
     public float boostForce;
     public float boostSpeed;
     public float boostCooldown;
-    public float exitBoostModeTrigger;
+    public float boostModeThreshold;
     private float boostTimer;
-    public bool speedMode = false;
-    public bool canCheckBoostModeStatus = true;
+    private bool speedMode = false;
+    private bool canCheckBoostModeStatus = true;
 
     [Header("Camera Settings")]
     public Vector3 cameraOffset;
@@ -77,7 +77,7 @@ public class BirdController : Interactable
         physics.rigid.AddForce(direction * aditionalForce * Time.deltaTime, ForceMode.VelocityChange);
         physics.rigid.AddRelativeTorque(torqueRotation * Time.deltaTime, ForceMode.VelocityChange);
 
-        if(physics.rigid.velocity.magnitude <= exitBoostModeTrigger && canCheckBoostModeStatus) {
+        if(physics.rigid.velocity.magnitude <= boostModeThreshold && canCheckBoostModeStatus) {
             speedMode = false;
         }
     }
@@ -91,6 +91,8 @@ public class BirdController : Interactable
     }
 
     private void Boost() {
+        if(!piloting) return;
+        
         if(boostTimer >= boostCooldown) {
             physics.rigid.AddForce(transform.forward * boostForce, ForceMode.VelocityChange);
             StartCoroutine(CheckBoostModeCooldown());
