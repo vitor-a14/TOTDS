@@ -11,13 +11,21 @@ public class MeshGenerator
 	int numDivisions;
 	int numVertsPerFace;
     int resolution;
+	int radius;
+
+	//Compute shader
+	private ComputeShader heightShader;
+	private ComputeBuffer verticesBuffer, heightsBuffer;
 
 	static readonly int[] vertexPairs = { 0, 1, 0, 2, 0, 3, 0, 4, 1, 2, 2, 3, 3, 4, 4, 1, 5, 1, 5, 2, 5, 3, 5, 4 };
 	static readonly int[] edgeTriplets = { 0, 1, 4, 1, 2, 5, 2, 3, 6, 3, 0, 7, 8, 9, 4, 9, 10, 5, 10, 11, 6, 11, 8, 7 };
 	static readonly Vector3[] baseVertices = { Vector3.up, Vector3.left, Vector3.back, Vector3.right, Vector3.forward, Vector3.down };
 
-    public MeshGenerator(int resolution) {
+    public MeshGenerator(int resolution, int radius, ComputeShader heightShader) {
+		this.heightShader = heightShader;
         this.resolution = resolution;
+		this.radius = radius;
+
         numDivisions = Mathf.Max (0, resolution);
 		numVertsPerFace = ((numDivisions + 3) * (numDivisions + 3) - (numDivisions + 3)) / 2;
 		int numVerts = numVertsPerFace * 8 - (numDivisions + 2) * 12 + 6;
@@ -53,9 +61,27 @@ public class MeshGenerator
 			CreateFace (edges[edgeTriplets[i]], edges[edgeTriplets[i + 1]], edges[edgeTriplets[i + 2]], reverse);
 		}
 
-		Vertices = vertices.items;
+		Vertices = CalculateHeights(vertices.items);
 		Triangles = triangles.items;
     }
+
+	private Vector3[] CalculateHeights(Vector3[] vertices) {
+		int kernel = heightShader.FindKernel("CSMain");
+		Vector3[] heights = new Vector3[vertices.Length];
+
+		verticesBuffer = new ComputeBuffer(vertices.Length, sizeof(float) * 3);
+        heightsBuffer = new ComputeBuffer(vertices.Length, sizeof(float) * 3);
+		heightShader.SetBuffer(kernel, "verticesBuffer", verticesBuffer);
+        heightShader.SetBuffer(kernel, "heightsBuffer", heightsBuffer);
+		verticesBuffer.SetData(vertices);
+		heightShader.SetFloat("radius", radius);
+		heightShader.Dispatch(kernel, 1024, 1, 1);
+		heightsBuffer.GetData(heights);
+		heightsBuffer.Dispose();
+        verticesBuffer.Dispose();
+
+		return heights;
+	}
 
 	void CreateFace (Edge sideA, Edge sideB, Edge bottom, bool reverse) {
 		int numPointsInEdge = sideA.vertexIndices.Length;

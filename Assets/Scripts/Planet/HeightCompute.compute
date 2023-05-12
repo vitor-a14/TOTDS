@@ -1,0 +1,17 @@
+#pragma kernel CSMain
+#define THREAD_GROUP_SIZE 1024
+
+StructuredBuffer<float3> verticesBuffer;
+RWStructuredBuffer<float3> heightsBuffer;
+
+int radius;
+
+float3 calculateHeight(float3 vertice) {
+    return vertice * radius;
+}
+
+[numthreads(THREAD_GROUP_SIZE,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    heightsBuffer[id.x] = calculateHeight(verticesBuffer[id.x]);
+}

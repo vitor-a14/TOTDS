@@ -7,6 +7,7 @@ public class PlanetMesh : MonoBehaviour
 {
     [Range(2, 256)] [SerializeField] private int resolution = 16;
 	[Range(100, 1500)] [SerializeField] private int radius;
+	[SerializeField] private ComputeShader heightShader;
 
 	[SerializeField, HideInInspector] MeshFilter meshFilter;
     [SerializeField, HideInInspector] MeshData meshData;
@@ -37,7 +38,7 @@ public class PlanetMesh : MonoBehaviour
 	}
 
 	private MeshData CalculateMesh(int resolution) {
-		MeshGenerator mesh = new MeshGenerator(resolution);
+		MeshGenerator mesh = new MeshGenerator(resolution, radius, heightShader);
 		MeshData data = new MeshData();
 		data.vertices = mesh.Vertices; //calculate height here
 		data.triangles = mesh.Triangles;
