@@ -7,6 +7,9 @@ public class Planet : MonoBehaviour
     private static Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
     [SerializeField] [HideInInspector] MeshFilter[] meshFilters;
     [SerializeField] [HideInInspector] TerrainFace[] terrainFaces;
+    [SerializeField] [HideInInspector] public float distanceToPlayer;
+    public static float cullingMinAngle = 1.6f;
+    public static float renderTick = 0.5f;
 
     public float size = 10f;
     public Material planetMaterial;
@@ -14,14 +17,14 @@ public class Planet : MonoBehaviour
 
     public static Dictionary<int, float> detailLevelDistances = new Dictionary<int, float>() {
         {0, Mathf.Infinity },
-        {1, 60f},
-        {2, 25f },
-        {3, 10f },
-        {4, 4f },
-        {5, 1.5f },
-        {6, 0.7f },
-        {7, 0.3f },
-        {8, 0.1f }
+        {1, 6000f},
+        {2, 2500f },
+        {3, 1000f },
+        {4, 400f },
+        {5, 150f },
+        {6, 70f },
+        {7, 30f },
+        {8, 10f }
     };
 
     void Start()
@@ -36,7 +39,8 @@ public class Planet : MonoBehaviour
     
     private IEnumerator PlanetGenerationLoop() {
         while(true) {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(renderTick);
+            distanceToPlayer = Vector3.Distance(transform.position, target.position);
             GenerateMesh();
         }
     }

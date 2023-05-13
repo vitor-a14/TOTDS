@@ -46,7 +46,12 @@ public class Chunk
                 toBeRendered.AddRange(child.GetVisibleChildren());
             }
         } else {
-            toBeRendered.Add(this);
+            if (Mathf.Acos((Mathf.Pow(planet.size, 2) + Mathf.Pow(planet.distanceToPlayer, 2) - 
+            Mathf.Pow(Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size), Planet.target.position), 2)) / 
+            (2 * planet.size * planet.distanceToPlayer)) < Planet.cullingMinAngle)
+            {
+                toBeRendered.Add(this);
+            }
         }
 
         return toBeRendered.ToArray();

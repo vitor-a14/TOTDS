@@ -1491,7 +1491,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshFilters: []
-  size: 10
+  distanceToPlayer: 0
+  size: 1000
   planetMaterial: {fileID: 2100000, guid: 04adf9507d723c84ab8c0efc30ab5986, type: 2}
 --- !u!1 &1335631540
 GameObject:
