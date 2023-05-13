@@ -10,7 +10,7 @@ public class Planet : MonoBehaviour
     [SerializeField] [HideInInspector] public float distanceToPlayer;
     public static float cullingMinAngle = 1.6f;
     public static float renderTick = 0.2f;
-    public int resolution = 9;
+    public int resolution = 9; //must be odd!
 
     public float size = 10f;
     public Material planetMaterial;

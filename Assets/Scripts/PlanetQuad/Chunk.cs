@@ -29,7 +29,7 @@ public class Chunk
     public void GenerateChildren() {
         int maxDetail = 8;
         if(detailLevel <= maxDetail && detailLevel >= 0) {
-            if(Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size), Planet.target.position) <= planet.detailLevelDistances[detailLevel]) {
+            if(Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size) + planet.transform.position, Planet.target.position) <= planet.detailLevelDistances[detailLevel]) {
                 children = new Chunk[4];
                 children[0] = new Chunk(new Chunk[0], this, position + axisA * radius / 2 + axisB * radius / 2, radius / 2, detailLevel + 1, localUp, axisA, axisB, planet);
                 children[1] = new Chunk(new Chunk[0], this, position + axisA * radius / 2 - axisB * radius / 2, radius / 2, detailLevel + 1, localUp, axisA, axisB, planet);
@@ -44,7 +44,7 @@ public class Chunk
     }
 
     public void UpdateChunk() {
-        float distanceToPlayer = Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size), Planet.target.position);
+        float distanceToPlayer = Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size) + planet.transform.position, Planet.target.position);
         if (detailLevel <= 8) {
             if (distanceToPlayer > planet.detailLevelDistances[detailLevel]) {
                 children = new Chunk[0];
@@ -69,7 +69,7 @@ public class Chunk
             }
         } else {
             if (Mathf.Acos((Mathf.Pow(planet.size, 2) + Mathf.Pow(planet.distanceToPlayer, 2) - 
-            Mathf.Pow(Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size), Planet.target.position), 2)) / 
+            Mathf.Pow(Vector3.Distance(planet.transform.TransformDirection(position.normalized * planet.size) + planet.transform.position, Planet.target.position), 2)) / 
             (2 * planet.size * planet.distanceToPlayer)) < Planet.cullingMinAngle)
             {
                 toBeRendered.Add(this);
@@ -90,7 +90,7 @@ public class Chunk
 
     //maybe can be put in a compute shader?
     public (Vector3[], int[]) CalculateVerticesAndTriangles(int triangleOffset) {
-        int resolution = 9; //resolution of the chunk, MUST BE ODD!
+        int resolution = planet.resolution; //resolution of the chunk, MUST BE ODD!
         Vector3[] vertices = new Vector3[resolution * resolution];
         int[] triangles = new int[(resolution - 1) * (resolution - 1) * 6];
         int triIndex = 0;

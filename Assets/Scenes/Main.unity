@@ -394,7 +394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: 0.00000002980232, y: -0.000000014901159, z: -0.70710677, w: 0.7071069}
-  m_LocalPosition: {x: 0, y: 0, z: -50.56}
+  m_LocalPosition: {x: 0, y: 0, z: -1000}
   m_LocalScale: {x: 0.7692337, y: 1.3000008, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1492,8 +1492,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilters: []
   distanceToPlayer: 0
+  resolution: 9
   size: 1000
   planetMaterial: {fileID: 2100000, guid: 04adf9507d723c84ab8c0efc30ab5986, type: 2}
+  detailLevelDistances:
+  - Infinity
+  - 6000
+  - 2500
+  - 1000
+  - 400
+  - 150
+  - 70
+  - 30
+  - 10
 --- !u!1 &1335631540
 GameObject:
   m_ObjectHideFlags: 0
