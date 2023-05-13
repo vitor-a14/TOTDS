@@ -9,31 +9,30 @@ public class Planet : MonoBehaviour
     [SerializeField] [HideInInspector] TerrainFace[] terrainFaces;
     [SerializeField] [HideInInspector] public float distanceToPlayer;
     public static float cullingMinAngle = 1.6f;
-    public static float renderTick = 0.5f;
+    public static float renderTick = 0.2f;
+    public int resolution = 9;
 
     public float size = 10f;
     public Material planetMaterial;
     public static Transform target;
 
-    public static Dictionary<int, float> detailLevelDistances = new Dictionary<int, float>() {
-        {0, Mathf.Infinity },
-        {1, 6000f},
-        {2, 2500f },
-        {3, 1000f },
-        {4, 400f },
-        {5, 150f },
-        {6, 70f },
-        {7, 30f },
-        {8, 10f }
+    public float[] detailLevelDistances = new float[] {
+        Mathf.Infinity,
+        6000f,
+        2500f,
+        1000f,
+        400f,
+        150f,
+        70f,
+        30f,
+        10f
     };
 
     void Start()
     {
         target = Camera.main.transform;
-
         Initialize();
         GenerateMesh();
-
         StartCoroutine(PlanetGenerationLoop());
     }
     
@@ -41,7 +40,7 @@ public class Planet : MonoBehaviour
         while(true) {
             yield return new WaitForSeconds(renderTick);
             distanceToPlayer = Vector3.Distance(transform.position, target.position);
-            GenerateMesh();
+            UpdateMesh();
         }
     }
 
@@ -64,13 +63,19 @@ public class Planet : MonoBehaviour
                 meshFilters[i].sharedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             }
 
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, 4, directions[i], size, this);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, resolution, directions[i], size, this);
         }
     }
 
     private void GenerateMesh() {
         foreach(TerrainFace face in terrainFaces) {
             face.ConstructTree();
+        }
+    }
+
+    private void UpdateMesh() {
+        foreach(TerrainFace face in terrainFaces) {
+            face.UpdateTree();
         }
     }
 }

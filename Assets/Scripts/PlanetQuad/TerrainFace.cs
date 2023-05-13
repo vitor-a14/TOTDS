@@ -8,6 +8,7 @@ public class TerrainFace
     private Vector3 localUp, axisA, axisB;
     private float radius;
     private Planet planet;
+    private Chunk parentChunk;
 
     public List<Vector3> vertices = new List<Vector3>();
     public List<int> triangles = new List<int>();
@@ -27,7 +28,7 @@ public class TerrainFace
         vertices.Clear();
         triangles.Clear();
 
-        Chunk parentChunk = new Chunk(null, null, localUp.normalized * planet.size, radius, 0, localUp, axisA, axisB, planet);
+        parentChunk = new Chunk(null, null, localUp.normalized * planet.size, radius, 0, localUp, axisA, axisB, planet);
         parentChunk.GenerateChildren();
 
         int triangleOffset = 0;
@@ -42,8 +43,37 @@ public class TerrainFace
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-        mesh.Optimize();
+        //mesh.RecalculateBounds();
+        //mesh.Optimize();
+    }
+
+    public void UpdateTree() {
+        vertices.Clear();
+        triangles.Clear();
+        parentChunk.UpdateChunk();
+
+        int triangleOffset = 0;
+        foreach(Chunk child in parentChunk.GetVisibleChildren()) {
+            (Vector3[], int[]) verticesAndTriangles = (new Vector3[0], new int[0]);
+            if (child.vertices == null) {
+                verticesAndTriangles = child.CalculateVerticesAndTriangles(triangleOffset);
+            } else if(child.vertices.Length == 0) {
+                verticesAndTriangles = child.CalculateVerticesAndTriangles(triangleOffset);
+            } else {
+                verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset));
+            }
+
+            vertices.AddRange(verticesAndTriangles.Item1);
+            triangles.AddRange(verticesAndTriangles.Item2);
+            triangleOffset += verticesAndTriangles.Item1.Length;
+        }
+
+        mesh.Clear();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+        //mesh.RecalculateBounds();
+        //mesh.Optimize();
     }
 }
 
