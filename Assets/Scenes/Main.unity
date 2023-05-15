@@ -394,7 +394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1000}
+  m_LocalPosition: {x: 0, y: 0, z: -1050}
   m_LocalScale: {x: 0.7692337, y: 1.3000008, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1416,6 +1416,8 @@ GameObject:
   - component: {fileID: 1263403375}
   - component: {fileID: 1263403374}
   - component: {fileID: 1263403376}
+  - component: {fileID: 1263403378}
+  - component: {fileID: 1263403379}
   m_Layer: 0
   m_Name: Planet
   m_TagString: Celestial Body
@@ -1490,9 +1492,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d261e1e6c4cbb0f428a1748a74599a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshFilters: []
-  distanceToPlayer: 0
-  resolution: 9
+  meshFilters:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  distanceToPlayer: 141
+  distanceToPlayerPow2: 0
+  presets: {fileID: 0}
+  heightNoise: {fileID: 1263403378}
   size: 1000
   planetMaterial: {fileID: 2100000, guid: 04adf9507d723c84ab8c0efc30ab5986, type: 2}
   detailLevelDistances:
@@ -1505,6 +1515,38 @@ MonoBehaviour:
   - 70
   - 30
   - 10
+--- !u!114 &1263403378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263403369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fa4406d6fc1ab345a716669f1f2e412, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  strength: 0.025
+  octaves: 5
+  baseRoughness: 4
+  roughness: 2
+  persistance: 0.7
+  center: {x: 0, y: 0, z: 0}
+  heightMap: []
+  normalMap: []
+--- !u!114 &1263403379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263403369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b63f48b74a0eb7742b660f9274ea2a4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1335631540
 GameObject:
   m_ObjectHideFlags: 0

@@ -103,7 +103,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _AtmosphereRadius: 72.4
+    - _AtmosphereRadius: 1090
     - _Atmosphere_Radius: 27339.94
     - _Blend: 0
     - _BumpScale: 1
@@ -125,14 +125,14 @@ Material:
     - _Intensity: 1
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OceanRadius: 0
+    - _OceanRadius: 900
     - _OpticalDepthPoints: 7
     - _Parallax: 0.005
-    - _PlanetRadius: 30
+    - _PlanetRadius: 951.2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ScaterringStrength: 1
+    - _ScaterringStrength: 0.2
     - _ScatteringPoints: 12
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0

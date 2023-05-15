@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlanetMesh : MonoBehaviour
@@ -8,27 +7,32 @@ public class PlanetMesh : MonoBehaviour
     [SerializeField] [HideInInspector] MeshFilter[] meshFilters;
     [SerializeField] [HideInInspector] TerrainFace[] terrainFaces;
     [SerializeField] [HideInInspector] public float distanceToPlayer;
-    public static float cullingMinAngle = 1.6f;
+    [SerializeField] [HideInInspector] public float distanceToPlayerPow2;
+    public static float cullingMinAngle = 1.45f;
     public static float renderTick = 0.2f;
 
+    public Noise heightNoise;
     public float size = 10f;
     public Material planetMaterial;
     public static Transform target;
 
     public float[] detailLevelDistances = new float[] {
         Mathf.Infinity,
-        6000f,
-        2500f,
-        1000f,
-        400f,
-        150f,
-        70f,
-        30f,
-        10f
+        3000f,
+        1100f,
+        500f,
+        210f,
+        100f,
+        40f
     };
 
-    void Start() {
+    private void Awake() {
         target = Camera.main.transform;
+        distanceToPlayer = Vector3.Distance(transform.position, target.position);
+        distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
+    }
+
+    void Start() {
         Initialize();
         GenerateMesh();
         StartCoroutine(PlanetGenerationLoop());
@@ -38,6 +42,7 @@ public class PlanetMesh : MonoBehaviour
         while(true) {
             yield return new WaitForSeconds(renderTick);
             distanceToPlayer = Vector3.Distance(transform.position, target.position);
+            distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
             UpdateMesh();
         }
     }
@@ -58,7 +63,6 @@ public class PlanetMesh : MonoBehaviour
                 meshObject.AddComponent<MeshRenderer>().sharedMaterial = planetMaterial;
                 meshFilters[i] = meshObject.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
-                meshFilters[i].sharedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             }
 
             terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directions[i], size, this);
