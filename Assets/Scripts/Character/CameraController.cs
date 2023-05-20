@@ -89,7 +89,6 @@ public class CameraController : MonoBehaviour
             lookPosition = focusPoint - lookDirection * distance;
 
         //Apply position
-        if(!inCameraTransition)
-            camRigid.Move(lookPosition, lookRotation);
+        camRigid.Move(lookPosition, lookRotation);
     }
 }

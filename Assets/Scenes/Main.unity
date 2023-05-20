@@ -1519,7 +1519,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1263403371}
   - component: {fileID: 1263403375}
-  - component: {fileID: 1263403380}
   - component: {fileID: 1263403374}
   - component: {fileID: 1263403376}
   - component: {fileID: 1263403378}
@@ -1608,6 +1607,7 @@ MonoBehaviour:
   - {fileID: 0}
   distanceToPlayer: 141
   distanceToPlayerPow2: 0
+  generateCollider: 0
   heightNoise: {fileID: 1263403378}
   size: 1000
   planetMaterial: {fileID: 2100000, guid: 04adf9507d723c84ab8c0efc30ab5986, type: 2}
@@ -1652,28 +1652,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63f48b74a0eb7742b660f9274ea2a4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!64 &1263403380
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263403369}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!1 &1335631540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1834,7 +1812,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1388566134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2490,7 +2468,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1887663608
 MonoBehaviour:
   m_ObjectHideFlags: 0
