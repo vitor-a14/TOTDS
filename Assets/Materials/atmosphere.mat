@@ -125,7 +125,7 @@ Material:
     - _Intensity: 1
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OceanRadius: 900
+    - _OceanRadius: 950
     - _OpticalDepthPoints: 7
     - _Parallax: 0.005
     - _PlanetRadius: 951.2

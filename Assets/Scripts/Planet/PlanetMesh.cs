@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlanetMesh : MonoBehaviour
@@ -10,6 +11,7 @@ public class PlanetMesh : MonoBehaviour
     [SerializeField] [HideInInspector] public float distanceToPlayerPow2;
     public static float cullingMinAngle = 1.45f;
     public static float renderTick = 0.2f;
+    public bool generateCollider;
 
     public Noise heightNoise;
     public float size = 10f;
@@ -58,6 +60,8 @@ public class PlanetMesh : MonoBehaviour
         for(int i = 0; i < 6; i++) {
             if(meshFilters[i] == null) {
                 GameObject meshObject = new GameObject("mesh");
+                meshObject.layer = gameObject.layer;
+                meshObject.tag = gameObject.tag;
                 meshObject.transform.parent = transform;
 
                 meshObject.AddComponent<MeshRenderer>().sharedMaterial = planetMaterial;
@@ -65,7 +69,7 @@ public class PlanetMesh : MonoBehaviour
                 meshFilters[i].sharedMesh = new Mesh();
             }
 
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directions[i], size, this);
+            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directions[i], size, this, meshFilters[i].gameObject.AddComponent<MeshCollider>());
         }
     }
 

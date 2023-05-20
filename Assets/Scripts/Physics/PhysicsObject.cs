@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -10,6 +11,8 @@ public class PhysicsObject : MonoBehaviour
 
     [HideInInspector] public Rigidbody rigid;
     protected Vector3 mainForceDirection = Vector3.zero;
+
+    private List<Vector3> collisionVertices = new List<Vector3>();
 
     private void Start() {
         InitializePhysics();
@@ -41,7 +44,8 @@ public class PhysicsObject : MonoBehaviour
 
             mainForceDirection = -greatestForce.normalized;
             if(!isActive) return;
-                rigid.AddForce(force);
+
+            rigid.AddForce(force);
         }
 
         //Rotate the object towards the greatest force attractor

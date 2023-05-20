@@ -8,6 +8,7 @@ public class TerrainFace
     private Vector3 axisA, axisB;
     private float radius;
     private PlanetMesh planet;
+    private MeshCollider faceCollider;
     public List<Chunk> visibleChildren = new List<Chunk>();
 
     public List<Vector3> vertices = new List<Vector3>();
@@ -20,12 +21,13 @@ public class TerrainFace
     public Vector3 localUp;
     public Chunk parentChunk;
 
-    public TerrainFace(Mesh mesh, Vector3 localUp, float radius, PlanetMesh planet) {
+    public TerrainFace(Mesh mesh, Vector3 localUp, float radius, PlanetMesh planet, MeshCollider faceCollider) {
         this.mesh = mesh;
         this.localUp = localUp;
         this.radius = radius;
         this.planet = planet;
-
+        this.faceCollider = faceCollider;
+        
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
     }
@@ -54,6 +56,7 @@ public class TerrainFace
             borderTriangles.AddRange(verticesAndTriangles.Item3);
             borderVertices.AddRange(verticesAndTriangles.Item4);
             normals.AddRange(verticesAndTriangles.Item5);
+
             triangleOffset += verticesAndTriangles.Item1.Length;
             borderTriangleOffset += verticesAndTriangles.Item4.Length;
         }
@@ -62,6 +65,8 @@ public class TerrainFace
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
+
+        GenerateCollisionMesh();
     }
 
     public void UpdateTree() {
@@ -118,6 +123,15 @@ public class TerrainFace
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
         mesh.uv = uvs;
+
+        GenerateCollisionMesh();
+    }
+
+    private void GenerateCollisionMesh() {
+        if(vertices.Count > 0 && planet.generateCollider) {
+            faceCollider.sharedMesh = null;
+            faceCollider.sharedMesh = mesh;
+        }
     }
 }
 
