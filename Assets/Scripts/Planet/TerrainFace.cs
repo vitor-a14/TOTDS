@@ -4,6 +4,8 @@ using UnityEngine;
 public class TerrainFace 
 {
     public volatile Mesh mesh;
+    public volatile Mesh faceCollsionMesh;
+
     private int resolution; 
     private Vector3 axisA, axisB;
     private float radius;
@@ -18,6 +20,13 @@ public class TerrainFace
     public List<int> borderTriangles = new List<int>();
     public Dictionary<int, bool> edgefanIndex = new Dictionary<int, bool>();
 
+    public List<Vector3> colliderVertices = new List<Vector3>();
+    public List<int> colliderTriangles = new List<int>();
+    public List<Vector3> colliderBorderVertices = new List<Vector3>();
+    public List<Vector3> colliderNormals = new List<Vector3>();
+    public List<int> colliderBorderTriangles = new List<int>();
+    public Dictionary<int, bool> colliderEdgefanIndex = new Dictionary<int, bool>();
+
     public Vector3 localUp;
     public Chunk parentChunk;
 
@@ -27,6 +36,9 @@ public class TerrainFace
         this.radius = radius;
         this.planet = planet;
         this.faceCollider = faceCollider;
+
+        this.faceCollsionMesh = new Mesh();
+        this.faceCollsionMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -51,6 +63,7 @@ public class TerrainFace
         foreach(Chunk child in visibleChildren) {
             child.GetNeighbourLOD();
             (Vector3[], int[], int[], Vector3[], Vector3[]) verticesAndTriangles = child.CalculateVerticesAndTriangles(triangleOffset, borderTriangleOffset);
+
             vertices.AddRange(verticesAndTriangles.Item1);
             triangles.AddRange(verticesAndTriangles.Item2);
             borderTriangles.AddRange(verticesAndTriangles.Item3);
@@ -65,8 +78,6 @@ public class TerrainFace
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
-
-        GenerateCollisionMesh();
     }
 
     public void UpdateTree() {
@@ -123,14 +134,51 @@ public class TerrainFace
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
         mesh.uv = uvs;
-
-        GenerateCollisionMesh();
     }
 
-    private void GenerateCollisionMesh() {
-        if(vertices.Count > 0 && planet.generateCollider) {
+    public void UpdateCollisionMesh() {
+        colliderVertices.Clear();
+        colliderTriangles.Clear();
+        colliderNormals.Clear();
+        colliderBorderVertices.Clear();
+        colliderBorderTriangles.Clear();
+        visibleChildren.Clear();
+        colliderEdgefanIndex.Clear();
+
+        parentChunk.UpdateChunk();
+
+        int triangleOffset = 0;
+        int borderTriangleOffset = 0;
+        parentChunk.GetVisibleChildren();
+        foreach(Chunk child in visibleChildren) {
+            child.GetNeighbourLOD();
+            (Vector3[], int[], int[], Vector3[], Vector3[]) verticesAndTriangles = (new Vector3[0], new int[0], new int[0], new Vector3[0], new Vector3[0]);
+            if (child.vertices == null) {
+                verticesAndTriangles = child.CalculateVerticesAndTriangles(triangleOffset, borderTriangleOffset);
+            } else if (child.vertices.Length == 0 || child.triangles != Presets.quadTemplateTriangles[(child.neighbours[0] | child.neighbours[1] * 2 | child.neighbours[2] * 4 | child.neighbours[3] * 8)]) {
+                verticesAndTriangles = child.CalculateVerticesAndTriangles(triangleOffset, borderTriangleOffset);
+            } else {
+                verticesAndTriangles = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
+            }
+
+            if(child.detailLevel >= planet.detailLevelDistances.Length) {
+                colliderVertices.AddRange(verticesAndTriangles.Item1);
+                colliderTriangles.AddRange(verticesAndTriangles.Item2);
+                colliderBorderTriangles.AddRange(verticesAndTriangles.Item3);
+                colliderBorderVertices.AddRange(verticesAndTriangles.Item4);
+
+                triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
+                borderTriangleOffset += verticesAndTriangles.Item4.Length;
+            }
+        }
+
+        faceCollsionMesh.Clear();
+        faceCollsionMesh.vertices = colliderVertices.ToArray();
+        faceCollsionMesh.triangles = colliderTriangles.ToArray();
+
+        if(colliderVertices.Count > 0 && planet.generateCollider) {
             faceCollider.sharedMesh = null;
-            faceCollider.sharedMesh = mesh;
+            faceCollider.sharedMesh = faceCollsionMesh;
         }
     }
 }

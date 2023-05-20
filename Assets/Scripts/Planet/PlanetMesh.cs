@@ -82,6 +82,7 @@ public class PlanetMesh : MonoBehaviour
     private void UpdateMesh() {
         foreach(TerrainFace face in terrainFaces) {
             face.UpdateTree();
+            face.UpdateCollisionMesh();
         }
     }
 }

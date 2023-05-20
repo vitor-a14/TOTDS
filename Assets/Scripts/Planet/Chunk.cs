@@ -147,7 +147,7 @@ public class Chunk
                 child.GetVisibleChildren();
             }
         } else {
-            float b = Vector3.Distance(planet.transform.TransformDirection(normalizedPos * planet.size) +
+            float b = Vector3.Distance(planet.transform.TransformDirection(normalizedPos * (planet.size - planet.size * 0.1f)) +
                 planet.transform.position, PlanetMesh.target.position);
 
             if (Mathf.Acos(((planet.size * planet.size) + (b * b) -

@@ -3,7 +3,7 @@ using System;
 
 public class Presets : MonoBehaviour
 {
-    public static int quadRes = 8; // The resolution of the quads
+    public static int quadRes = 6; // The resolution of the quads
     public static Vector3[][] quadTemplateVertices = new Vector3[16][];
     public static Vector3[][] quadTemplateBorderVertices = new Vector3[16][];
     public static int[][] quadTemplateTriangles = new int[16][];
