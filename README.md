@@ -9,9 +9,10 @@ The Tale of the Dying Sun is my dream game in development just by me. It takes i
 
 As the mysterious and lonely character, the player is free to explore the solar system and find answers to the questions that arise. The game is minimalist, allowing the player to decide what to do next.
 
-## 📄 Dependencies
-- This project is developed using <b>Unity Engine 2022.2.10f1</b> and the <b>Universal Render Pipeline</b>.
-- A big shoutout to <a href="https://www.youtube.com/@SebastianLague">Sebastian Lague</sub></a> for his research in procedural generation of planets and atmospheric scattering.
+## 📄 Dependencies and Kudos
+- This project is developed using <b>Unity Engine 2022.2.20f1</b> and the <b>Universal Render Pipeline</b>.
+- Shoutout to <a href="https://www.youtube.com/@SebastianLague">Sebastian Lague</sub></a> for his research in procedural generation of planets and atmospheric scattering.
+- A big thanks to <a href="https://www.youtube.com/@simonholmqvist1951">Simon Holmqvist</sub></a> and his QuadMesh LOD implementation in Sebastian Lague's base code.
 
 <div align="center">
   <br/>
