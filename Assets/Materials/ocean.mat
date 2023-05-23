@@ -111,7 +111,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _AlphaMultiplier: 470
+    - _AlphaMultiplier: 3500
     - _AtmosphereRadius: 27500
     - _Atmosphere_Radius: 27339.94
     - _Blend: 0
@@ -121,7 +121,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DensityFalloff: 12
-    - _DepthMultiplier: 140.24
+    - _DepthMultiplier: 114.6
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DitheringScale: 5
@@ -138,14 +138,14 @@ Material:
     - _OceanRadius: 22000
     - _OpticalDepthPoints: 10
     - _Parallax: 0.005
-    - _PlanetRadius: 1790
+    - _PlanetRadius: 720
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Radius: 1820
+    - _Radius: 999
     - _ReceiveShadows: 1
     - _ScaterringStrength: 1
     - _ScatteringPoints: 10
-    - _Smoothness: 0.9
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -160,12 +160,12 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorA: {r: 0.3737985, g: 0.754717, b: 0.7547169, a: 1}
-    - _ColorB: {r: 0, g: 0, b: 0, a: 1}
+    - _ColorA: {r: 0.023584902, g: 0.69298697, b: 1, a: 1}
+    - _ColorB: {r: 0, g: 0.97205925, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PlanetCenter: {r: 0, g: -24000, b: 0, a: 1}
     - _PlanetPosition: {r: 0, g: 0, b: 0, a: 1}
-    - _Position: {r: 0, g: -4090, b: 0, a: 0}
+    - _Position: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _SunDir: {r: 1, g: 1, b: -1, a: 0}
     - _WaveLengths: {r: 700, g: 540, b: 440, a: 1}
