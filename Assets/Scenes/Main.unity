@@ -498,13 +498,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1000}
-  m_LocalScale: {x: 0.7692337, y: 1.3000008, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 50.98, y: 0.18287879, z: -1005.4}
+  m_LocalScale: {x: 0.7692337, y: 1.3000009, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
@@ -836,7 +836,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &462917338
 GameObject:
@@ -1030,7 +1030,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &618295940
 GameObject:
@@ -1311,7 +1311,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1060239037 stripped
 GameObject:
@@ -1435,7 +1435,7 @@ Transform:
   - {fileID: 8485359074236188203}
   - {fileID: 1493258338}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1101617370
 MonoBehaviour:
@@ -1521,9 +1521,9 @@ GameObject:
   - component: {fileID: 1263403371}
   - component: {fileID: 1263403375}
   - component: {fileID: 1263403374}
-  - component: {fileID: 1263403376}
   - component: {fileID: 1263403378}
   - component: {fileID: 1263403379}
+  - component: {fileID: 1263403380}
   m_Layer: 3
   m_Name: Planet
   m_TagString: Celestial Body
@@ -1539,12 +1539,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1263403369}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3.7199707}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1263403374
 MonoBehaviour:
@@ -1559,7 +1559,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rigid: {fileID: 0}
-  planetMeshScript: {fileID: 0}
 --- !u!54 &1263403375
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1587,40 +1586,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1263403376
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263403369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d261e1e6c4cbb0f428a1748a74599a9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  meshFilters:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  distanceToPlayer: 141
-  distanceToPlayerPow2: 0
-  generateCollider: 1
-  heightNoise: {fileID: 1263403378}
-  size: 1000
-  planetMaterial: {fileID: 2100000, guid: 04adf9507d723c84ab8c0efc30ab5986, type: 2}
-  detailLevelDistances:
-  - 6000
-  - 2500
-  - 1200
-  - 800
-  - 650
-  - 500
-  - 250
-  - 50
 --- !u!114 &1263403378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1653,6 +1618,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b63f48b74a0eb7742b660f9274ea2a4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1263403380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263403369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff1c42a319b92f489e82a8a81e3a5cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshFilters: []
+  size: 1000
+  player: {fileID: 330585546}
+  noiseFilter: {fileID: 1263403378}
+  planetMaterial: {fileID: 2100000, guid: da688e96f9c4e2c459d7f5838cc13595, type: 2}
+  proceduralCollision: 1
+  distanceToPlayer: 0
+  distanceToPlayerPow2: 0
+  detailLevelDistances:
+  - Infinity
+  - 3000
+  - 1100
+  - 500
+  - 210
+  - 100
+  - 40
 --- !u!1 &1335631540
 GameObject:
   m_ObjectHideFlags: 0
@@ -1779,7 +1772,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1335631547
 MonoBehaviour:
@@ -1891,7 +1884,7 @@ RectTransform:
   m_Children:
   - {fileID: 1892704763}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2191,7 +2184,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 3.639, z: 0}
 --- !u!1 &1727071811
 GameObject:
@@ -2362,7 +2355,7 @@ Transform:
   m_Children:
   - {fileID: 204451940}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 11.355, z: 0}
 --- !u!54 &1837898424
 Rigidbody:
@@ -2499,7 +2492,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1887663611
 MonoBehaviour:
@@ -2766,7 +2759,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1973916538 stripped
 GameObject:

@@ -1,22 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlanetMesh : MonoBehaviour
-{
-    private static Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
-    [SerializeField] [HideInInspector] MeshFilter[] meshFilters;
-    [SerializeField] [HideInInspector] TerrainFace[] terrainFaces;
-    [SerializeField] [HideInInspector] public float distanceToPlayer;
-    [SerializeField] [HideInInspector] public float distanceToPlayerPow2;
-    public static float cullingMinAngle = 1.45f;
-    public static float renderTick = 0.2f;
-    public bool generateCollider;
+public class PlanetMesh : MonoBehaviour {
+    [SerializeField, HideInInspector] MeshFilter[] meshFilters;
+    private FaceMesh[] terrainFaces;
 
-    public Noise heightNoise;
-    public float size = 10f;
+    public static float cullingMinAngle = 1.45f;
+    private WaitForSeconds timeTick = new WaitForSeconds(0.5f);
+
+    public float size = 1000; 
+    public Transform player;
+    public PlanetNoise noiseFilter;
     public Material planetMaterial;
-    public static Transform target;
+    public bool proceduralCollision;
+
+    [HideInInspector] public float distanceToPlayer;
+    [HideInInspector] public float distanceToPlayerPow2;
 
     public float[] detailLevelDistances = new float[] {
         Mathf.Infinity,
@@ -25,64 +24,63 @@ public class PlanetMesh : MonoBehaviour
         500f,
         210f,
         100f,
-        40f
+        40f,
     };
 
     private void Awake() {
-        target = Camera.main.transform;
-        distanceToPlayer = Vector3.Distance(transform.position, target.position);
+        distanceToPlayer = Vector3.Distance(transform.position, player.position);
         distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
     }
 
-    void Start() {
+    private void Start() {
         Initialize();
         GenerateMesh();
         StartCoroutine(PlanetGenerationLoop());
     }
-    
+
     private IEnumerator PlanetGenerationLoop() {
-        while(true) {
-            yield return new WaitForSeconds(renderTick);
-            distanceToPlayer = Vector3.Distance(transform.position, target.position);
+        while (true) {
+            yield return timeTick;
+            distanceToPlayer = Vector3.Distance(transform.position, player.position);
             distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
             UpdateMesh();
         }
     }
 
-    private void Initialize() {
-        if(meshFilters == null || meshFilters.Length == 0) 
+    void Initialize() {
+        if (meshFilters == null || meshFilters.Length == 0) {
             meshFilters = new MeshFilter[6];
+        }
 
-        if(terrainFaces == null || terrainFaces.Length == 0)
-            terrainFaces = new TerrainFace[6];
-
+        terrainFaces = new FaceMesh[6];
         Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right, Vector3.forward, Vector3.back };
-        for(int i = 0; i < 6; i++) {
-            if(meshFilters[i] == null) {
-                GameObject meshObject = new GameObject("mesh");
-                meshObject.layer = gameObject.layer;
-                meshObject.tag = gameObject.tag;
-                meshObject.transform.parent = transform;
 
-                meshObject.AddComponent<MeshRenderer>().sharedMaterial = planetMaterial;
+        for (int i = 0; i < 6; i++) {
+            if (meshFilters[i] == null) {
+                GameObject meshObject = new GameObject("mesh");
+                meshObject.transform.parent = transform;
+                meshObject.transform.tag = transform.tag;
+                meshObject.layer = gameObject.layer;
+                meshObject.AddComponent<MeshRenderer>().sharedMaterial = new Material(planetMaterial);
                 meshFilters[i] = meshObject.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
             }
 
-            terrainFaces[i] = new TerrainFace(meshFilters[i].sharedMesh, directions[i], size, this, meshFilters[i].gameObject.AddComponent<MeshCollider>());
+            terrainFaces[i] = new FaceMesh(meshFilters[i].sharedMesh, directions[i], size, this, meshFilters[i].gameObject.AddComponent<MeshCollider>());
         }
     }
 
-    private void GenerateMesh() {
-        foreach(TerrainFace face in terrainFaces) {
-            face.ConstructTree();
+    void GenerateMesh() {
+        foreach (FaceMesh face in terrainFaces) {
+            face.GenerateMesh();
         }
     }
 
-    private void UpdateMesh() {
-        foreach(TerrainFace face in terrainFaces) {
-            face.UpdateTree();
-            face.UpdateCollisionMesh();
+    void UpdateMesh() {
+        foreach (FaceMesh face in terrainFaces) {
+            face.UpdateMesh();
+            if(proceduralCollision)
+                face.UpdateCollisionMesh();
         }
     }
 }
