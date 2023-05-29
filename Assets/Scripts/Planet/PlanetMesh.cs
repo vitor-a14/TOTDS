@@ -10,7 +10,6 @@ public class PlanetMesh : MonoBehaviour {
 
     public float size = 1000; 
     public Transform player;
-    public PlanetNoise noiseFilter;
     public Material planetMaterial;
     public bool proceduralCollision;
 
@@ -33,9 +32,11 @@ public class PlanetMesh : MonoBehaviour {
     }
 
     private void Start() {
+        float startTime = Time.realtimeSinceStartup;
         Initialize();
         GenerateMesh();
-        StartCoroutine(PlanetGenerationLoop());
+        Debug.Log(((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
+        //StartCoroutine(PlanetGenerationLoop());
     }
 
     private IEnumerator PlanetGenerationLoop() {
@@ -79,8 +80,6 @@ public class PlanetMesh : MonoBehaviour {
     void UpdateMesh() {
         foreach (FaceMesh face in terrainFaces) {
             face.UpdateMesh();
-            if(proceduralCollision)
-                face.UpdateCollisionMesh();
         }
     }
 }

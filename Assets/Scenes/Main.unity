@@ -221,7 +221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 195642852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50.98, y: 0.18287879, z: -999.32996}
+  m_LocalPosition: {x: 55.95, y: 0.18287879, z: -1002.76}
   m_LocalScale: {x: 5, y: 5, z: 0.19908667}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -499,7 +499,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 50.98, y: 0.18287879, z: -1005.4}
+  m_LocalPosition: {x: 56.12, y: 0.18287879, z: -1010.69}
   m_LocalScale: {x: 0.7692337, y: 1.3000009, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1428,7 +1428,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101617364}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50.98, y: 0.29, z: -1003.72}
+  m_LocalPosition: {x: 55.95, y: 0.29, z: -1007.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1598,14 +1598,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fa4406d6fc1ab345a716669f1f2e412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strength: 0.025
-  octaves: 5
-  baseRoughness: 4
-  roughness: 2
-  persistance: 0.7
-  center: {x: 0, y: 0, z: 0}
-  heightMap: []
-  normalMap: []
 --- !u!114 &1263403379
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1633,7 +1625,6 @@ MonoBehaviour:
   meshFilters: []
   size: 1000
   player: {fileID: 330585546}
-  noiseFilter: {fileID: 1263403378}
   planetMaterial: {fileID: 2100000, guid: da688e96f9c4e2c459d7f5838cc13595, type: 2}
   proceduralCollision: 1
   distanceToPlayer: 0

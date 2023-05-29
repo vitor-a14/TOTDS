@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7354e7c8e0e0d15408e8ab6fe49ad575, type: 3}
   m_Name: Atmosphere
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     Event: 550
     blitMaterial: {fileID: 2100000, guid: 1ee2eed398698ad4483a5ebf9164859e, type: 2}
@@ -135,7 +135,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7354e7c8e0e0d15408e8ab6fe49ad575, type: 3}
   m_Name: Ocean
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
     Event: 500
     blitMaterial: {fileID: 2100000, guid: 8c10e3768ba8bf14aa432d8fee9ce223, type: 2}

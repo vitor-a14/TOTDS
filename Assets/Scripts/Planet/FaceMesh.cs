@@ -23,6 +23,8 @@ public class FaceMesh
 
     public List<Vector3> colliderVertices = new List<Vector3>();
     public List<int> colliderTriangles = new List<int>();
+    public List<Vector3> colliderBorderVertices = new List<Vector3>();
+    public List<int> colliderBorderTriangles = new List<int>();
 
     public FaceMesh(Mesh mesh, Vector3 localUp, float radius, PlanetMesh planetScript, MeshCollider meshCollider) {
         this.mesh = mesh;
@@ -54,9 +56,19 @@ public class FaceMesh
         int triangleOffset = 0;
         int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
+
         foreach (Chunk child in visibleChildren) {
             child.GetNeighbourLOD();
-            (Vector3[], int[], int[], Vector3[], Vector3[]) result = child.Calculate(triangleOffset, borderTriangleOffset);
+            child.Calculate(triangleOffset, borderTriangleOffset);
+            triangleOffset += child.verticesArray.Length;
+            borderTriangleOffset += child.borderVerticesArray.Length;
+        }
+
+        triangleOffset = 0;
+        borderTriangleOffset = 0;
+        foreach (Chunk child in visibleChildren) {
+            child.GetNeighbourLOD();
+            (Vector3[], int[], int[], Vector3[], Vector3[]) result = child.GetJob(triangleOffset, borderTriangleOffset);
 
             vertices.AddRange(result.Item1);
             triangles.AddRange(result.Item2);
@@ -71,6 +83,8 @@ public class FaceMesh
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
+
+        UpdateCollision();
     }
 
     public void UpdateMesh() {
@@ -89,12 +103,21 @@ public class FaceMesh
         parentChunk.GetVisibleChildren();
         foreach (Chunk child in visibleChildren) {
             child.GetNeighbourLOD();
+            child.Calculate(triangleOffset, borderTriangleOffset);
+            triangleOffset += child.verticesArray.Length;
+            borderTriangleOffset += child.borderVerticesArray.Length;
+        }
+
+        triangleOffset = 0;
+        borderTriangleOffset = 0;
+        foreach (Chunk child in visibleChildren) {
+            child.GetNeighbourLOD();
             (Vector3[], int[], int[], Vector3[], Vector3[]) result = (new Vector3[0], new int[0], new int[0], new Vector3[0], new Vector3[0]);
             if (child.vertices == null) {
-                result = child.Calculate(triangleOffset, borderTriangleOffset);
+                result = child.GetJob(triangleOffset, borderTriangleOffset);
             }
             else if (child.vertices.Length == 0 || child.triangles != Presets.quadTemplateTriangles[(child.neighbours[0] | child.neighbours[1] * 2 | child.neighbours[2] * 4 | child.neighbours[3] * 8)]) {
-                result = child.Calculate(triangleOffset, borderTriangleOffset);
+                result = child.GetJob(triangleOffset, borderTriangleOffset);
             } else {
                 result = (child.vertices, child.GetTrianglesWithOffset(triangleOffset), child.GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), child.borderVertices, child.normals);
             }
@@ -127,40 +150,50 @@ public class FaceMesh
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
         mesh.uv = uvs;
+
+        UpdateCollision();
     }
 
-    public void UpdateCollisionMesh() {
+    public void UpdateCollision() {
         colliderVertices.Clear();
         colliderTriangles.Clear();
+        visibleChildren.Clear();
+
         parentChunk.UpdateChunk();
 
         int triangleOffset = 0;
+        int borderTriangleOffset = 0;
         parentChunk.GetVisibleChildren();
         foreach (Chunk child in visibleChildren) {
             if(child.detailLevel >= planetScript.detailLevelDistances.Length) {
                 child.GetNeighbourLOD();
-                (Vector3[], int[]) result = (new Vector3[0], new int[0]);
+                child.Calculate(triangleOffset, borderTriangleOffset);
+                triangleOffset += child.verticesArray.Length;
+                borderTriangleOffset += child.borderVerticesArray.Length;
+            }
+        }
 
-                if (child.vertices == null) {
-                    result = child.CalculateOnlyVerticesAndTriangles(triangleOffset);
-                }
-                else if (child.vertices.Length == 0 || child.triangles != Presets.quadTemplateTriangles[(child.neighbours[0] | child.neighbours[1] * 2 | child.neighbours[2] * 4 | child.neighbours[3] * 8)]) {
-                    result = child.CalculateOnlyVerticesAndTriangles(triangleOffset);
-                } else {
-                    result = (child.vertices, child.GetTrianglesWithOffset(triangleOffset));
-                }
+        triangleOffset = 0;
+        borderTriangleOffset = 0;
+        foreach (Chunk child in visibleChildren) {
+            if(child.detailLevel >= planetScript.detailLevelDistances.Length) {
+                child.GetNeighbourLOD();
+                (Vector3[], int[], int[], Vector3[], Vector3[]) result = child.GetJob(triangleOffset, borderTriangleOffset);
 
                 colliderVertices.AddRange(result.Item1);
                 colliderTriangles.AddRange(result.Item2);
 
                 triangleOffset += (Presets.quadRes + 1) * (Presets.quadRes + 1);
+                borderTriangleOffset += result.Item4.Length;
             }
         }
 
-        if(colliderVertices.Count > 0 && planetScript.proceduralCollision) {
+        if(colliderVertices.ToArray().Length > 0) {
             faceCollsionMesh.Clear();
             faceCollsionMesh.vertices = colliderVertices.ToArray();
             faceCollsionMesh.triangles = colliderTriangles.ToArray();
+
+            meshCollider.sharedMesh = null;
             meshCollider.sharedMesh = faceCollsionMesh;
         }
     }

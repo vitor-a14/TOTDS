@@ -1,3 +1,5 @@
+using Unity.Collections;
+using Unity.Jobs;
 using UnityEngine;
 
 public class Chunk
@@ -23,6 +25,13 @@ public class Chunk
     public Vector3[] normals;
 
     public byte[] neighbours = new byte[4];
+
+    public NativeArray<Vector3> verticesArray;
+    public NativeArray<Vector3> borderVerticesArray;
+    public NativeArray<int> trianglesArray;
+    public NativeArray<int> borderTrianglesArray;
+    public NativeArray<Vector3> normalsArray;
+    public JobHandle jobHandle;
 
     public Chunk(uint hashvalue, PlanetMesh planetScript, FaceMesh terrainFace, Chunk[] children, Vector3 position, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte[] neighbours, byte corner) {
         this.hashvalue = hashvalue;
@@ -176,148 +185,53 @@ public class Chunk
         return newBorderTriangles;
     }
 
-    public (Vector3[], int[], int[], Vector3[], Vector3[]) Calculate(int triangleOffset, int borderTriangleOffset) {
-        Matrix4x4 transformMatrix;
-        Vector3 rotationMatrixAttrib = new Vector3(0, 0, 0);
-        Vector3 scaleMatrixAttrib = new Vector3(radius, radius, 1);
-
-        if (terrainFace.localUp == Vector3.forward)
-            rotationMatrixAttrib = new Vector3(0, 0, 180);
-        else if (terrainFace.localUp == Vector3.back)
-            rotationMatrixAttrib = new Vector3(0, 180, 0);
-        else if (terrainFace.localUp == Vector3.right)
-            rotationMatrixAttrib = new Vector3(0, 90, 270);
-        else if (terrainFace.localUp == Vector3.left)
-            rotationMatrixAttrib = new Vector3(0, 270, 270);
-        else if (terrainFace.localUp == Vector3.up)
-            rotationMatrixAttrib = new Vector3(270, 0, 90);
-        else if (terrainFace.localUp == Vector3.down)
-            rotationMatrixAttrib = new Vector3(90, 0, 270);
-
-        transformMatrix = Matrix4x4.TRS(position, Quaternion.Euler(rotationMatrixAttrib), scaleMatrixAttrib);
-
+    public void Calculate(int triangleOffset, int borderTriangleOffset) {
         int quadIndex = (neighbours[0] | neighbours[1] * 2 | neighbours[2] * 4 | neighbours[3] * 8);
+        verticesArray = new NativeArray<Vector3>((Presets.quadRes + 1) * (Presets.quadRes + 1), Allocator.TempJob);
+        borderVerticesArray = new NativeArray<Vector3>(Presets.quadTemplateBorderVertices[quadIndex].Length, Allocator.TempJob);
+        trianglesArray = new NativeArray<int>(Presets.quadTemplateTriangles[quadIndex], Allocator.TempJob);
+        borderTrianglesArray = new NativeArray<int>(Presets.quadTemplateBorderTriangles[quadIndex], Allocator.TempJob);
+        normalsArray = new NativeArray<Vector3>(verticesArray.Length, Allocator.TempJob);
 
-        vertices = new Vector3[(Presets.quadRes + 1) * (Presets.quadRes + 1)];
+        ChunkJob calculateJob = new ChunkJob
+        {
+            triangleOffset = triangleOffset,
+            borderTriangleOffset = borderTriangleOffset,
+            radius = radius,
+            planetSize = planetScript.size,
+            localUp = localUp,
+            position = position,
+            quadIndex = quadIndex,
+            vertices = verticesArray,
+            borderVertices = borderVerticesArray,
+            triangles = trianglesArray,
+            borderTriangles = borderTrianglesArray,
+            normals = normalsArray
+        };
 
-        for (int i = 0; i < vertices.Length; i++) {
-            Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateVertices[quadIndex][i]);
-            Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            float elevation = planetScript.noiseFilter.CalculateNoise(pointOnUnitSphere);
-            vertices[i] = pointOnUnitSphere * (1 + elevation) * planetScript.size;
-        }
+        jobHandle = calculateJob.Schedule();
+    }
 
-        borderVertices = new Vector3[Presets.quadTemplateBorderVertices[quadIndex].Length];
+    public (Vector3[], int[], int[], Vector3[], Vector3[]) GetJob(int triangleOffset, int borderTriangleOffset) {
+        jobHandle.Complete();
+        
+        this.vertices = verticesArray.ToArray();
+        this.triangles = trianglesArray.ToArray();
+        this.borderTriangles = borderTrianglesArray.ToArray();
+        this.borderVertices = borderVerticesArray.ToArray();
+        this.normals = normalsArray.ToArray();
 
-        for (int i = 0; i < borderVertices.Length; i++) {
-            Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateBorderVertices[quadIndex][i]);
-            Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            float elevation = planetScript.noiseFilter.CalculateNoise(pointOnUnitSphere);
-            borderVertices[i] = pointOnUnitSphere * (1 + elevation) * planetScript.size;
-        }
-
-        triangles = Presets.quadTemplateTriangles[quadIndex];
-        borderTriangles = Presets.quadTemplateBorderTriangles[quadIndex];
-
-        normals = new Vector3[vertices.Length];
-
-        int triangleCount = triangles.Length / 3;
-        int vertexIndexA;
-        int vertexIndexB;
-        int vertexIndexC;
-
-        Vector3 triangleNormal;
-        int[] edgefansIndices = Presets.quadTemplateEdgeIndices[quadIndex];
-
-        for (int i = 0; i < triangleCount; i++) {
-            int normalTriangleIndex = i * 3;
-            vertexIndexA = triangles[normalTriangleIndex];
-            vertexIndexB = triangles[normalTriangleIndex + 1];
-            vertexIndexC = triangles[normalTriangleIndex + 2];
-
-            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
-
-            if (edgefansIndices[vertexIndexA] == 0)
-                normals[vertexIndexA] += triangleNormal;
-            if (edgefansIndices[vertexIndexB] == 0)
-                normals[vertexIndexB] += triangleNormal;
-            if (edgefansIndices[vertexIndexC] == 0)
-                normals[vertexIndexC] += triangleNormal;
-        }
-
-        int borderTriangleCount = borderTriangles.Length / 3;
-
-        for (int i = 0; i < borderTriangleCount; i++) {
-            int normalTriangleIndex = i * 3;
-            vertexIndexA = borderTriangles[normalTriangleIndex];
-            vertexIndexB = borderTriangles[normalTriangleIndex + 1];
-            vertexIndexC = borderTriangles[normalTriangleIndex + 2];
-
-            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
-
-            if (vertexIndexA >= 0 && (vertexIndexA % (Presets.quadRes + 1) == 0 ||
-                vertexIndexA % (Presets.quadRes + 1) == Presets.quadRes ||
-                (vertexIndexA >= 0 && vertexIndexA <= Presets.quadRes) ||
-                (vertexIndexA >= (Presets.quadRes + 1) * Presets.quadRes && vertexIndexA < (Presets.quadRes + 1) * (Presets.quadRes + 1))))
-            {
-                normals[vertexIndexA] += triangleNormal;
-            }
-            if (vertexIndexB >= 0 && (vertexIndexB % (Presets.quadRes + 1) == 0 ||
-                vertexIndexB % (Presets.quadRes + 1) == Presets.quadRes ||
-                (vertexIndexB >= 0 && vertexIndexB <= Presets.quadRes) ||
-                (vertexIndexB >= (Presets.quadRes + 1) * Presets.quadRes && vertexIndexB < (Presets.quadRes + 1) * (Presets.quadRes + 1))))
-            {
-                normals[vertexIndexB] += triangleNormal;
-            }
-            if (vertexIndexC >= 0 && (vertexIndexC % (Presets.quadRes + 1) == 0 ||
-                vertexIndexC % (Presets.quadRes + 1) == Presets.quadRes ||
-                (vertexIndexC >= 0 && vertexIndexC <= Presets.quadRes) ||
-                (vertexIndexC >= (Presets.quadRes + 1) * Presets.quadRes && vertexIndexC < (Presets.quadRes + 1) * (Presets.quadRes + 1))))
-            {
-                normals[vertexIndexC] += triangleNormal;
-            }
-        }
-
-        for (int i = 0; i < normals.Length; i++) {
-            normals[i].Normalize();
-        }
+        Dispose();
 
         return (vertices, GetTrianglesWithOffset(triangleOffset), GetBorderTrianglesWithOffset(borderTriangleOffset, triangleOffset), borderVertices, normals);
     }
-    
-    public (Vector3[], int[]) CalculateOnlyVerticesAndTriangles(int triangleOffset) {
-        Matrix4x4 transformMatrix;
-        Vector3 rotationMatrixAttrib = new Vector3(0, 0, 0);
-        Vector3 scaleMatrixAttrib = new Vector3(radius, radius, 1);
 
-        if (terrainFace.localUp == Vector3.forward)
-            rotationMatrixAttrib = new Vector3(0, 0, 180);
-        else if (terrainFace.localUp == Vector3.back)
-            rotationMatrixAttrib = new Vector3(0, 180, 0);
-        else if (terrainFace.localUp == Vector3.right)
-            rotationMatrixAttrib = new Vector3(0, 90, 270);
-        else if (terrainFace.localUp == Vector3.left)
-            rotationMatrixAttrib = new Vector3(0, 270, 270);
-        else if (terrainFace.localUp == Vector3.up)
-            rotationMatrixAttrib = new Vector3(270, 0, 90);
-        else if (terrainFace.localUp == Vector3.down)
-            rotationMatrixAttrib = new Vector3(90, 0, 270);
-
-        transformMatrix = Matrix4x4.TRS(position, Quaternion.Euler(rotationMatrixAttrib), scaleMatrixAttrib);
-
-        int quadIndex = (neighbours[0] | neighbours[1] * 2 | neighbours[2] * 4 | neighbours[3] * 8);
-
-        vertices = new Vector3[(Presets.quadRes + 1) * (Presets.quadRes + 1)];
-        triangles = Presets.quadTemplateTriangles[quadIndex];
-
-        for (int i = 0; i < vertices.Length; i++) {
-            Vector3 pointOnCube = transformMatrix.MultiplyPoint(Presets.quadTemplateVertices[quadIndex][i]);
-            Vector3 pointOnUnitSphere = pointOnCube.normalized;
-            float elevation = planetScript.noiseFilter.CalculateNoise(pointOnUnitSphere);
-            vertices[i] = pointOnUnitSphere * (1 + elevation) * planetScript.size;
-        }
-
-        return (vertices, GetTrianglesWithOffset(triangleOffset));
+    public void Dispose() {
+        verticesArray.Dispose();
+        borderVerticesArray.Dispose();
+        trianglesArray.Dispose();
+        borderTrianglesArray.Dispose();
+        normalsArray.Dispose();
     }
 
     private Vector3 SurfaceNormalFromIndices(int indexA, int indexB, int indexC) {
@@ -329,5 +243,9 @@ public class Chunk
         Vector3 sideAC = pointC - pointA;
 
         return Vector3.Cross(sideAB, sideAC).normalized;
+    }
+
+    private void OnDisable() {
+        Dispose();
     }
 }

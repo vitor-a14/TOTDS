@@ -3,10 +3,6 @@ using UnityEngine;
 
 public class Noise : MonoBehaviour
 {
-    public virtual float CalculateNoise(Vector3 point) { 
-        return 0; 
-    }
-
     #region Values
     /// Initial permutation table
     static readonly int[] Source = {
