@@ -1355,6 +1355,7 @@ GameObject:
   - component: {fileID: 1101617365}
   - component: {fileID: 1101617370}
   - component: {fileID: 1101617371}
+  - component: {fileID: 1101617372}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -1482,6 +1483,37 @@ MonoBehaviour:
   interactionsQueueSize: 10
   queueDuration: 1
   readingTarget: {fileID: 0}
+--- !u!114 &1101617372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101617364}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: c71824230ee850944a7363912fa34b31,
+    type: 3}
+  m_NotificationBehavior: 3
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: Character
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &1254906131 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -259972160606440404, guid: 98174f9efbbce8f4ba0fd83bf145929f,
@@ -1994,7 +2026,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isActive: 1
-  sensivity: 150
+  sensivity: 10
   maxAngle: 65
   distance: 5
   focusCentering: 0.9
@@ -2337,7 +2369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1837898422
 Transform:
   m_ObjectHideFlags: 0
@@ -2345,15 +2377,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1837898417}
-  m_LocalRotation: {x: 0, y: 0.09892902, z: 0, w: 0.9950945}
-  m_LocalPosition: {x: 44.53, y: -0.14, z: -1002.94995}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalPosition: {x: 41, y: -10.82, z: -1020.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 204451940}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 11.355, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 180, z: 0}
 --- !u!54 &1837898424
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2394,7 +2426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   piloting: 0
-  changeModeDuration: 15
+  changeModeDuration: 3
   movementSpeed: 12
   torqueSpeed: 2
   boostForce: 80
