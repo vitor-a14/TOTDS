@@ -36,7 +36,7 @@ public class PlanetMesh : MonoBehaviour {
         Initialize();
         GenerateMesh();
         Debug.Log(((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
-        //StartCoroutine(PlanetGenerationLoop());
+        StartCoroutine(PlanetGenerationLoop());
     }
 
     private IEnumerator PlanetGenerationLoop() {

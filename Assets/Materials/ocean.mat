@@ -141,7 +141,7 @@ Material:
     - _PlanetRadius: 720
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Radius: 999
+    - _Radius: 1000
     - _ReceiveShadows: 1
     - _ScaterringStrength: 1
     - _ScatteringPoints: 10

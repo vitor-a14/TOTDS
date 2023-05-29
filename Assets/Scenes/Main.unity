@@ -613,7 +613,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1622,13 +1622,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ff1c42a319b92f489e82a8a81e3a5cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshFilters: []
+  meshFilters:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   size: 1000
   player: {fileID: 330585546}
   planetMaterial: {fileID: 2100000, guid: da688e96f9c4e2c459d7f5838cc13595, type: 2}
   proceduralCollision: 1
-  distanceToPlayer: 0
-  distanceToPlayerPow2: 0
+  distanceToPlayer: 1012.2469
+  distanceToPlayerPow2: 1024643.75
   detailLevelDistances:
   - Infinity
   - 3000

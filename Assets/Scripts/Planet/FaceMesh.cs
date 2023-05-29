@@ -34,7 +34,7 @@ public class FaceMesh
         this.meshCollider = meshCollider;
 
         this.faceCollsionMesh = new Mesh();
-        this.faceCollsionMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32; //test if needed
+        //this.faceCollsionMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
         axisA = new Vector3(localUp.y, localUp.z, localUp.x);
         axisB = Vector3.Cross(localUp, axisA);
@@ -84,7 +84,8 @@ public class FaceMesh
         mesh.triangles = triangles.ToArray();
         mesh.normals = normals.ToArray();
 
-        UpdateCollision();
+        if(planetScript.proceduralCollision)
+            UpdateCollision();
     }
 
     public void UpdateMesh() {
