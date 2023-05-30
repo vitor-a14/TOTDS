@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BlueNoise:
-        m_Texture: {fileID: 2800000, guid: 888ad2ed37f546b4c91714433da5746e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 890223c0fa6c03646821550731052a34, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -69,7 +69,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: c01c011c498590342b31df46ccd1cad6, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -111,10 +111,10 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _DensityFalloff: 5
+    - _DensityFalloff: 6
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DitheringScale: 3
+    - _DitheringScale: 254
     - _DitheringStrength: 0.3
     - _DstBlend: 0
     - _EnvironmentReflections: 1

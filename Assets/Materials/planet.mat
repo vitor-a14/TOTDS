@@ -8,18 +8,17 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: planet
-  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 8d12e08f4782ade4d846dd66aa720c73,
+    type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords:
-  - _SPECULAR_SETUP
+  m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -55,6 +54,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTexture:
+        m_Texture: {fileID: 2800000, guid: d8118ac1c4244914398b800515d0d350, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -97,12 +100,17 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _FlatToSteepBlend: 0.9
+    - _FlatToSteepNoise: 0.7
+    - _Float: 0.8
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
+    - _Noise_Scale: 1800
     - _OcclusionStrength: 1
     - _Parallax: 0.005
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0
@@ -111,13 +119,22 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _Threshold: 0.3
     - _WorkflowMode: 0
     - _ZWrite: 1
+    - _s: 1
+    - _threshold: 0.4
     m_Colors:
+    - _Above: {r: 0.18867922, g: 0.1713243, b: 0.15396936, a: 0}
     - _BaseColor: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+    - _Below: {r: 0.39205107, g: 0.6226415, b: 0.11454255, a: 0}
     - _Color: {r: 0.8679245, g: 0.8679245, b: 0.8679245, a: 1}
+    - _Color_1: {r: 0.006904674, g: 0.9339623, b: 0, a: 0}
+    - _Color_2: {r: 0.2264151, g: 0.217598, b: 0.18262728, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Flat_Color: {r: 0.49310133, g: 0.7264151, b: 0.12677999, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Step_Color: {r: 0.1509434, g: 0.12340035, b: 0.0761837, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &687462340027757123
 MonoBehaviour:

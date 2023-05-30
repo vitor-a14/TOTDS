@@ -62,7 +62,10 @@ public class PlanetMesh : MonoBehaviour {
                 meshObject.transform.parent = transform;
                 meshObject.transform.tag = transform.tag;
                 meshObject.layer = gameObject.layer;
-                meshObject.AddComponent<MeshRenderer>().sharedMaterial = new Material(planetMaterial);
+
+                MeshRenderer meshRenderer = meshObject.AddComponent<MeshRenderer>();
+                meshRenderer.sharedMaterial = new Material(planetMaterial);
+                meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
                 meshFilters[i] = meshObject.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
             }
