@@ -2,7 +2,8 @@ using System.Collections;
 using UnityEngine;
 
 public class PlanetMesh : MonoBehaviour {
-    [SerializeField, HideInInspector] MeshFilter[] meshFilters;
+    private MeshFilter[] meshFilters;
+    private MeshCollider[] meshColliders;
     private FaceMesh[] terrainFaces;
 
     public static float cullingMinAngle = 1.45f;
@@ -15,6 +16,8 @@ public class PlanetMesh : MonoBehaviour {
 
     [HideInInspector] public float distanceToPlayer;
     [HideInInspector] public float distanceToPlayerPow2;
+
+    float t = 0;
 
     public float[] detailLevelDistances = new float[] {
         Mathf.Infinity,
@@ -36,21 +39,27 @@ public class PlanetMesh : MonoBehaviour {
         Initialize();
         GenerateMesh();
         Debug.Log(((Time.realtimeSinceStartup - startTime) * 1000f) + "ms");
-        StartCoroutine(PlanetGenerationLoop());
+        //StartCoroutine(PlanetGenerationLoop());
     }
 
-    private IEnumerator PlanetGenerationLoop() {
-        while (true) {
-            yield return timeTick;
+    private void LateUpdate() {
+        if (t < 0.5f) {
+            t += Time.deltaTime;
+        } else {
             distanceToPlayer = Vector3.Distance(transform.position, player.position);
             distanceToPlayerPow2 = distanceToPlayer * distanceToPlayer;
             UpdateMesh();
+            t = 0f;
         }
     }
 
     void Initialize() {
         if (meshFilters == null || meshFilters.Length == 0) {
             meshFilters = new MeshFilter[6];
+        }
+
+        if (meshColliders == null || meshColliders.Length == 0) {
+            meshColliders = new MeshCollider[6];
         }
 
         terrainFaces = new FaceMesh[6];
@@ -68,9 +77,11 @@ public class PlanetMesh : MonoBehaviour {
                 meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.TwoSided;
                 meshFilters[i] = meshObject.AddComponent<MeshFilter>();
                 meshFilters[i].sharedMesh = new Mesh();
+
+                meshColliders[i] = meshObject.AddComponent<MeshCollider>();
             }
 
-            terrainFaces[i] = new FaceMesh(meshFilters[i].sharedMesh, directions[i], size, this, meshFilters[i].gameObject.AddComponent<MeshCollider>());
+            terrainFaces[i] = new FaceMesh(meshFilters[i].sharedMesh, meshColliders[i], directions[i], size, this);
         }
     }
 

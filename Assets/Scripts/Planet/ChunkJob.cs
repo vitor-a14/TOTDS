@@ -5,9 +5,6 @@ using Unity.Jobs;
 public struct ChunkJob : IJob
 {
     public NativeArray<Vector3> vertices;
-    public NativeArray<Vector3> borderVertices;
-    public NativeArray<int> triangles;
-    public NativeArray<int> borderTriangles;
     public NativeArray<Vector3> normals;
 
     public int quadIndex;
@@ -15,13 +12,15 @@ public struct ChunkJob : IJob
     public float planetSize;
     public Vector3 localUp;
     public Vector3 position;
-    public int triangleOffset;
-    public int borderTriangleOffset;
 
     public void Execute() {
         Matrix4x4 transformMatrix;
         Vector3 rotationMatrixAttrib = new Vector3(0, 0, 0);
         Vector3 scaleMatrixAttrib = new Vector3(radius, radius, 1);
+
+        Vector3[] borderVertices = new Vector3[Presets.quadTemplateBorderVertices[quadIndex].Length];
+        int[] borderTriangles = Presets.quadTemplateBorderTriangles[quadIndex];
+        int[] triangles = Presets.quadTemplateTriangles[quadIndex];
 
         if (localUp == Vector3.forward)
             rotationMatrixAttrib = new Vector3(0, 0, 180);
@@ -52,10 +51,6 @@ public struct ChunkJob : IJob
             borderVertices[i] = pointOnUnitSphere * (1 + elevation) * planetSize;
         }
 
-        //try to see if it works
-        triangles.CopyFrom(Presets.quadTemplateTriangles[quadIndex]);
-        borderTriangles.CopyFrom(Presets.quadTemplateBorderTriangles[quadIndex]);
-
         int triangleCount = triangles.Length / 3;
         int vertexIndexA;
         int vertexIndexB;
@@ -70,7 +65,7 @@ public struct ChunkJob : IJob
             vertexIndexB = triangles[normalTriangleIndex + 1];
             vertexIndexC = triangles[normalTriangleIndex + 2];
 
-            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
+            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC, borderVertices);
 
             if (edgefansIndices[vertexIndexA] == 0)
                 normals[vertexIndexA] += triangleNormal;
@@ -88,7 +83,7 @@ public struct ChunkJob : IJob
             vertexIndexB = borderTriangles[normalTriangleIndex + 1];
             vertexIndexC = borderTriangles[normalTriangleIndex + 2];
 
-            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC);
+            triangleNormal = SurfaceNormalFromIndices(vertexIndexA, vertexIndexB, vertexIndexC, borderVertices);
 
             if (vertexIndexA >= 0 && (vertexIndexA % (Presets.quadRes + 1) == 0 ||
                 vertexIndexA % (Presets.quadRes + 1) == Presets.quadRes ||
@@ -118,27 +113,7 @@ public struct ChunkJob : IJob
         }
     }
 
-    private int[] GetTrianglesWithOffset(int triangleOffset) {
-        int[] newTriangles = new int[triangles.Length];
-
-        for (int i = 0; i < triangles.Length; i++) {
-            newTriangles[i] = triangles[i] + triangleOffset;
-        }
-
-        return newTriangles;
-    }
-
-    private int[] GetBorderTrianglesWithOffset(int borderTriangleOffset, int triangleOffset) {
-        int[] newBorderTriangles = new int[borderTriangles.Length];
-
-        for (int i = 0; i < borderTriangles.Length; i++) {
-            newBorderTriangles[i] = (borderTriangles[i] < 0) ? borderTriangles[i] - borderTriangleOffset : borderTriangles[i] + triangleOffset;
-        }
-
-        return newBorderTriangles;
-    }
-
-    private Vector3 SurfaceNormalFromIndices(int indexA, int indexB, int indexC) {
+    private Vector3 SurfaceNormalFromIndices(int indexA, int indexB, int indexC, Vector3[] borderVertices) {
         Vector3 pointA = (indexA < 0) ? borderVertices[-indexA - 1] : vertices[indexA];
         Vector3 pointB = (indexB < 0) ? borderVertices[-indexB - 1] : vertices[indexB];
         Vector3 pointC = (indexC < 0) ? borderVertices[-indexC - 1] : vertices[indexC];
