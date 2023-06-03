@@ -3,19 +3,16 @@ using UnityEngine;
 using Unity.Mathematics;
 using Unity.Collections;
 
-//a face of cube 
-public class Plane { 
+public class Plane 
+{ 
     public Quadtree quadtree;
     public Mesh mesh;
     public Mesh collisionMesh;
     public MeshCollider meshCollider;
-    //local up cube normal 
     public Vector3 localUp;
-    //cube axis perpendicular to local up
     public Vector3 AxisA;
     public Vector3 AxisB;
-    //planet radius
-    public float rad;
+
     public int collisionDetailLevel;
     public int res;
     public List<Vector3> borderVertices;
@@ -42,12 +39,11 @@ public class Plane {
     public int[] neighborConnectDirection;
     public float planetRadius;
 
-    public Plane(Mesh mesh,Mesh collisionMesh, Vector3 localUp, float rad, int res, PlanetMesh t) {
+    public Plane(Mesh mesh,Mesh collisionMesh, Vector3 localUp, int res, PlanetMesh t) {
         this.mesh = mesh;
         this.collisionMesh = collisionMesh;
         
         this.localUp = localUp;
-        this.rad = rad;
         AxisA = new Vector3(localUp.y, localUp.z, localUp.x);
         AxisB = Vector3.Cross(localUp, AxisA);
 
@@ -89,7 +85,7 @@ public class Plane {
     }
     
     public void GenerateQuadTree() {
-        quadtree = new Quadtree(8, rad, localUp * rad, localUp, AxisA, AxisB, res, terrainGenerator,this);
+        quadtree = new Quadtree(8, planetRadius, localUp * planetRadius, localUp, AxisA, AxisB, res, terrainGenerator,this);
         quadtree.GenerateTree();
     }
 
@@ -133,7 +129,7 @@ public class Plane {
             pointA = verticeListFixed[vertexIndexA];
             pointB = verticeListFixed[vertexIndexB];
             pointC = verticeListFixed[vertexIndexC];
-            // float3 avg = (pointA + pointB + pointC) / 3;
+
             float2 uvA = GetUVEq(normalListFixed[vertexIndexA]);
             float2 uvB = GetUVEq(normalListFixed[vertexIndexB]);
             float2 uvC = GetUVEq(normalListFixed[vertexIndexC]);

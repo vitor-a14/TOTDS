@@ -8,14 +8,10 @@ public struct CalculatePositionJob : IJobParallelFor
 {
     [ReadOnly] public NativeArray<QuadTreeNodeJob> nodesJob;
     
-    [NativeDisableParallelForRestriction]
-    public NativeArray<float3> verticesJob;
-    [NativeDisableParallelForRestriction]
-    public NativeArray<float3> normalsJob;
-    [NativeDisableParallelForRestriction]
-    public NativeArray<int> trianglesJob;
-    [NativeDisableParallelForRestriction]
-    public NativeArray<float2> uvJob;
+    [NativeDisableParallelForRestriction] public NativeArray<float3> verticesJob;
+    [NativeDisableParallelForRestriction] public NativeArray<float3> normalsJob;
+    [NativeDisableParallelForRestriction] public NativeArray<int> trianglesJob;
+    [NativeDisableParallelForRestriction] public NativeArray<float2> uvJob;
 
     [ReadOnly] public NativeArray<int> tmpTriangleJob;
     [ReadOnly] public NativeArray<int> tmpTriangleJobBordered;
@@ -23,7 +19,7 @@ public struct CalculatePositionJob : IJobParallelFor
     [ReadOnly] public int resJob;
     [ReadOnly] public float radiusJob;
     [ReadOnly] public float baseFrequency;
-    [ReadOnly] public float2 uvMap; //uv index 0 1 row 0 column 1
+    [ReadOnly] public float2 uvMap; 
     [ReadOnly] public bool isCollision;
     [ReadOnly] public NativeArray<float> heightMap;
     [ReadOnly] public int2 heightmapDimensions;
@@ -71,8 +67,7 @@ public struct CalculatePositionJob : IJobParallelFor
             for (int j = 0; j < resJob + 2; j++) {
                 float2 percent = new float2(j - 1, i - 1) / (resJob - 1);
                 pointOnCube = node.center + ((percent.x - 0.5f) * 2 * node.axisA+ (percent.y - 0.5f) * 2 * node.axisB) * node.radius;
-                //float3 x= pointOnCube;
-                
+
                 //calculate uvs 
                 float2 Coordinate2D = new float2();  
                 if (node.localUp.x != 0) {
@@ -128,39 +123,34 @@ public struct CalculatePositionJob : IJobParallelFor
                 Coordinate2D.y = (Coordinate2D.y / 4) + uvMap.x*0.25f;
                 uvBorder[count] = Coordinate2D;
                 pointOnSphere = math.normalize(pointOnCube);
-                borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));//pointOnSphere*radius;
-                //borderedVerticeArray[count] = terrainGenerator.CalculatePointOnPlanet(pointOnSphere, radius);
-                //normalsBorder[count] = pointOnSphere;
+                borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));
                 count += 1;
             }
         }
 
-        CalculateNormals(borderedVerticeArray, tmpTriangleJobBordered, normalsBorder);
         count = 0;
-        
         for (int i = 0; i < resJob + 2; i++) {
             for (int j = 0; j < resJob + 2; j++) {
-                //n 
+                //north
                 if (node.neighbours1) {
                     if (j == resJob && i % 2 == 0 && i > 0 && i < resJob + 1) {
-                        borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2; //= (borderedVerticeArray[count - (res+1)] + borderedVerticeArray[count +(res+1])/2;
+                        borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2; 
                     }
                 }
-
-                //s
+                //south
                 if (node.neighbours3) {
                     if (j == 1 && i % 2 == 0 && i > 0 && i < resJob + 1) {
-                        borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2; //= (borderedVerticeArray[count - (res+1)] + borderedVerticeArray[count +(res+1])/2;
+                        borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2; 
                     }
                 }
-                //e
+                //east
                 if (node.neighbours0) {
                     if (i == resJob && j % 2 == 0) {
 
                         borderedVerticeArray[count] = (borderedVerticeArray[count - 1] + borderedVerticeArray[count + 1]) / 2;
                     }
                 }
-                //w
+                //west
                 if (node.neighbours2) {
                     if (i == 1 && j % 2 == 0) {
                         borderedVerticeArray[count] = (borderedVerticeArray[count - 1] + borderedVerticeArray[count + 1]) / 2;
@@ -178,38 +168,32 @@ public struct CalculatePositionJob : IJobParallelFor
                     if (node.edgeNeighbors1) {
                         if (j == resJob && i % 2 == 0 && i > 0 && i < resJob + 1) {
                             borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2;
-                            //borderedVerticeArray[count] *= 1.1f;
                         }
                     }
-
                     //south
                     if (node.edgeNeighbors3) {
                         if (j == 1 && i % 2 == 0 && i > 0 && i < resJob + 1) {
                             borderedVerticeArray[count] = (borderedVerticeArray[count - (resJob + 2)] + borderedVerticeArray[count + (resJob + 2)]) / 2;
-                            //borderedVerticeArray[count] *= 1.1f;
-                            //= (borderedVerticeArray[count - (res+1)] + borderedVerticeArray[count +(res+1])/2;
                         }
                     }
-
                     //east
                     if (node.edgeNeighbors0) {
                         if (i == resJob && j % 2 == 0) {
                             borderedVerticeArray[count] = (borderedVerticeArray[count - 1] + borderedVerticeArray[count + 1]) / 2;
-                            //borderedVerticeArray[count] *= 1.1f;
                         }
                     }
-
                     //west
                     if (node.edgeNeighbors2) {
                         if (i == 1 && j % 2 == 0) {
                             borderedVerticeArray[count] = (borderedVerticeArray[count - 1] + borderedVerticeArray[count + 1]) / 2;
-                            //borderedVerticeArray[count] *= 1.1f;
                         }
                     }
                     count += 1;
                 }
             }
         }
+
+        CalculateNormals(borderedVerticeArray, tmpTriangleJobBordered, normalsBorder);
 
         int c = 0;
         for (int i = 0; i < borderedVerticeArray.Length; i++) {

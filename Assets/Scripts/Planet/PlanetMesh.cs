@@ -304,12 +304,10 @@ public class PlanetMesh : MonoBehaviour
         if (Vector3.Distance(pos, player.position) > updateInterval && finishedCount == 6 ) {
             LOD.cameraPos = player;
             pos = new Vector3(player.position.x, player.position.y, player.position.z);
-            //setupUpdateCubePartition();
             finishedCount = 0; 
             state = 0;
             state_counter = 0;
             updateCollision = false;
-            //drawUpdateCube();
         }
 
         if (finishedCount < 6) {
@@ -329,7 +327,6 @@ public class PlanetMesh : MonoBehaviour
         } else if (state == 1) {
             cube[state_counter].quadtree.GetLeafNodes();
             state_counter += 1;
-            //cube[i].quadtree.findNeighbours();
             if (state_counter >= 6) {
                 state = 2;
                 state_counter = 0;
@@ -372,7 +369,6 @@ public class PlanetMesh : MonoBehaviour
    
     private void JobCalculateTerrain(int cubeIndex,bool collision) {
         NativeArray<int> borderedSizeIndex = new NativeArray<int>((res + 2) * (res + 2), Allocator.TempJob, NativeArrayOptions.UninitializedMemory);
-
         int meshIndex = 0;
         int borderIndex = -1;
         int c = 0;
@@ -392,13 +388,11 @@ public class PlanetMesh : MonoBehaviour
         }
 
         float2 uvMap;
-
         NativeArray<float3> verticeList;
         NativeArray<int> triangleList;
         NativeArray<float3> normalList;
         NativeArray<float2> uvList;
 
-        // up
         if (cubeIndex == 0) {
             uvList = uvCoordinates0;
             uvMap = new float2(1, 1);
@@ -474,8 +468,7 @@ public class PlanetMesh : MonoBehaviour
         }
 
         int listCount;
-        //list of leaf nodes converted for to be compatible with jobs format
-        QuadTreeNodeJob[] list;
+        QuadTreeNodeJob[] list; //list of leaf nodes converted for to be compatible with jobs format
         if (collision) {
             list = cube[cubeIndex].quadtree.leafnodeJobsCollision;
             listCount = cube[cubeIndex].quadtree.collisionLeafNodeCount;
@@ -483,6 +476,7 @@ public class PlanetMesh : MonoBehaviour
             list = cube[cubeIndex].quadtree.leafnodeJobs;
             listCount = cube[cubeIndex].quadtree.leafNodeCount;
         }
+        
         //convert to jobs format
         leafnodes = new NativeArray<QuadTreeNodeJob>(list, Allocator.TempJob);
         NativeArray<int> tmpTriangleN = new NativeArray<int>(tmpTriangle, Allocator.TempJob);
@@ -620,12 +614,12 @@ public class PlanetMesh : MonoBehaviour
 
     void CreateCube() {
         cube = new Plane[6];
-        cube[0] = new Plane(cubeMesh[0], collisionMesh[0], Vector3.up      , radius, res, this);
-        cube[1] = new Plane(cubeMesh[1], collisionMesh[1], Vector3.left    , radius, res, this);
-        cube[2] = new Plane(cubeMesh[2], collisionMesh[2], Vector3.forward , radius, res, this);
-        cube[3] = new Plane(cubeMesh[3], collisionMesh[3], Vector3.right   , radius, res, this);
-        cube[4] = new Plane(cubeMesh[4], collisionMesh[4], Vector3.back    , radius, res, this);
-        cube[5] = new Plane(cubeMesh[5], collisionMesh[5], Vector3.down    , radius, res, this);
+        cube[0] = new Plane(cubeMesh[0], collisionMesh[0], Vector3.up      , res, this);
+        cube[1] = new Plane(cubeMesh[1], collisionMesh[1], Vector3.left    , res, this);
+        cube[2] = new Plane(cubeMesh[2], collisionMesh[2], Vector3.forward , res, this);
+        cube[3] = new Plane(cubeMesh[3], collisionMesh[3], Vector3.right   , res, this);
+        cube[4] = new Plane(cubeMesh[4], collisionMesh[4], Vector3.back    , res, this);
+        cube[5] = new Plane(cubeMesh[5], collisionMesh[5], Vector3.down    , res, this);
 
         cube[0].SetNeighbors(cube[3], cube[1], cube[4], cube[2], DIRECTION.WEST, DIRECTION.WEST, DIRECTION.SOUTH, DIRECTION.NORTH);
         cube[1].SetNeighbors(cube[4], cube[2], cube[5], cube[0], DIRECTION.EAST, DIRECTION.EAST, DIRECTION.NORTH, DIRECTION.SOUTH);

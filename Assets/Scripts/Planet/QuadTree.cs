@@ -1,13 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class QuadTreeNode 
 {
-    //0 top left
-    //1 top right
-    //2 bottom right
-    //3 bottom left
     public Vector3 center;
     public QuadTreeNode parent;
     public QuadTreeNode root;
@@ -35,7 +29,8 @@ public class QuadTreeNode
     public bool[] edgeNeighbours;
     public int[] edgeDirections;
 
-    public QuadTreeNode(Vector3 center, QuadTreeNode root, QuadTreeNode parent, float radius, int detailLevel, Vector3 localUp, Vector3 axisA, Vector3 axisB, byte corner, uint hash,Transform planetTransform,float planetRadius,LOD lod) {
+    public QuadTreeNode(Vector3 center, QuadTreeNode root, QuadTreeNode parent, float radius, int detailLevel, Vector3 localUp, 
+    Vector3 axisA, Vector3 axisB, byte corner, uint hash,Transform planetTransform,float planetRadius,LOD lod) {
         this.center = center;
         this.parent = parent;
         this.root = root;
@@ -235,19 +230,12 @@ public class QuadTreeNode
         bool isEdge2 = true;
         edgeDirections[0] = -1;
         edgeDirections[1] = -1;
-        
         //0 1
         //3 2
-        
         //0 north  west     1 north east     3 south west
         //1 north  east     0 north west     2 south east
         //2 south  east     1 north east     3 south west
         //3 south  west     0 north west     2 south east
-
-        //for 0
-        //   ^ ^
-        // <-0 1  only west and north directions leads to an edge so 1 can lead noth edge or 3 can lead to west edge
-        // <-3 2  
         int otherPossibleCorner1;
         int otherPossibleCorner2;
         int non; //imposible corner
@@ -318,8 +306,8 @@ public class QuadTreeNode
     }
 }
 
-//tree structure used for lod mesh
-public class Quadtree {
+public class Quadtree 
+{
     public LOD lod;
     public int maxDetailLevel;
     public float radius;
@@ -341,7 +329,6 @@ public class Quadtree {
 
     public QuadTreeNode root;
 
-    //nodes converted for parallel programming
     public QuadTreeNodeJob[] leafnodeJobs;
     public QuadTreeNodeJob[] leafnodeJobsCollision;
 
@@ -368,7 +355,6 @@ public class Quadtree {
         leafNodeCount = 0;
         collisionLeafNodeCount = 0;
 
-        //preallocate max size 
         this.leafNodes = new QuadTreeNode[100000];
         this.leafnodeJobs = new QuadTreeNodeJob[100000];
         this.leafnodeJobsCollision = new QuadTreeNodeJob[100000];
@@ -506,7 +492,6 @@ public class Quadtree {
         root.UpdateChildren();
     }
 
-    //get leaf nodes for collision mesh 
     public void GetCollisionLeafTree() {
         collisionLeafNodeCount = 0;
         int len = leafNodeCount;
