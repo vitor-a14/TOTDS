@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NoiseFilter : Noise
+public class NoiseFilter : MonoBehaviour
 {
     public static float strength = 0.018f;
     public static int octaves = 4;

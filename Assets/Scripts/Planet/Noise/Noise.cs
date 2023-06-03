@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Noise : MonoBehaviour
+public class Noise 
 {
     #region Values
     /// Initial permutation table

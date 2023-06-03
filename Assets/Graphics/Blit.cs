@@ -20,6 +20,8 @@ using UnityEngine.Rendering.Universal;
  * @Cyanilux
 */
 
+#pragma warning disable
+
 namespace Cyan {
 /*
 CreateAssetMenu here allows creating the ScriptableObject without being attached to a Renderer Asset

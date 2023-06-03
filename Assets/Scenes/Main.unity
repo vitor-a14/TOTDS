@@ -183,7 +183,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 21da37ad0b6659c4393597ebfec2f924, type: 2}
+  - {fileID: 2100000, guid: c3a04a3a1bb51614490117a13bc47814, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -221,7 +221,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 195642852}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 55.95, y: 0.18288048, z: -1002.76}
+  m_LocalPosition: {x: 51.8, y: 1.4928806, z: -1019.70996}
   m_LocalScale: {x: 15, y: 15, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -499,7 +499,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   m_LocalRotation: {x: -0.533061, y: -0.3913136, z: -0.42295015, w: 0.6195425}
-  m_LocalPosition: {x: 56.12, y: 0.18287879, z: -1010.69}
+  m_LocalPosition: {x: 51.969997, y: 1.4928789, z: -911.79}
   m_LocalScale: {x: 0.7692337, y: 1.3000009, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1429,7 +1429,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101617364}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 55.95, y: 0.29, z: -1007.15}
+  m_LocalPosition: {x: 51.8, y: 1.6, z: -1024.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1553,8 +1553,6 @@ GameObject:
   - component: {fileID: 1263403371}
   - component: {fileID: 1263403375}
   - component: {fileID: 1263403374}
-  - component: {fileID: 1263403378}
-  - component: {fileID: 1263403379}
   - component: {fileID: 1263403380}
   m_Layer: 3
   m_Name: Planet
@@ -1618,30 +1616,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1263403378
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263403369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fa4406d6fc1ab345a716669f1f2e412, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1263403379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263403369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63f48b74a0eb7742b660f9274ea2a4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1263403380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1651,23 +1625,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 1263403369}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff1c42a319b92f489e82a8a81e3a5cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 536cd0d18b2ad11498568cab246b9d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 1000
+  radius: 980
   player: {fileID: 330585546}
-  planetMaterial: {fileID: 2100000, guid: da688e96f9c4e2c459d7f5838cc13595, type: 2}
-  proceduralCollision: 1
-  distanceToPlayer: 1012.2469
-  distanceToPlayerPow2: 1024643.75
-  detailLevelDistances:
-  - Infinity
-  - 3000
-  - 1100
+  collisionMeshMinDetalLevel: 7
+  Material: {fileID: 2100000, guid: da688e96f9c4e2c459d7f5838cc13595, type: 2}
+  planetMap: {fileID: 2800000, guid: 3916f0087aed2c94aa3788fc2b9c1494, type: 3}
+  res: 5
+  maxDetail: 7
+  range:
+  - 2400
+  - 2400
+  - 1200
+  - 980
+  - 800
   - 600
-  - 450
-  - 200
-  - 35
+  - 300
+  verticeFixedSize: 100000
+  verticeFixedSizeCol: 75000
+  heightMapPower: 150
+  updateInterval: 50
+  leafNodeMax: 75000
+  meshFilters: []
+  meshColliders: []
 --- !u!1 &1335631540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2371,7 +2353,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1837898417}
   m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 41, y: -10.82, z: -1020.4}
+  m_LocalPosition: {x: 36.85, y: -9.5, z: -1034.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
