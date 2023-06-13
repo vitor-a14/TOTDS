@@ -29,19 +29,26 @@ struct GeometryOutput
     float4 positionCS   : SV_POSITION; 
 };
 
+TEXTURE2D(_FloorTexture); SAMPLER(sampler_FloorTexture); float4 _FloorTexture_ST;
+TEXTURE2D(_SteepTexture); SAMPLER(sampler_SteepTexture); float4 _SteepTexture_ST;
+TEXTURE2D(_SteepNoise); SAMPLER(sampler_SteepNoise); float4 _SteepNoise_ST;
+
+TEXTURE2D(_DetailNoiseTexture); SAMPLER(sampler_DetailNoiseTexture); float4 _DetailNoiseTexture_ST;
+TEXTURE2D(_SmoothNoiseTexture); SAMPLER(sampler_SmoothNoiseTexture); float4 _SmoothNoiseTexture_ST;
+TEXTURE2D(_WindNoiseTexture); SAMPLER(sampler_WindNoiseTexture); float4 _WindNoiseTexture_ST;
+
 float4 _BaseColor;
 float4 _TopColor;
 float _TotalHeight; 
 float _ColorStrength;
 
-TEXTURE2D(_FloorTexture); SAMPLER(sampler_FloorTexture); float4 _FloorTexture_ST;
+float _FlatToSteepBlend;
+float _SteepnessThreshold;
+float _SteepNoiseStrength;
 
-TEXTURE2D(_DetailNoiseTexture); SAMPLER(sampler_DetailNoiseTexture); float4 _DetailNoiseTexture_ST;
 float _DetailDepthScale;
-TEXTURE2D(_SmoothNoiseTexture); SAMPLER(sampler_SmoothNoiseTexture); float4 _SmoothNoiseTexture_ST;
 float _SmoothDepthScale;
 
-TEXTURE2D(_WindNoiseTexture); SAMPLER(sampler_WindNoiseTexture); float4 _WindNoiseTexture_ST;
 float _WindTimeMult;
 float _WindAmplitude;
 
@@ -117,8 +124,32 @@ void Geometry(triangle VertexOutput inputs[3], inout TriangleStream<GeometryOutp
     }
 }
 
+float blend(float startHeight, float blendDst, float height) {
+	 return smoothstep(startHeight - blendDst / 2, startHeight + blendDst / 2, height);
+}
+
 half4 Fragment(GeometryOutput input) : SV_Target 
 {
+    // planet surface
+    float3 sphereNormal = normalize(input.positionWS);
+    float steepness = 1 - dot (sphereNormal, input.normalWS);
+    steepness = saturate(steepness / _SteepnessThreshold);
+
+    float2 steepNoiseUV = TRANSFORM_TEX(input.uv.xy, _SteepNoise);
+    float3 steepNoise = SAMPLE_TEXTURE2D(_SteepNoise, sampler_SteepNoise, steepNoiseUV).rgb;
+    float flatBlendNoise = (steepNoise.r) * _SteepNoiseStrength;
+    
+    float flatStrength = 1 - blend(_SteepnessThreshold + flatBlendNoise, _FlatToSteepBlend, steepness);
+
+    float2 flatColorUV = TRANSFORM_TEX(input.uv.xy, _FloorTexture);
+    float3 flatColor = SAMPLE_TEXTURE2D(_FloorTexture, sampler_FloorTexture, flatColorUV).rgb;
+
+    float2 steepColorUV = TRANSFORM_TEX(input.uv.xy, _SteepTexture);
+    float3 steepColor = SAMPLE_TEXTURE2D(_SteepTexture, sampler_SteepTexture, steepColorUV).rgb;
+
+    float3 surfaceColor = lerp(steepColor, flatColor, flatStrength); 
+
+    // grass
     float dist = distance(input.positionWS, _WorldSpaceCameraPos) / _LODDistance;
     float height = input.uv.z;
 
@@ -126,7 +157,7 @@ half4 Fragment(GeometryOutput input) : SV_Target
     float2 windNoise = SAMPLE_TEXTURE2D(_WindNoiseTexture, sampler_WindNoiseTexture, windUV).xy * 2 - 1;
     float2 uv = input.uv.xy + windNoise * (_WindAmplitude * height);
 
-    float detailNoise = SAMPLE_TEXTURE2D(_DetailNoiseTexture, sampler_DetailNoiseTexture, TRANSFORM_TEX(uv, _DetailNoiseTexture)).r;
+    float detailNoise = SAMPLE_TEXTURE2D(_DetailNoiseTexture, sampler_DetailNoiseTexture, TRANSFORM_TEX(uv, _DetailNoiseTexture)).r * flatStrength;
     float smoothNoise = SAMPLE_TEXTURE2D(_SmoothNoiseTexture, sampler_SmoothNoiseTexture, TRANSFORM_TEX(uv, _SmoothNoiseTexture)).r;
 
     detailNoise = 1 - (1 - detailNoise) * _DetailDepthScale;
@@ -143,11 +174,9 @@ half4 Fragment(GeometryOutput input) : SV_Target
     float dist2 = distance(input.positionWS, _WorldSpaceCameraPos);
     float fadeOut = 1.0 - smoothstep(maxDistance - 30.0, maxDistance, dist2);
 
-    float2 colorUV = TRANSFORM_TEX(input.uv.xy, _FloorTexture);
-    float3 color = SAMPLE_TEXTURE2D(_FloorTexture, sampler_FloorTexture, colorUV).rgb;
+    //result
+    float3 albedo = lerp(surfaceColor * _BaseColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb;
 
-    float3 albedo;
-    albedo = lerp(color * _BaseColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb;
     SurfaceData surfaceInput = (SurfaceData)0;
     surfaceInput.albedo = albedo;   
 

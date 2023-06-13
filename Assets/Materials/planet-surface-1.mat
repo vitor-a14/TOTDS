@@ -139,13 +139,21 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SteepNoise:
+        m_Texture: {fileID: 2800000, guid: 4465a335f3a00914b92e0b0c6b51a03b, type: 3}
+        m_Scale: {x: 2100, y: 2100}
+        m_Offset: {x: 0, y: 0}
+    - _SteepTexture:
+        m_Texture: {fileID: 2800000, guid: 7332b40a7ac63fe45932e1e48f0024f1, type: 3}
+        m_Scale: {x: 600, y: 600}
+        m_Offset: {x: 0, y: 0}
     - _WindMap:
         m_Texture: {fileID: 2800000, guid: b0ccb66e0fb27a94bb0e07ac5bf82645, type: 3}
         m_Scale: {x: 15, y: 15}
         m_Offset: {x: 0, y: 0}
     - _WindNoiseTexture:
         m_Texture: {fileID: 2800000, guid: 4ba191c1cfbdbec49a6f31744cea8fbd, type: 3}
-        m_Scale: {x: 80, y: 80}
+        m_Scale: {x: 15, y: 15}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
@@ -187,6 +195,7 @@ Material:
     - _DstBlendAlpha: 0
     - _EnableExternalAlpha: 0
     - _EnvironmentReflections: 1
+    - _FlatToSteepBlend: 0.15
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -212,6 +221,8 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
+    - _SteepNoiseStrength: 1
+    - _SteepnessThreshold: 0.2
     - _Surface: 0
     - _TessellationGrassDistance: 0.03
     - _TotalHeight: 0.4
@@ -219,7 +230,7 @@ Material:
     - _Weight1: 0.11
     - _Weight2: 0.5
     - _Weight3: 0.5
-    - _WindAmplitude: 0.0001
+    - _WindAmplitude: 0.00002
     - _WindFrequency: 0.028
     - _WindQuality: 0
     - _WindSpeed: 100
@@ -228,7 +239,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.2200099, g: 0.6132076, b: 0.19379672, a: 1}
+    - _BaseColor: {r: 0.41091138, g: 0.509434, b: 0.4138091, a: 1}
     - _BottomColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
@@ -241,7 +252,7 @@ Material:
     - _Tint2: {r: 1, g: 1, b: 1, a: 0}
     - _Tint3: {r: 1, g: 1, b: 1, a: 0}
     - _TipColor: {r: 0.39909673, g: 1, b: 0, a: 1}
-    - _TopColor: {r: 0.31523064, g: 0.8113208, b: 0.11863652, a: 1}
+    - _TopColor: {r: 0.23055486, g: 0.5849056, b: 0.09104664, a: 1}
     - _WindVelocity: {r: 0.1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &8038522499979508317
