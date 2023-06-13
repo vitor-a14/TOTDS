@@ -39,6 +39,7 @@ TEXTURE2D(_WindNoiseTexture); SAMPLER(sampler_WindNoiseTexture); float4 _WindNoi
 
 float4 _BaseColor;
 float4 _TopColor;
+float4 _SteepColor;
 float _TotalHeight; 
 float _ColorStrength;
 
@@ -142,10 +143,10 @@ half4 Fragment(GeometryOutput input) : SV_Target
     float flatStrength = 1 - blend(_SteepnessThreshold + flatBlendNoise, _FlatToSteepBlend, steepness);
 
     float2 flatColorUV = TRANSFORM_TEX(input.uv.xy, _FloorTexture);
-    float3 flatColor = SAMPLE_TEXTURE2D(_FloorTexture, sampler_FloorTexture, flatColorUV).rgb;
+    float3 flatColor = SAMPLE_TEXTURE2D(_FloorTexture, sampler_FloorTexture, flatColorUV).rgb * _BaseColor;
 
     float2 steepColorUV = TRANSFORM_TEX(input.uv.xy, _SteepTexture);
-    float3 steepColor = SAMPLE_TEXTURE2D(_SteepTexture, sampler_SteepTexture, steepColorUV).rgb;
+    float3 steepColor = SAMPLE_TEXTURE2D(_SteepTexture, sampler_SteepTexture, steepColorUV).rgb * _SteepColor;
 
     float3 surfaceColor = lerp(steepColor, flatColor, flatStrength); 
 
@@ -175,7 +176,7 @@ half4 Fragment(GeometryOutput input) : SV_Target
     float fadeOut = 1.0 - smoothstep(maxDistance - 30.0, maxDistance, dist2);
 
     //result
-    float3 albedo = lerp(surfaceColor * _BaseColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb;
+    float3 albedo = lerp(surfaceColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb;
 
     SurfaceData surfaceInput = (SurfaceData)0;
     surfaceInput.albedo = albedo;   

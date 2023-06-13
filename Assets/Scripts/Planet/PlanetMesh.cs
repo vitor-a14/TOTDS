@@ -591,7 +591,7 @@ public class PlanetMesh : MonoBehaviour
                 meshObj.layer = gameObject.layer;
                 meshObj.transform.localPosition = Vector3.zero;
                 meshObj.transform.localRotation = quaternion.identity;
-                meshObj.AddComponent<MeshRenderer>();
+                meshObj.AddComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshColliders[i] = meshObj.AddComponent<MeshCollider>();
