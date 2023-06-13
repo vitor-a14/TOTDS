@@ -15,8 +15,6 @@ public class Plane
 
     public int collisionDetailLevel;
     public int res;
-    public List<Vector3> borderVertices;
-    public List<int> borderTriangles;
     public PlanetMesh terrainGenerator;
     public bool complete = false;
     public LOD Lod;

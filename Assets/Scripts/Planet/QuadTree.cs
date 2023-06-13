@@ -16,9 +16,6 @@ public class QuadTreeNode
     public Vector3[] vertices;
     public Vector3[] normals;
     public int[] triangles;
-    public Vector3[] verticesBorder;
-    public Vector3[] normalsBorder;
-    public int[] trianglesBorder;
     public float planetRadius;
     public byte corner;
     public uint hash = 0;

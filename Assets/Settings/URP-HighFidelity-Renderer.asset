@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7354e7c8e0e0d15408e8ab6fe49ad575, type: 3}
   m_Name: Atmosphere
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
-    Event: 500
+    Event: 550
     blitMaterial: {fileID: 2100000, guid: 1ee2eed398698ad4483a5ebf9164859e, type: 2}
     blitMaterialPassIndex: 0
     setInverseViewMatrix: 0
@@ -39,7 +39,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f62c9c65cf3354c93be831c8bc075510, type: 3}
   m_Name: SSAO
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   m_Settings:
     AOMethod: 0
     Downsample: 0
@@ -82,7 +82,8 @@ MonoBehaviour:
   - {fileID: -1878332245247344467}
   - {fileID: -7951644685319418316}
   - {fileID: 4395264989483528102}
-  m_RendererFeatureMap: adc0de57c6d2eee534ce69cf4915a691a66fe087381eff3c
+  - {fileID: 1859002429053636564}
+  m_RendererFeatureMap: adc0de57c6d2eee534ce69cf4915a691a66fe087381eff3cd48f541cdc80cc19
   m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
@@ -123,6 +124,23 @@ MonoBehaviour:
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 1
+--- !u!114 &1859002429053636564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d613f08f173d4dd895bb07b3230baa9, type: 3}
+  m_Name: FullScreenPassRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  passMaterial: {fileID: 2100000, guid: 343417504d8bfe24ea93a5aa5e9112a8, type: 2}
+  injectionPoint: 550
+  requirements: 4
+  passIndex: 0
 --- !u!114 &4395264989483528102
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7354e7c8e0e0d15408e8ab6fe49ad575, type: 3}
   m_Name: Ocean
   m_EditorClassIdentifier: 
-  m_Active: 1
+  m_Active: 0
   settings:
-    Event: 450
+    Event: 500
     blitMaterial: {fileID: 2100000, guid: 8c10e3768ba8bf14aa432d8fee9ce223, type: 2}
     blitMaterialPassIndex: 0
     setInverseViewMatrix: 0

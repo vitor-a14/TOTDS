@@ -319,7 +319,6 @@ public class PlanetMesh : MonoBehaviour
         if (state == 0) {
             cube[state_counter].UpdateQuadTree();
             state_counter += 1;
-            
             if (state_counter >= 6) {
                 state = 1;
                 state_counter = 0;
@@ -334,7 +333,6 @@ public class PlanetMesh : MonoBehaviour
         } else if (state == 2) {
             cube[state_counter].quadtree.FindNeighbors();
             state_counter += 1;
-
             if (state_counter >= 6) {
                 state = 3;
                 state_counter = 0;
@@ -476,7 +474,7 @@ public class PlanetMesh : MonoBehaviour
             list = cube[cubeIndex].quadtree.leafnodeJobs;
             listCount = cube[cubeIndex].quadtree.leafNodeCount;
         }
-        
+
         //convert to jobs format
         leafnodes = new NativeArray<QuadTreeNodeJob>(list, Allocator.TempJob);
         NativeArray<int> tmpTriangleN = new NativeArray<int>(tmpTriangle, Allocator.TempJob);
@@ -541,8 +539,6 @@ public class PlanetMesh : MonoBehaviour
                         tmpTriangle[tris] = count; //0
                         tmpTriangle[tris + 1] = count + 1; //1
                         tmpTriangle[tris + 2] = count + res; //2
-
-
                         tmpTriangle[tris + 3] = count + 1; //1
                         tmpTriangle[tris + 4] = count + res + 1; //2
                         tmpTriangle[tris + 5] = count + res;//3
@@ -558,7 +554,7 @@ public class PlanetMesh : MonoBehaviour
         if (range == null) {
             return;
         }
-
+        
         for (int i = 0; i < range.Length; i++) {
             lod.detailLevelDist[i] = range[i];
         }
