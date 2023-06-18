@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.64bleat.astronomy": {
+      "version": "https://github.com/64bleat/AstronomicSkybox-Unity.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c481ef12a9b2f3013ad006099d29b0d085564678"
+    },
     "com.unity.burst": {
       "version": "1.8.4",
       "depth": 1,
