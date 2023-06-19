@@ -4,6 +4,7 @@ Shader "Planet/Atmosphere"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _BlueNoise ("Blue Noise", 2D) = "white" {}
+        _OpticalDepthTexture ("Optical Depth Texture", 2D) = "white" {}
         _PlanetCenter ("Planet Position", Vector) = (0,0,0)
         _AtmosphereRadius ("Atmosphere Radius", float) = 0
         _PlanetRadius ("Planet Radius", float) = 0
@@ -53,6 +54,7 @@ Shader "Planet/Atmosphere"
             sampler2D _FarCameraDepth;
             sampler2D _BakedOpticalDepth;
             sampler2D _BlueNoise;
+            sampler2D _OpticalDepthTexture;
 
             struct appdata
             {
@@ -111,32 +113,43 @@ Shader "Planet/Atmosphere"
 
             float densityAtPoint(float3 densitySamplePoint)
             {
+                float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
                 float heightAboveSurface = length(densitySamplePoint - _PlanetCenter) - _PlanetRadius;
-                float height01 = heightAboveSurface / (_AtmosphereRadius - _PlanetRadius);
+                float height01 = heightAboveSurface / (scale - _PlanetRadius);
                 float localDensity = exp(-height01 * _DensityFalloff) * (1 - height01);
 
                 return localDensity;
             }
 
-            float opticalDepth(float3 rayOrigin, float3 rayDir, float rayLength)
-            {
-                float3 densitySamplePoint = rayOrigin;
-                float stepSize = rayLength / (_OpticalDepthPoints - 1);
-                float opticalDepth = 0;
+            float opticalDepthBaked(float3 rayOrigin, float3 rayDir) {
+                float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
 
-                for(int i = 0; i < _OpticalDepthPoints; i++)
-                {
-                    float localDensity = densityAtPoint(densitySamplePoint);
-                    opticalDepth += localDensity * stepSize;
-                    densitySamplePoint += rayDir * stepSize;
-                }
+				float height = length(rayOrigin - _PlanetCenter) - _PlanetRadius;
+				float height01 = saturate(height / (scale - _PlanetRadius));
+				float uvX = 1 - (dot(normalize(rayOrigin - _PlanetCenter), rayDir) * .5 + .5);
 
-                return opticalDepth;
-            }
+				return tex2Dlod(_OpticalDepthTexture, float4(uvX, height01,0,0));
+			}
+
+			float opticalDepthBaked2(float3 rayOrigin, float3 rayDir, float rayLength) {
+				float3 endPoint = rayOrigin + rayDir * rayLength;
+				float d = dot(rayDir, normalize(rayOrigin - _PlanetCenter));
+				float opticalDepth = 0;
+
+				const float blendStrength = 1.5;
+				float w = saturate(d * blendStrength + .5);
+				
+				float d1 = opticalDepthBaked(rayOrigin, rayDir) - opticalDepthBaked(endPoint, rayDir);
+				float d2 = opticalDepthBaked(endPoint, -rayDir) - opticalDepthBaked(rayOrigin, -rayDir);
+
+				opticalDepth = lerp(d2, d1, w);
+				return opticalDepth;
+			}
 
             float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 col, float2 uv)
             {
                 _SunDir = normalize(_WorldSpaceLightPos0.xyz);
+
                 float blueNoise = tex2Dlod(_BlueNoise, float4(squareUV(uv) * _DitheringScale,0,0));
 				blueNoise = (blueNoise - 0.5) * _DitheringStrength;
 
@@ -147,25 +160,44 @@ Shader "Planet/Atmosphere"
 
                 for(int i = 0; i < _ScatteringPoints; i++)
                 {
-                    float sunRayLength = raySphere(_PlanetCenter, _AtmosphereRadius, inScatterPoint, _SunDir).y;
-                    float sunRayOpticalDepth = opticalDepth(inScatterPoint, _SunDir * _DitheringStrength, sunRayLength);
-                    viewRayOpticalDepth = opticalDepth(inScatterPoint, -rayDir, stepSize * i);
-                    float3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth) * scatteringCoefficients);
+                    float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
+
+                    float sunRayLength = raySphere(_PlanetCenter, scale, inScatterPoint, _SunDir).y;
+					float sunRayOpticalDepth = opticalDepthBaked(inScatterPoint + _SunDir * _DitheringStrength, _SunDir);
                     float localDensity = densityAtPoint(inScatterPoint);
+                    viewRayOpticalDepth = opticalDepthBaked2(rayOrigin, rayDir, stepSize * i);
+					float3 transmittance = exp(-(sunRayOpticalDepth + viewRayOpticalDepth) * scatteringCoefficients);
 
-                    inScatteredLight += localDensity * transmittance * scatteringCoefficients * stepSize;
-                    inScatterPoint += rayDir * stepSize;
+					inScatteredLight += localDensity * transmittance;
+					inScatterPoint += rayDir * stepSize;
                 }
-                inScatteredLight += blueNoise * 0.01;
 
-                float colTransmittance = exp(-viewRayOpticalDepth);
-                return col * colTransmittance + inScatteredLight;
+                const float intensity = 1;
+				inScatteredLight *= scatteringCoefficients * intensity * stepSize / _PlanetRadius;
+				inScatteredLight += blueNoise * 0.01;
+
+				// Attenuate brightness of original col (i.e light reflected from planet surfaces)
+				// This is a hacky mess, TODO: figure out a proper way to do this
+				const float brightnessAdaptionStrength = 0.15;
+				const float reflectedLightOutScatterStrength = 3;
+				float brightnessAdaption = dot (inScatteredLight,1) * brightnessAdaptionStrength;
+				float brightnessSum = viewRayOpticalDepth * intensity * reflectedLightOutScatterStrength + brightnessAdaption;
+				float reflectedLightStrength = exp(-brightnessSum);
+				float hdrStrength = saturate(dot(col,1)/3-1);
+				reflectedLightStrength = lerp(reflectedLightStrength, 1, hdrStrength);
+				float3 reflectedLight = col * reflectedLightStrength;
+
+				float3 finalCol = reflectedLight + inScatteredLight;
+
+				
+				return finalCol;
             }
 
             fixed4 frag (v2f i) : SV_Target
             {
+                float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
+
                 fixed4 col = tex2D(_MainTex, i.uv);
-                
                 float sceneDepthNonLinear = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 float sceneDepth = LinearEyeDepth(sceneDepthNonLinear) * length(i.viewVector);
 
@@ -175,18 +207,16 @@ Shader "Planet/Atmosphere"
                 float dstToOcean = raySphere(_PlanetCenter, _OceanRadius, rayOrigin, rayDir);
 				float dstToSurface = min(sceneDepth, dstToOcean);
 
-                float2 hitInfo = raySphere(_PlanetCenter, _AtmosphereRadius, rayOrigin, rayDir);
+                float2 hitInfo = raySphere(_PlanetCenter, scale, rayOrigin, rayDir);
                 float distanceToAtmosphere = hitInfo.x;
                 float distanceThroughAtmosphere = min(hitInfo.y, dstToSurface - distanceToAtmosphere);
-
-                //return sceneDepth / 100000;
 
                 if(distanceThroughAtmosphere > 0)
                 {
                     const float epsilon = 0.0001;
                     float3 pointInAtmosphere = rayOrigin + rayDir * (distanceToAtmosphere + epsilon);
                     float3 light = calculateLight(pointInAtmosphere, rayDir, distanceThroughAtmosphere - epsilon * 2, col, i.uv);
-                    return float4(light, 0);
+                    return float4(light, 1);
                 }
 
                 return col;

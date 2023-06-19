@@ -179,7 +179,7 @@ half4 Fragment(GeometryOutput input) : SV_Target
     float3 albedo = lerp(surfaceColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb;
 
     SurfaceData surfaceInput = (SurfaceData)0;
-    surfaceInput.albedo = albedo;   
+    surfaceInput.albedo = albedo;  
 
     return UniversalFragmentBlinnPhong(lightingInput, surfaceInput);
 }

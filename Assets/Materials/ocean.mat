@@ -121,7 +121,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DensityFalloff: 12
-    - _DepthMultiplier: 191.39
+    - _DepthMultiplier: 190
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DitheringScale: 5
