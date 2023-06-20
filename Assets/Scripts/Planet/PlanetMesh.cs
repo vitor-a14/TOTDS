@@ -8,25 +8,23 @@ using Unity.Collections;
 public class PlanetMesh : MonoBehaviour
 {
     public float radius = 1000;
+    public int collisionMeshResolution;
+    public float heightMapPower = 200;
+    public float updateInterval = 50;
+
     public Transform player;
-    public int collisionMeshMinDetalLevel;
 
     public Material Material;
-    public Texture2D planetMap;
+    public Texture2D heightMap;
 
     [Range(2, 16)] public int res = 2;
-    [Range(0, 9)] public int maxDetail = 8;
     public float[] range;
 
-    public int verticeFixedSize = 500000;  
-    int triangleFixedSize;
-
-    public int verticeFixedSizeCol = 40000;
+    private int verticeFixedSize = 100000;  
+    private int verticeFixedSizeCol = 75000;
     int triangleFixedSizeCol;
-
-    public float heightMapPower=200;
-    public float updateInterval = 50;
-    public int leafNodeMax = 1000000;
+    int triangleFixedSize;
+    int maxDetail;
 
     private NativeArray<float3> verticeListFixed0;
     private NativeArray<int> triangleListFixed0;
@@ -94,7 +92,6 @@ public class PlanetMesh : MonoBehaviour
 
     Mesh[] cubeMesh;
     Mesh[] collisionMesh;
-    List<GameObject> meshObjects;
     Plane[] cube;
     Vector3 pos;
     int finishedCount = 6;
@@ -102,22 +99,24 @@ public class PlanetMesh : MonoBehaviour
     int2 heightmapDimensions;
     [HideInInspector] public LOD lod;
 
+    [HideInInspector] [SerializeField] List<GameObject> meshChildren;
     [HideInInspector] [SerializeField] MeshFilter[] meshFilters;
     [HideInInspector] [SerializeField] MeshCollider[] meshColliders;
 
-    private void Awake() {
+    private void InitializeScript() {
+        maxDetail = range.Length;
         lod = new LOD();
       
-        Color[] tmp = planetMap.GetPixels(0, 0, planetMap.width, planetMap.height);
+        Color[] tmp = heightMap.GetPixels(0, 0, heightMap.width, heightMap.height);
         planetTextureData = new NativeArray<float>(tmp.Length, Allocator.Persistent);
         int len = tmp.Length;
         for (int i = 0; i < len; i++) {
             planetTextureData[i] = tmp[i].r; //use red channel reduce size of array
         }
 
-        heightmapDimensions.x = planetMap.width;
-        heightmapDimensions.y = planetMap.height;
-        Resources.UnloadAsset(planetMap);
+        heightmapDimensions.x = heightMap.width;
+        heightmapDimensions.y = heightMap.height;
+        Resources.UnloadAsset(heightMap);
 
         triangleFixedSize = (verticeFixedSize / (res * res) )* ((res - 1) * (res - 1) * 6);
         triangleFixedSizeCol = (verticeFixedSizeCol / (res * res)) * ((res - 1) * (res - 1) * 6);
@@ -177,7 +176,29 @@ public class PlanetMesh : MonoBehaviour
         normalListFixedCol5 = new NativeArray<float3>(verticeFixedSizeCol, Allocator.Persistent);
     }
 
+    private void Awake() {
+        foreach(GameObject mesh in meshChildren) {
+            DestroyImmediate(mesh);
+        }
+
+        InitializeScript();
+    }
+
     private void Start() {
+        CreateMesh();
+    }
+
+    public void RenderPreview() {
+        foreach(GameObject mesh in meshChildren) {
+            DestroyImmediate(mesh);
+        }
+
+        InitializeScript();
+        CreateMesh();
+        OnDestroy();
+    }
+
+    private void CreateMesh() {
         cubeMesh = null;
         cube = null;
         meshFilters = null;
@@ -205,20 +226,14 @@ public class PlanetMesh : MonoBehaviour
         for (int i = 0; i < 6; i++) {
             cube[i].UpdateQuadTree();
             cube[i].quadtree.GetLeafNodes();
-        }
-        
-        for (int i = 0; i < 6; i++) {
             cube[i].quadtree.UpdateEdgeNeighbors();
         }
 
         CalculateTriangle();
        
-        for (int i = 0; i < 6; i++) {
-            cube[i].quadtree.ConvertJobs();
-        }
-
         //claculate mesh on start
         for (int i = 0; i < 6; i++) {
+            cube[i].quadtree.ConvertJobs();
             JobCalculateTerrain(i,false);
             JobCalculateTerrain(i, true);
             cube[i].UpdateMesh();
@@ -284,16 +299,6 @@ public class PlanetMesh : MonoBehaviour
         normalListFixedCol5.Dispose();
 
         planetTextureData.Dispose();
-    }
-
-    private void OnValidate() {
-        /*
-        if (start) {
-            for(int i = 0; i < 6; i++) {
-                JobCalculateTerrain(i,false);
-            }
-        }
-        */
     }
 
     private void Update() {
@@ -597,13 +602,11 @@ public class PlanetMesh : MonoBehaviour
                 meshColliders[i] = meshObj.AddComponent<MeshCollider>();
                 meshFilters[i].sharedMesh = cube[i].mesh;
                 meshColliders[i].sharedMesh = cube[i].collisionMesh;
-                meshColliders[i].convex =false;
+                meshColliders[i].convex = false;
                 meshObj.GetComponent<MeshRenderer>().material = Material;
                 cube[i].meshCollider = meshColliders[i];
-                Rigidbody rb;
-                rb=meshObj.AddComponent<Rigidbody>();
-                rb.useGravity = false;
-                rb.isKinematic = true;
+
+                meshChildren.Add(meshObj);
             };
         }
     }

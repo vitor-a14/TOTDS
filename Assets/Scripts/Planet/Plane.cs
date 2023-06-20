@@ -52,7 +52,7 @@ public class Plane
         terrainGenerator = t;
         this.res = res;
         this.Lod = t.lod;
-        this.collisionDetailLevel = t.collisionMeshMinDetalLevel;
+        this.collisionDetailLevel = t.collisionMeshResolution;
         GenerateQuadTree();
 
         uvs = new Vector2[500000];

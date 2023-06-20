@@ -19,6 +19,7 @@ struct VertexOutput
     float3 positionWS   : TEXCOORD0;
     float3 normalWS     : TEXCOORD1;
     float2 uv           : TEXCOORD2;
+    float3 positionOS   : TEXCOORD3;
 };
 
 struct GeometryOutput 
@@ -26,6 +27,7 @@ struct GeometryOutput
     float3 uv           : TEXCOORD0;
     float3 positionWS   : TEXCOORD1;
     float3 normalWS     : TEXCOORD2;
+    float3 positionOS   : TEXCOORD3;
     float4 positionCS   : SV_POSITION; 
 };
 
@@ -64,7 +66,8 @@ VertexOutput Vertex(Attributes input)
     VertexNormalInputs normalInput = GetVertexNormalInputs(input.normalOS, input.tangentOS);
     output.positionWS = vertexInput.positionWS;
     output.normalWS = normalInput.normalWS;
-
+    
+    output.positionOS = input.positionOS.xyz;
     output.uv = input.uv;
     return output;
 }
@@ -77,6 +80,7 @@ void SetupVertex(in VertexOutput input, inout GeometryOutput output, float heigh
     output.normalWS = input.normalWS;
     output.uv = float3(input.uv, height); 
     output.positionCS = CalculatePositionCSWithShadowCasterLogic(positionWS, input.normalWS);
+    output.positionOS = input.positionOS;
 }
 
 int GetNumLayer(VertexOutput a, VertexOutput b, VertexOutput c)
@@ -132,7 +136,7 @@ float blend(float startHeight, float blendDst, float height) {
 half4 Fragment(GeometryOutput input) : SV_Target 
 {
     // planet surface
-    float3 sphereNormal = normalize(input.positionWS);
+    float3 sphereNormal = normalize(input.positionOS);
     float steepness = 1 - dot (sphereNormal, input.normalWS);
     steepness = saturate(steepness / _SteepnessThreshold);
 

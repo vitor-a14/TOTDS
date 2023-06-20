@@ -38,7 +38,6 @@ float opticalDepth(float2 rayOrigin, float2 rayDir, float rayLength) {
 float calculateOutScattering(float2 inPoint, float2 outPoint) {
 	float planetRadius = 1;
 	float skinWidth = planetRadius / 1000.0;
-	
 
 	float lightTravelDst = length(outPoint - inPoint);
 	float2 outScatterPoint = inPoint;

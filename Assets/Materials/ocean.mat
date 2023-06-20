@@ -101,7 +101,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - waveNormalA:
-        m_Texture: {fileID: 2800000, guid: f2b8966b2e7c56c46b30c7045647ad46, type: 3}
+        m_Texture: {fileID: 2800000, guid: 80aa02f76e5a5a54b99f661852535cf1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - waveNormalB:
@@ -111,7 +111,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _AlphaMultiplier: 120
+    - _AlphaMultiplier: 256
     - _AtmosphereRadius: 27500
     - _Atmosphere_Radius: 27339.94
     - _Blend: 0
@@ -121,7 +121,7 @@ Material:
     - _Cull: 2
     - _Cutoff: 0.5
     - _DensityFalloff: 12
-    - _DepthMultiplier: 190
+    - _DepthMultiplier: 84
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DitheringScale: 5
@@ -151,17 +151,17 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _Thickness: 0.000002
-    - _WaveScale: 400
+    - _WaveScale: 64
     - _WaveSpeed: 0.2
-    - _WaveStrength: 0.4
+    - _WaveStrength: 0.5
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _bwBlend: 0.215
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorA: {r: 0, g: 0.58708096, b: 1, a: 1}
-    - _ColorB: {r: 0.15419188, g: 0.2191987, b: 0.5188679, a: 1}
+    - _ColorA: {r: 0, g: 0.5882354, b: 1, a: 1}
+    - _ColorB: {r: 0.07453719, g: 0.17645268, b: 0.6320754, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PlanetCenter: {r: 0, g: -24000, b: 0, a: 1}
     - _PlanetPosition: {r: 0, g: 0, b: 0, a: 1}
