@@ -6,6 +6,7 @@ Shader "Planet/Atmosphere"
         _BlueNoise ("Blue Noise", 2D) = "white" {}
         _OpticalDepthTexture ("Optical Depth Texture", 2D) = "white" {}
         _PlanetPosition ("Planet Position", Vector) = (0,0,0)
+        _SunDir ("Sun Direction", Vector) = (0,0,0)
         _AtmosphereRadius ("Atmosphere Radius", float) = 0
         _PlanetRadius ("Planet Radius", float) = 0
         _OceanRadius ("Ocean Radius", float) = 0
@@ -32,13 +33,13 @@ Shader "Planet/Atmosphere"
             static const float maxFloat = 3.402823466e+38;
 
             float3 _PlanetPosition;
+            float3 _SunDir;
             float _AtmosphereRadius;
             float _PlanetRadius;
             float _OceanRadius;
             float _DensityFalloff;
             int _ScatteringPoints;
             int _OpticalDepthPoints;
-            float3 _SunDir;
             float _DitheringStrength;
             float _DitheringScale;
 
@@ -148,8 +149,6 @@ Shader "Planet/Atmosphere"
 
             float3 calculateLight(float3 rayOrigin, float3 rayDir, float rayLength, float3 col, float2 uv)
             {
-                _SunDir = normalize(_WorldSpaceLightPos0.xyz);
-
                 float blueNoise = tex2Dlod(_BlueNoise, float4(squareUV(uv) * _DitheringScale,0,0));
 				blueNoise = (blueNoise - 0.5) * _DitheringStrength;
 

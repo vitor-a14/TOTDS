@@ -8,6 +8,7 @@ public class PlanetEffectsEditor : Editor {
     private SerializedProperty hasAtmosphereProp;
     private SerializedProperty hasOceanProp;
     private SerializedProperty planetRadiusProp;
+    private SerializedProperty sunTransformProp;
 
     private SerializedProperty atmosphereShaderProp;
     private SerializedProperty blueNoiseProp;
@@ -45,7 +46,8 @@ public class PlanetEffectsEditor : Editor {
         hasAtmosphereProp = serializedObject.FindProperty("hasAtmosphere");
         hasOceanProp = serializedObject.FindProperty("hasOcean");
         planetRadiusProp = serializedObject.FindProperty("planetRadius");
-
+        sunTransformProp = serializedObject.FindProperty("sunTransform");
+        
         //atmosphere
         atmosphereShaderProp = serializedObject.FindProperty("atmosphereShader");
         blueNoiseProp = serializedObject.FindProperty("blueNoise");
@@ -81,6 +83,7 @@ public class PlanetEffectsEditor : Editor {
 
         EditorGUILayout.PropertyField(rendererDataProp);
         EditorGUILayout.PropertyField(planetRadiusProp);
+        EditorGUILayout.PropertyField(sunTransformProp);
         EditorGUILayout.Space(); EditorGUILayout.Space();
 
         EditorGUILayout.PropertyField(hasAtmosphereProp);

@@ -4,6 +4,7 @@ Shader "Planet/Ocean"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _PlanetPosition("Position", Vector) = (0,0,0)
+        _SunDir("Sun Direction", Vector) = (0,0,0)
         _Radius("Ocean Radius", float) = 0
         _PlanetRadius("Planet Radius", float) = 20
         _ColorA("Color A", Color) = (1,1,1,1)

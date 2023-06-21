@@ -11,11 +11,12 @@ public class PlanetEffects : MonoBehaviour
 	public bool hasAtmosphere;
 	public bool hasOcean;
 	public float planetRadius;
+	public Transform sunTransform;
 
 	//atmosphere
 	public Shader atmosphereShader;
 	public Texture2D blueNoise;
-	[Range(1, 0)] public float atmosphereScale;
+	[Range(0, 1)] public float atmosphereScale;
 	public float densityFalloff = 9;
 	public int scatteringPoints = 7;
 	public int opticalDepthPoints = 7;
@@ -76,6 +77,9 @@ public class PlanetEffects : MonoBehaviour
 			atmosphereBlit.settings.blitMaterial.SetFloat("_ScaterringStrength", scatteringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringStrength", ditheringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringScale", ditheringScale);
+
+			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
+			atmosphereBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		} else {
 			if(atmosphereBlit != null) {
 				rendererData.rendererFeatures.Remove(atmosphereBlit);
@@ -110,6 +114,9 @@ public class PlanetEffects : MonoBehaviour
 			oceanBlit.settings.blitMaterial.SetFloat("_WaveScale", waveScale);
 			oceanBlit.settings.blitMaterial.SetTexture("waveNormalA", waveNormalA);
 			oceanBlit.settings.blitMaterial.SetTexture("waveNormalB", waveNormalB);
+
+			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
+			oceanBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		} else {
 			if(oceanBlit != null) {
 				rendererData.rendererFeatures.Remove(oceanBlit);
@@ -124,11 +131,17 @@ public class PlanetEffects : MonoBehaviour
 
 	// for now, just update positions
 	private void UpdateEffects() {
-		if(hasAtmosphere && atmosphereBlit != null)
+		if(hasAtmosphere && atmosphereBlit != null) {
+			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
 			atmosphereBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+			atmosphereBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
+		}
 
-		if(hasOcean && oceanBlit != null)
+		if(hasOcean && oceanBlit != null) {
+			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
 			oceanBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+			oceanBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
+		}
 	}
 
     private void Awake() {
@@ -143,8 +156,8 @@ public class PlanetEffects : MonoBehaviour
         CreateRenderTexture (ref opticalDepthTexture, textureSize, FilterMode.Bilinear);
         opticalDepthCompute.SetTexture (0, "Result", opticalDepthTexture);
         opticalDepthCompute.SetInt ("textureSize", textureSize);
-        opticalDepthCompute.SetInt ("numOutScatteringSteps", opticalDepthPoints);
-        opticalDepthCompute.SetFloat ("atmosphereRadius", (1 + atmosphereScale));
+        opticalDepthCompute.SetInt ("numOutScatteringSteps", 40);
+        opticalDepthCompute.SetFloat ("atmosphereRadius", ((1 + atmosphereScale)));
         opticalDepthCompute.SetFloat ("densityFalloff", densityFalloff);
         Run (opticalDepthCompute, textureSize, textureSize);
 	}
