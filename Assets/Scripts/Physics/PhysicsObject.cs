@@ -16,6 +16,8 @@ public class PhysicsObject : MonoBehaviour
     private float rotationSpeed = 85f;
     private float setParentThreshold = 150f; //the distance that will make the object be attached to the celestial body
 
+    private CelestialBody lastParentBody;
+
     private void Start() {
         InitializePhysics();
     }
@@ -47,8 +49,13 @@ public class PhysicsObject : MonoBehaviour
 
             if(useTransformParent && distance - celestialBody.planetRadius <= setParentThreshold) {
                 celestialBodyNear = true;
-                if(transform.parent != celestialBody.transform)
+                if(transform.parent != celestialBody.transform) {
                     transform.SetParent(celestialBody.transform);
+                    if(transform.tag == "Player") {
+                        celestialBody.ChangePhysicsPerspective(PhysicsPerspective.PLANET_SURFACE);
+                        lastParentBody = celestialBody;
+                    }
+                }
             }
 
             mainForceDirection = -greatestForce.normalized;
@@ -58,6 +65,8 @@ public class PhysicsObject : MonoBehaviour
         }
 
         if(useTransformParent && !celestialBodyNear && transform.parent != null) {
+            lastParentBody.ChangePhysicsPerspective(PhysicsPerspective.SPACE);
+            lastParentBody = null;
             transform.SetParent(null);
         }
 

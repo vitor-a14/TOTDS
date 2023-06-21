@@ -4932,8 +4932,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcdef753cdca6904882fddd994afce2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 1
+  userGravitacionalForce: 1
   autoRotate: 0
+  useTransformParent: 0
   rigid: {fileID: 0}
   cloth: {fileID: 0}
 --- !u!1 &1027204214805595512
@@ -9559,7 +9560,7 @@ Transform:
   - {fileID: 6329735610740949875}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -9623,8 +9624,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98cd25c395a10e14c99cf672bd4c9565, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 1
+  userGravitacionalForce: 1
   autoRotate: 1
+  useTransformParent: 1
   rigid: {fileID: 0}
   canMove: 1
   reading: 0
