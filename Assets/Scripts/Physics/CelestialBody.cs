@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CelestialBody : MonoBehaviour
 {
+    public float planetRadius;
     [HideInInspector] public Rigidbody rigid;
 
     private void Start() {

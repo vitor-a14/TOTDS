@@ -123,7 +123,7 @@ public class BirdController : Interactable
         inputs.Enable();
         player.SetParent(transform);
         player.gameObject.SetActive(false);
-        physics.isActive = false;
+        physics.userGravitacionalForce = false;
         physics.rigid.freezeRotation = true;
     }
 
@@ -136,7 +136,7 @@ public class BirdController : Interactable
         player.SetParent(null);
         PlayerController.Instance.inputs.Enable();
         inputs.Disable();
-        physics.isActive = true;
+        physics.userGravitacionalForce = true;
         physics.rigid.freezeRotation = false;
     }
 

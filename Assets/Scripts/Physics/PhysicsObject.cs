@@ -5,14 +5,16 @@ using UnityEngine;
 public class PhysicsObject : MonoBehaviour
 {
     [Header("Physics Settings")]
-    public bool isActive = true;
+    public bool userGravitacionalForce = true;
     public bool autoRotate = false;
-    private float rotationSpeed = 85f;
+    public bool useTransformParent = true; //if activated, the object will be attached to close celestial bodies with SetParent
 
     [HideInInspector] public Rigidbody rigid;
     protected Vector3 mainForceDirection = Vector3.zero;
-
     private List<Vector3> collisionVertices = new List<Vector3>();
+
+    private float rotationSpeed = 85f;
+    private float setParentThreshold = 150f; //the distance that will make the object be attached to the celestial body
 
     private void Start() {
         InitializePhysics();
@@ -31,6 +33,7 @@ public class PhysicsObject : MonoBehaviour
     protected void UpdatePhysics() {
         //Variable that will store the greatest force attraction
         Vector3 greatestForce = Vector3.zero;
+        bool celestialBodyNear = false;
 
         //Go through all attractors and apply force in the object based on the Gravitational Formula
         foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
@@ -42,10 +45,20 @@ public class PhysicsObject : MonoBehaviour
             if(force.magnitude > greatestForce.magnitude)
                 greatestForce = force;
 
-            mainForceDirection = -greatestForce.normalized;
-            if(!isActive) return;
+            if(useTransformParent && distance - celestialBody.planetRadius <= setParentThreshold) {
+                celestialBodyNear = true;
+                if(transform.parent != celestialBody.transform)
+                    transform.SetParent(celestialBody.transform);
+            }
 
-            rigid.AddForce(force);
+            mainForceDirection = -greatestForce.normalized;
+
+            if(userGravitacionalForce) 
+                rigid.AddForce(force);
+        }
+
+        if(useTransformParent && !celestialBodyNear && transform.parent != null) {
+            transform.SetParent(null);
         }
 
         //Rotate the object towards the greatest force attractor
