@@ -21,6 +21,7 @@ using UnityEngine.Rendering.Universal;
 */
 
 #pragma warning disable
+[System.Serializable]
 public class Blit : ScriptableRendererFeature {
 
 	public class BlitPass : ScriptableRenderPass {

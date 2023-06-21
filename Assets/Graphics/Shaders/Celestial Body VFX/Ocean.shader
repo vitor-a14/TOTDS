@@ -3,7 +3,7 @@ Shader "Planet/Ocean"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _Position("Position", Vector) = (0,0,0)
+        _PlanetPosition("Position", Vector) = (0,0,0)
         _Radius("Ocean Radius", float) = 0
         _PlanetRadius("Planet Radius", float) = 20
         _ColorA("Color A", Color) = (1,1,1,1)
@@ -28,7 +28,7 @@ Shader "Planet/Ocean"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-            #include "Triplanar.cginc"
+            #include "../Triplanar.cginc"
 
             static const float maxFloat = 3.402823466e+38;
 
@@ -84,7 +84,7 @@ Shader "Planet/Ocean"
             sampler2D waveNormalA;
 			sampler2D waveNormalB;
 
-            float3 _Position;
+            float3 _PlanetPosition;
             float _Radius;
             float4 _ColorA;
             float4 _ColorB;
@@ -107,10 +107,10 @@ Shader "Planet/Ocean"
                 float nonlin_depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                 float sceneDepth = LinearEyeDepth(nonlin_depth) * viewLength;
 
-                float2 hitInfo = raySphere(_Position, _Radius, rayPos, rayDir);
+                float2 hitInfo = raySphere(_PlanetPosition, _Radius, rayPos, rayDir);
 				float dstToOcean = hitInfo.x;
 				float dstThroughOcean = hitInfo.y;
-				float3 rayOceanIntersectPos = rayPos + rayDir * dstToOcean - _Position;
+				float3 rayOceanIntersectPos = rayPos + rayDir * dstToOcean - _PlanetPosition;
 
 				float oceanViewDepth = min(dstThroughOcean, sceneDepth - dstToOcean);
 
@@ -120,7 +120,7 @@ Shader "Planet/Ocean"
                 {
                     float opticalDepth01 = 1 - exp(-oceanViewDepth / _PlanetRadius * _DepthMultiplier);
                     float alpha = 1 - exp(-oceanViewDepth / _PlanetRadius * _AlphaMultiplier);
-                    float3 oceanNormal = normalize(rayPos + rayDir * dstToOcean - _Position);
+                    float3 oceanNormal = normalize(rayPos + rayDir * dstToOcean - _PlanetPosition);
 
                     //Wave normals
                     float2 waveOffsetA = float2(_Time.x * _WaveSpeed, _Time.x * _WaveSpeed * 0.8);

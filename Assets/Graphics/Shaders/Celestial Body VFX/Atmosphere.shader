@@ -5,7 +5,7 @@ Shader "Planet/Atmosphere"
         _MainTex ("Texture", 2D) = "white" {}
         _BlueNoise ("Blue Noise", 2D) = "white" {}
         _OpticalDepthTexture ("Optical Depth Texture", 2D) = "white" {}
-        _PlanetCenter ("Planet Position", Vector) = (0,0,0)
+        _PlanetPosition ("Planet Position", Vector) = (0,0,0)
         _AtmosphereRadius ("Atmosphere Radius", float) = 0
         _PlanetRadius ("Planet Radius", float) = 0
         _OceanRadius ("Ocean Radius", float) = 0
@@ -31,7 +31,7 @@ Shader "Planet/Atmosphere"
 
             static const float maxFloat = 3.402823466e+38;
 
-            float3 _PlanetCenter;
+            float3 _PlanetPosition;
             float _AtmosphereRadius;
             float _PlanetRadius;
             float _OceanRadius;
@@ -114,7 +114,7 @@ Shader "Planet/Atmosphere"
             float densityAtPoint(float3 densitySamplePoint)
             {
                 float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
-                float heightAboveSurface = length(densitySamplePoint - _PlanetCenter) - _PlanetRadius;
+                float heightAboveSurface = length(densitySamplePoint - _PlanetPosition) - _PlanetRadius;
                 float height01 = heightAboveSurface / (scale - _PlanetRadius);
                 float localDensity = exp(-height01 * _DensityFalloff) * (1 - height01);
 
@@ -124,16 +124,16 @@ Shader "Planet/Atmosphere"
             float opticalDepthBaked(float3 rayOrigin, float3 rayDir) {
                 float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
 
-				float height = length(rayOrigin - _PlanetCenter) - _PlanetRadius;
+				float height = length(rayOrigin - _PlanetPosition) - _PlanetRadius;
 				float height01 = saturate(height / (scale - _PlanetRadius));
-				float uvX = 1 - (dot(normalize(rayOrigin - _PlanetCenter), rayDir) * .5 + .5);
+				float uvX = 1 - (dot(normalize(rayOrigin - _PlanetPosition), rayDir) * .5 + .5);
 
 				return tex2Dlod(_OpticalDepthTexture, float4(uvX, height01,0,0));
 			}
 
 			float opticalDepthBaked2(float3 rayOrigin, float3 rayDir, float rayLength) {
 				float3 endPoint = rayOrigin + rayDir * rayLength;
-				float d = dot(rayDir, normalize(rayOrigin - _PlanetCenter));
+				float d = dot(rayDir, normalize(rayOrigin - _PlanetPosition));
 				float opticalDepth = 0;
 
 				const float blendStrength = 1.5;
@@ -162,7 +162,7 @@ Shader "Planet/Atmosphere"
                 {
                     float scale = (_AtmosphereRadius + 1) * _PlanetRadius;
 
-                    float sunRayLength = raySphere(_PlanetCenter, scale, inScatterPoint, _SunDir).y;
+                    float sunRayLength = raySphere(_PlanetPosition, scale, inScatterPoint, _SunDir).y;
 					float sunRayOpticalDepth = opticalDepthBaked(inScatterPoint + _SunDir * _DitheringStrength, _SunDir);
                     float localDensity = densityAtPoint(inScatterPoint);
                     viewRayOpticalDepth = opticalDepthBaked2(rayOrigin, rayDir, stepSize * i);
@@ -204,10 +204,10 @@ Shader "Planet/Atmosphere"
                 float3 rayOrigin = _WorldSpaceCameraPos;
                 float3 rayDir = normalize(i.viewVector);
 
-                float dstToOcean = raySphere(_PlanetCenter, _OceanRadius, rayOrigin, rayDir);
+                float dstToOcean = raySphere(_PlanetPosition, _OceanRadius, rayOrigin, rayDir);
 				float dstToSurface = min(sceneDepth, dstToOcean);
 
-                float2 hitInfo = raySphere(_PlanetCenter, scale, rayOrigin, rayDir);
+                float2 hitInfo = raySphere(_PlanetPosition, scale, rayOrigin, rayDir);
                 float distanceToAtmosphere = hitInfo.x;
                 float distanceThroughAtmosphere = min(hitInfo.y, dstToSurface - distanceToAtmosphere);
 

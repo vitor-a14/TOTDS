@@ -1,26 +1,145 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering.Universal;
 
 public class PlanetEffects : MonoBehaviour
 {
-	public UniversalRendererData renderData;
-	private Blit blit;
+	public UniversalRendererData rendererData;
+	private Blit atmosphereBlit;
+	private Blit oceanBlit;
 
-	[Header("Atmosphere Optical Depth Texture")]
-	public RenderTexture opticalDepthTexture;
-	public ComputeShader opticalDepthCompute;
-	public int textureSize = 256;
+	public bool hasAtmosphere;
+	public bool hasOcean;
+	public float planetRadius;
+
+	//atmosphere
+	public Shader atmosphereShader;
+	public Texture2D blueNoise;
+	[Range(1, 0)] public float atmosphereScale;
+	public float densityFalloff = 9;
+	public int scatteringPoints = 7;
 	public int opticalDepthPoints = 7;
-	public float densityFalloff = 8;
-	public float atmosphereScale = 1;
+	public Vector3 waveLenghts;
+	public float scatteringStrength;
+	public float ditheringStrength;
+	public float ditheringScale;
+	public ComputeShader opticalDepthCompute;
+	private RenderTexture opticalDepthTexture;
+	public int textureSize = 256;
 
-    void Awake() {
-        PrecomputeOutScattering();
-    }
+	//ocean
+	public Shader oceanShader;
+	[Range(0, 1)] public float oceanScale;
+	public Color highColor;
+	public Color lowColor;
+	public float depthMultiplier;
+	public float alphaMultiplier;
+	public float smoothness;
+	public float waveSpeed;
+	public float waveStrength;
+	public float waveScale;
+	public Texture2D waveNormalA;
+	public Texture2D waveNormalB;
 
-    void PrecomputeOutScattering () {
+	// on inspector render
+	public void PreviewEffects() {
+		SetEffects();
+	}
+
+	// create effects in the render feature
+	private void SetEffects() {
+		PrecomputeOutScattering();
+
+		if(hasAtmosphere) {
+			if(atmosphereBlit == null) {
+				Material atmosphereMaterial = new Material(atmosphereShader);
+				atmosphereBlit = ScriptableObject.CreateInstance<Blit>();
+				atmosphereBlit.SetActive(true);
+				atmosphereBlit.name = transform.name + " Atmosphere";
+				atmosphereBlit.settings.Event = RenderPassEvent.BeforeRenderingPostProcessing;
+				atmosphereBlit.settings.blitMaterial = atmosphereMaterial;
+				atmosphereBlit.settings.requireDepthNormals = true;
+				rendererData.rendererFeatures.Add(atmosphereBlit);
+			}
+
+			//materias properties setup
+			atmosphereBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+			atmosphereBlit.settings.blitMaterial.SetTexture("_BlueNoise", blueNoise);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_AtmosphereRadius", atmosphereScale);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_PlanetRadius", planetRadius);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_DensityFalloff", densityFalloff);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_ScatteringPoints", scatteringPoints);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_OpticalDepthPoints", opticalDepthPoints);
+			atmosphereBlit.settings.blitMaterial.SetVector("_WaveLengths", waveLenghts);
+			atmosphereBlit.settings.blitMaterial.SetTexture("_OpticalDepthTexture", opticalDepthTexture);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_OceanRadius", hasOcean ? (1 + oceanScale) * planetRadius : 0);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_ScaterringStrength", scatteringStrength);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringStrength", ditheringStrength);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringScale", ditheringScale);
+		} else {
+			if(atmosphereBlit != null) {
+				rendererData.rendererFeatures.Remove(atmosphereBlit);
+				atmosphereBlit.SetActive(false);
+			}
+
+			atmosphereBlit = null;
+		}
+
+		if(hasOcean) {
+			if(oceanBlit == null) {
+				Material oceanMaterial = new Material(oceanShader);
+				oceanBlit = ScriptableObject.CreateInstance<Blit>();
+				oceanBlit.SetActive(true);
+				oceanBlit.name = transform.name + " Ocean";
+				oceanBlit.settings.Event = RenderPassEvent.AfterRenderingTransparents;
+				oceanBlit.settings.blitMaterial = oceanMaterial;
+				oceanBlit.settings.requireDepthNormals = true;
+				rendererData.rendererFeatures.Add(oceanBlit);
+			}
+
+			oceanBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+			oceanBlit.settings.blitMaterial.SetFloat("_Radius", (1 + oceanScale) * planetRadius);
+			oceanBlit.settings.blitMaterial.SetFloat("_PlanetRadius", planetRadius);
+			oceanBlit.settings.blitMaterial.SetColor("_ColorA", highColor);
+			oceanBlit.settings.blitMaterial.SetColor("_ColorB", lowColor);
+			oceanBlit.settings.blitMaterial.SetFloat("_DepthMultiplier", depthMultiplier);
+			oceanBlit.settings.blitMaterial.SetFloat("_AlphaMultiplier", alphaMultiplier);
+			oceanBlit.settings.blitMaterial.SetFloat("_Smoothness", smoothness);
+			oceanBlit.settings.blitMaterial.SetFloat("_WaveSpeed", waveSpeed);
+			oceanBlit.settings.blitMaterial.SetFloat("_WaveStrength", waveStrength);
+			oceanBlit.settings.blitMaterial.SetFloat("_WaveScale", waveScale);
+			oceanBlit.settings.blitMaterial.SetTexture("waveNormalA", waveNormalA);
+			oceanBlit.settings.blitMaterial.SetTexture("waveNormalB", waveNormalB);
+		} else {
+			if(oceanBlit != null) {
+				rendererData.rendererFeatures.Remove(oceanBlit);
+				oceanBlit.SetActive(false);
+			}
+
+			oceanBlit = null;
+		}
+
+		rendererData.SetDirty();
+	}
+
+	// for now, just update positions
+	private void UpdateEffects() {
+		if(hasAtmosphere && atmosphereBlit != null)
+			atmosphereBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+
+		if(hasOcean && oceanBlit != null)
+			oceanBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
+	}
+
+    private void Awake() {
+		SetEffects();
+	}
+
+	private void LateUpdate() {
+		UpdateEffects();
+	}
+
+    private void PrecomputeOutScattering () {
         CreateRenderTexture (ref opticalDepthTexture, textureSize, FilterMode.Bilinear);
         opticalDepthCompute.SetTexture (0, "Result", opticalDepthTexture);
         opticalDepthCompute.SetInt ("textureSize", textureSize);
@@ -28,18 +147,6 @@ public class PlanetEffects : MonoBehaviour
         opticalDepthCompute.SetFloat ("atmosphereRadius", (1 + atmosphereScale));
         opticalDepthCompute.SetFloat ("densityFalloff", densityFalloff);
         Run (opticalDepthCompute, textureSize, textureSize);
-
-        RenderTexture.active = opticalDepthTexture;
-        Texture2D tex = new Texture2D(opticalDepthTexture.width, opticalDepthTexture.height, TextureFormat.RGB24, false);
-        tex.ReadPixels(new Rect(0, 0, opticalDepthTexture.width, opticalDepthTexture.height), 0, 0);
-        RenderTexture.active = null;
-
-        byte[] bytes;
-        bytes = tex.EncodeToPNG();
-        
-        string path = "Assets/Textures/OpticalDepthTexture.png";
-        System.IO.File.WriteAllBytes(path, bytes);
-        AssetDatabase.ImportAsset(path);
 	}
 
 	private static void CreateRenderTexture (ref RenderTexture texture, int size, FilterMode filterMode = FilterMode.Bilinear, GraphicsFormat format = GraphicsFormat.R16G16B16A16_SFloat) {
