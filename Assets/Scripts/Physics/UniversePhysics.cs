@@ -12,10 +12,7 @@ public class UniversePhysics : MonoBehaviour
             Instance = this;
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
-    }
 
-    private void Start() {
-        //Find all celestial bodies that will affect the object in this scene
         celestialBodies = GameObject.FindObjectsOfType<CelestialBody>();
     }
 }
