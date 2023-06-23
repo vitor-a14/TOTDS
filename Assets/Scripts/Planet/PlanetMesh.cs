@@ -646,11 +646,10 @@ public static class DIRECTION
     };
 }
 
-[System.Serializable]
 public class LOD 
 {
     public static Transform cameraPos;
-    public int MaxDetail = 9;
+    public int MaxDetail = 16;
     public Dictionary<int, float> detailLevelDist = new Dictionary<int, float>() {
         {0, Mathf.Infinity },
         {1, 60f  },
