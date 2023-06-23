@@ -136,7 +136,7 @@ float blend(float startHeight, float blendDst, float height) {
 half4 Fragment(GeometryOutput input) : SV_Target 
 {
     // planet surface
-    float3 sphereNormal = normalize(input.positionOS);
+    float3 sphereNormal = normalize(input.positionWS - mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz);
     float steepness = 1 - dot (sphereNormal, input.normalWS);
     steepness = saturate(steepness / _SteepnessThreshold);
 
