@@ -310,9 +310,8 @@ public class PlanetMesh : MonoBehaviour
             LOD.cameraPos = player;
             pos = new Vector3(player.position.x, player.position.y, player.position.z);
             finishedCount = 0; 
-            state = 0;
             state_counter = 0;
-            updateCollision = false;
+            state = 0;
         }
 
         if (finishedCount < 6) {
@@ -321,6 +320,8 @@ public class PlanetMesh : MonoBehaviour
     }
 
     public void UpdateMesh() {
+        cube[state_counter].UpdateMesh();
+
         if (state == 0) {
             cube[state_counter].UpdateQuadTree();
             state_counter += 1;

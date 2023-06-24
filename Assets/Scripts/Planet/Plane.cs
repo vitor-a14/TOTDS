@@ -211,4 +211,9 @@ public class Plane
         collisionMesh.SetNormals(normalListFixedCol, 0, quadtree.verticeCountCollision);
         meshCollider.sharedMesh = collisionMesh;
     }
+
+    public void ClearCollisionMesh() {
+        collisionMesh.Clear();
+        meshCollider.sharedMesh.Clear();
+    }
 }

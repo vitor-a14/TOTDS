@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public enum PhysicsPerspective 
 {
@@ -19,25 +20,45 @@ public class CelestialBody : MonoBehaviour
     private bool playerOnSurface;
     protected bool canOrbit = true;
 
+    private Vector3 celestialPosition;
+
+    public List<CelestialBody> children = new List<CelestialBody>();
+
     private void Start() {
         rigid = GetComponent<Rigidbody>();
-        //ChangePhysicsPerspective(PhysicsPerspective.SPACE);
+        celestialPosition = transform.position;
+        if(orbitAround != null) {
+            orbitAround.children.Add(this);
+        }
     }
 
     private void FixedUpdate() {
-        if(playerOnSurface) {  
+        if(playerOnSurface) {
+            canOrbit = true;  
             if(orbitAround != null) {
                 float combinedRotationSpeed = rotationSpeed + orbitSpeed;
-                orbitAround.transform.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
-                skyDome.Rotate(transform.up * rotationSpeed * Time.fixedDeltaTime);
+                skyDome.Rotate(transform.up * combinedRotationSpeed * Time.fixedDeltaTime);
+                orbitAround.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
 
-                if(isMoon) {
-                    orbitAround.orbitAround.transform.RotateAround(orbitAround.transform.position, orbitAround.orbitAround.transform.up, orbitAround.orbitSpeed * Time.fixedDeltaTime);
+                if(isMoon) {    
+                    orbitAround.canOrbit = false;
+                    orbitAround.orbitAround.RotateAround(transform.position, orbitAround.orbitAround.transform.up, (combinedRotationSpeed + orbitAround.orbitSpeed) * Time.fixedDeltaTime); //relative orbit o
+                    foreach(CelestialBody child in orbitAround.orbitAround.children) {
+                        if(child != orbitAround)
+                            child.RotateAround(transform.position, child.transform.up, (combinedRotationSpeed + orbitAround.orbitSpeed) * Time.fixedDeltaTime);
+                    }
+                } else {
+                    foreach(CelestialBody child in orbitAround.children) {
+                        child.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
+                    }
                 }
             }
         } else {
-            if(orbitAround != null) {
-                transform.RotateAround(orbitAround.transform.position, transform.up, orbitSpeed * Time.fixedDeltaTime);
+            if(orbitAround != null && canOrbit) {
+                RotateAround(orbitAround.transform.position, transform.up, orbitSpeed * Time.fixedDeltaTime);
+                foreach(CelestialBody child in children) {
+                    child.RotateAround(orbitAround.transform.position, child.transform.up, orbitSpeed * Time.fixedDeltaTime);
+                }
             }
 
             transform.Rotate(transform.up * rotationSpeed * Time.fixedDeltaTime);
@@ -51,33 +72,23 @@ public class CelestialBody : MonoBehaviour
     public void ChangePhysicsPerspective(PhysicsPerspective perspective) {
         if(perspective == PhysicsPerspective.PLANET_SURFACE) {
             foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
-                if(celestialBody.orbitAround != null)
-                    celestialBody.transform.SetParent(celestialBody.orbitAround.transform);
-                else 
-                    celestialBody.transform.SetParent(null);
-
                 playerOnSurface = false;
-            }
-            
-            if(isMoon) {
-                transform.SetParent(null); //free moon
-                orbitAround.transform.SetParent(null); //free planet
-                orbitAround.orbitAround.transform.SetParent(orbitAround.transform); //sun becomes parent of planet
-            } else {
-                transform.SetParent(null);
             }
 
             playerOnSurface = true;
-
         } else if (perspective == PhysicsPerspective.SPACE) {
             foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
-                if(celestialBody.orbitAround != null)
-                    celestialBody.transform.SetParent(celestialBody.orbitAround.transform);
-                else 
-                    celestialBody.transform.SetParent(null);
-
                 playerOnSurface = false;
             }
         }
+    }
+
+    //Custom transform rotate around to rotate the body without changing it's rotation 
+    private void RotateAround(Vector3 center, Vector3 axis, float angle){
+        Vector3 pos = transform.position;
+        Quaternion rot = Quaternion.AngleAxis(angle, axis); // get the desired rotation
+        Vector3 dir = pos - center; // find current direction relative to center
+        dir = rot * dir; // rotate the direction
+        transform.position = center + dir; // define new position
     }
 }
