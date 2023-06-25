@@ -4,6 +4,7 @@ using UnityEngine.Jobs;
 using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Collections;
+using System.Collections;
 
 public enum TerrainGenerationMode {
     HEIGHTMAP_TEXTURE,
@@ -130,7 +131,7 @@ public class PlanetMesh : MonoBehaviour
 
         triangleFixedSize = (verticeFixedSize / (res * res) )* ((res - 1) * (res - 1) * 6);
         triangleFixedSizeCol = (verticeFixedSizeCol / (res * res)) * ((res - 1) * (res - 1) * 6);
-        
+
         verticeListFixed0 = new NativeArray<float3>(verticeFixedSize, Allocator.Persistent);
         triangleListFixed0 = new NativeArray<int>(triangleFixedSize, Allocator.Persistent);
         normalListFixed0 = new NativeArray<float3>(verticeFixedSize, Allocator.Persistent);
@@ -199,12 +200,19 @@ public class PlanetMesh : MonoBehaviour
     }
 
     public void RenderPreview() {
+        StartCoroutine(RenderPreviewCorotuine());
+    }
+
+    IEnumerator RenderPreviewCorotuine() {
         foreach(GameObject mesh in meshChildren) {
             DestroyImmediate(mesh);
         }
 
         InitializeScript();
         CreateMesh();
+
+        yield return new WaitForSeconds(0.1f);
+
         OnDestroy();
     }
 

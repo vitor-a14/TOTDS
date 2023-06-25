@@ -43,13 +43,8 @@ public class PlanetMeshEditor : Editor {
         EditorGUILayout.PropertyField(MaterialProp);
         EditorGUILayout.PropertyField(resProp);
         EditorGUILayout.PropertyField(rangeProp);
-        
-        EditorGUI.BeginChangeCheck();
-        EditorGUILayout.PropertyField(terrainGenerationModeProp);
-        if (EditorGUI.EndChangeCheck()) {
-            serializedObject.ApplyModifiedProperties();
-        }
 
+        EditorGUILayout.PropertyField(terrainGenerationModeProp);
         if (terrainGenerationModeProp.intValue == (int)TerrainGenerationMode.HEIGHTMAP_TEXTURE) {
             EditorGUILayout.PropertyField(heightMapProp);
             EditorGUILayout.PropertyField(heightMapResolutionProp);
@@ -62,7 +57,9 @@ public class PlanetMeshEditor : Editor {
         PlanetMesh script = (PlanetMesh)target;
         if(GUILayout.Button("Preview Planet Mesh")) {
             script.RenderPreview();
-        }     
+        }   
+
+        serializedObject.ApplyModifiedProperties();  
     }
 }
 #endif

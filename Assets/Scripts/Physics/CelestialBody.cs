@@ -50,16 +50,19 @@ public class CelestialBody : MonoBehaviour
                             child.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
                     }
                 } else {
-                    foreach(CelestialBody child in orbitAround.children) {
-                        child.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
+                    foreach(CelestialBody planet in orbitAround.children) {
+                        planet.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
+                        foreach(CelestialBody moon in planet.children) {
+                            moon.RotateAround(transform.transform.position, moon.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
+                        }
                     }
                 }
             }
         } else {
             if(orbitAround != null && canOrbit) {
                 RotateAround(orbitAround.transform.position, transform.up, orbitSpeed * Time.fixedDeltaTime);
-                foreach(CelestialBody child in children) {
-                    child.RotateAround(orbitAround.transform.position, child.transform.up, orbitSpeed * Time.fixedDeltaTime);
+                foreach(CelestialBody planet in children) {
+                    planet.RotateAround(orbitAround.transform.position, planet.transform.up, orbitSpeed * Time.fixedDeltaTime);
                 }
             }
 
