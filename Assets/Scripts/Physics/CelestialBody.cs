@@ -15,14 +15,12 @@ public class CelestialBody : MonoBehaviour
     public CelestialBody orbitAround;
     public Transform skyDome;
     public bool isMoon;
-
     [HideInInspector] public Rigidbody rigid;
+
     private bool playerOnSurface;
-    protected bool canOrbit = true;
-
     private Vector3 celestialPosition;
-
-    public List<CelestialBody> children = new List<CelestialBody>();
+    protected bool canOrbit = true;
+    protected List<CelestialBody> children = new List<CelestialBody>();
 
     private void Start() {
         rigid = GetComponent<Rigidbody>();
@@ -46,6 +44,10 @@ public class CelestialBody : MonoBehaviour
                     foreach(CelestialBody child in orbitAround.orbitAround.children) {
                         if(child != orbitAround)
                             child.RotateAround(transform.position, child.transform.up, (combinedRotationSpeed + orbitAround.orbitSpeed) * Time.fixedDeltaTime);
+                    }
+                    foreach(CelestialBody child in orbitAround.children) {
+                        if(child != this)
+                            child.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
                     }
                 } else {
                     foreach(CelestialBody child in orbitAround.children) {

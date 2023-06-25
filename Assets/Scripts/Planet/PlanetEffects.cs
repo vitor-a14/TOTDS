@@ -144,7 +144,7 @@ public class PlanetEffects : MonoBehaviour
 		}
 	}
 
-    private void Awake() {
+    private void Start() {
 		SetEffects();
 	}
 

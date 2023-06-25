@@ -5,20 +5,30 @@ using Unity.Mathematics;
 using Unity.Jobs;
 using Unity.Collections;
 
+public enum TerrainGenerationMode {
+    HEIGHTMAP_TEXTURE,
+    NOISE_CALCULATION
+};
+
 public class PlanetMesh : MonoBehaviour
 {
+    [Header("General Settings")]
     public float radius = 1000;
     public int collisionMeshResolution;
-    public float heightMapPower = 200;
     public float updateInterval = 50;
-
     public Transform player;
-
     public Material Material;
-    public Texture2D heightMap;
 
     [Range(2, 16)] public int res = 2;
     public float[] range;
+
+    [Header("Terrain Settings")]
+    public TerrainGenerationMode terrainGenerationMode;
+    public Texture2D heightMap;
+    public int heightMapResolution;
+    public float heightMapPower = 200;
+
+    public bool useHeightmapTexture;
 
     private int verticeFixedSize = 100000;  
     private int verticeFixedSizeCol = 75000;
@@ -107,7 +117,7 @@ public class PlanetMesh : MonoBehaviour
         maxDetail = range.Length;
         lod = new LOD();
       
-        Color[] tmp = heightMap.GetPixels(0, 0, heightMap.width, heightMap.height);
+        Color[] tmp = heightMap.GetPixels(0, 0, heightMapResolution, heightMapResolution);
         planetTextureData = new NativeArray<float>(tmp.Length, Allocator.Persistent);
         int len = tmp.Length;
         for (int i = 0; i < len; i++) {
@@ -499,6 +509,7 @@ public class PlanetMesh : MonoBehaviour
             tmpTriangleJobBordered = tmpTriangleBorderedN,
             borderedSizeIndex = borderedSizeIndex,
 
+            useHeightmap = (terrainGenerationMode == TerrainGenerationMode.HEIGHTMAP_TEXTURE ? true : false),
             isCollision = collision,
             uvMap = uvMap,
             heightmapDimensions =heightmapDimensions,

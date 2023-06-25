@@ -13,6 +13,7 @@ public struct CalculatePositionJob : IJobParallelFor
     [NativeDisableParallelForRestriction] public NativeArray<int> trianglesJob;
     [NativeDisableParallelForRestriction] public NativeArray<float2> uvJob;
 
+    [ReadOnly] public bool useHeightmap;
     [ReadOnly] public NativeArray<int> tmpTriangleJob;
     [ReadOnly] public NativeArray<int> tmpTriangleJobBordered;
     [ReadOnly] public NativeArray<int> borderedSizeIndex;
@@ -123,7 +124,10 @@ public struct CalculatePositionJob : IJobParallelFor
                 Coordinate2D.y = (Coordinate2D.y / 4) + uvMap.x*0.25f;
                 uvBorder[count] = Coordinate2D;
                 pointOnSphere = math.normalize(pointOnCube);
-                borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));
+                if(useHeightmap)
+                    borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));
+                else 
+                    borderedVerticeArray[count] = pointOnSphere * radiusJob;
                 count += 1;
             }
         }

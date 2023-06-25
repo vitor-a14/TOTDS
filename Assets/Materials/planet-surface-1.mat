@@ -215,7 +215,7 @@ Material:
     - _ReceiveShadows: 1
     - _RootTintSpread: 0.8
     - _RootTintStart: 0.2
-    - _SmoothDepthScale: 0.619
+    - _SmoothDepthScale: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
