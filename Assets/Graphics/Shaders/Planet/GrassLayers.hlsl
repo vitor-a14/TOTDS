@@ -38,11 +38,11 @@ TEXTURE2D(_ShoreTexture); SAMPLER(sampler_ShoreTexture); float4 _ShoreTexture_ST
 
 TEXTURE2D(_DetailNoiseTexture); SAMPLER(sampler_DetailNoiseTexture); float4 _DetailNoiseTexture_ST;
 TEXTURE2D(_SmoothNoiseTexture); SAMPLER(sampler_SmoothNoiseTexture); float4 _SmoothNoiseTexture_ST;
-TEXTURE2D(_WindNoiseTexture); SAMPLER(sampler_WindNoiseTexture); float4 _WindNoiseTexture_ST;
 
 float4 _BaseColor;
 float4 _TopColor;
 float4 _SteepColor;
+float4 _SandColor;
 float _TotalHeight; 
 float _ColorStrength;
 
@@ -52,9 +52,6 @@ float _SteepNoiseStrength;
 
 float _DetailDepthScale;
 float _SmoothDepthScale;
-
-float _WindTimeMult;
-float _WindAmplitude;
 
 float _LODDistance;
 float _LODFactor;
@@ -118,7 +115,7 @@ void Geometry(triangle VertexOutput inputs[3], inout TriangleStream<GeometryOutp
 
     outputStream.RestartStrip();
             
-    if(distance(output.positionWS, _WorldSpaceCameraPos) < _LODDistance * 1.5)
+    if(distance(output.positionWS, _WorldSpaceCameraPos) < _LODDistance * 1.1)
     {
         for (int l = 1; l < GRASS_LAYERS; l++) 
         {
@@ -164,18 +161,14 @@ half4 Fragment(GeometryOutput input) : SV_Target
 
     // Shore
     float2 shoreColUV = TRANSFORM_TEX(input.uv.xy, _ShoreTexture);
-    float3 shoreCol = SAMPLE_TEXTURE2D(_ShoreTexture, sampler_ShoreTexture, shoreColUV).rgb;
+    float3 shoreCol = SAMPLE_TEXTURE2D(_ShoreTexture, sampler_ShoreTexture, shoreColUV).rgb * _SandColor;
 
     float shoreBlendWeight = blend(_ShoreHeight + flatBlendNoise, _ShoreBlend, terrainHeight);
     flatColor = lerp(flatColor, shoreCol, 1 - shoreBlendWeight);
 
     // Detail and smooth noise
-    float dist = distance(input.positionWS, _WorldSpaceCameraPos) / _LODDistance;
     float height = input.uv.z;
-
-    float2 windUV = TRANSFORM_TEX(input.uv.xy, _WindNoiseTexture) + _Time.y * _WindTimeMult;
-    float2 windNoise = SAMPLE_TEXTURE2D(_WindNoiseTexture, sampler_WindNoiseTexture, windUV).xy * 2 - 1;
-    float2 uv = input.uv.xy + windNoise * (_WindAmplitude * height);
+    float2 uv = input.uv.xy;
 
     float detailNoise = SAMPLE_TEXTURE2D(_DetailNoiseTexture, sampler_DetailNoiseTexture, TRANSFORM_TEX(uv, _DetailNoiseTexture)).r * flatStrength * shoreBlendWeight;
     float smoothNoise = SAMPLE_TEXTURE2D(_SmoothNoiseTexture, sampler_SmoothNoiseTexture, TRANSFORM_TEX(uv, _SmoothNoiseTexture)).r;
@@ -196,9 +189,9 @@ half4 Fragment(GeometryOutput input) : SV_Target
     lightingInput.viewDirectionWS = GetViewDirectionFromPosition(input.positionWS); 
     lightingInput.shadowCoord = CalculateShadowCoord(input.positionWS, input.positionCS);
     
-    float maxDistance = 60.0;
+    float maxDistance = _LODDistance;
     float dist2 = distance(input.positionWS, _WorldSpaceCameraPos);
-    float fadeOut = 1.0 - smoothstep(maxDistance - 30.0, maxDistance, dist2);
+    float fadeOut = 1.0 - smoothstep(maxDistance - (_LODDistance / 2), maxDistance, dist2);
 
     //result
     float3 albedo = lerp(surfaceColor, _TopColor, pow(height * fadeOut, _ColorStrength)).rgb; 

@@ -207,7 +207,10 @@ public class Blit : ScriptableRendererFeature {
 	}
 #endif
 
-		blitPass.Setup(renderer);
-		renderer.EnqueuePass(blitPass);
+		Camera currentCamera = renderingData.cameraData.camera;
+		if (!currentCamera.CompareTag("AuxCamera")) {
+			blitPass.Setup(renderer);
+			renderer.EnqueuePass(blitPass);
+		}
 	}
 }

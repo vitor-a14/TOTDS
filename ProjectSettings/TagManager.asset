@@ -8,6 +8,7 @@ TagManager:
   - Interactable
   - Listener
   - Bird
+  - AuxCamera
   layers:
   - Default
   - TransparentFX
@@ -15,7 +16,7 @@ TagManager:
   - Celestial Body
   - Water
   - UI
-  - 
+  - StarView
   - 
   - 
   - 
