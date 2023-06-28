@@ -4174,7 +4174,7 @@ Cloth:
   m_RandomAcceleration: {x: 0, y: 0, z: 0}
   m_WorldVelocityScale: 0.5
   m_WorldAccelerationScale: 1
-  m_Friction: 0
+  m_Friction: 0.3
   m_CollisionMassScale: 15
   m_UseContinuousCollision: 1
   m_UseVirtualParticles: 1
@@ -4609,9 +4609,9 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.0025
     collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.0002
+  - maxDistance: 0.0015
     collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.0002
+  - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.0009
     collisionSphereDistance: 3.4028235e+38
@@ -4789,7 +4789,7 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.0025
     collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.0002
+  - maxDistance: 0.0015
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
@@ -4803,7 +4803,7 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.0015
     collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.0002
+  - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.0009
     collisionSphereDistance: 3.4028235e+38
@@ -9636,7 +9636,7 @@ MonoBehaviour:
   characterModel: {fileID: 6329735610740949875}
   jumpForce: 8
   aditionalJumpForce: 10
-  groundDistanceCheck: 1
+  groundDistanceCheck: 1.2
   walkableLayers:
     serializedVersion: 2
     m_Bits: 8

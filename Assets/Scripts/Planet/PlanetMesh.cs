@@ -6,11 +6,6 @@ using Unity.Jobs;
 using Unity.Collections;
 using System.Collections;
 
-public enum TerrainGenerationMode {
-    HEIGHTMAP_TEXTURE,
-    NOISE_CALCULATION
-};
-
 public class PlanetMesh : MonoBehaviour
 {
     [Header("General Settings")]
@@ -24,12 +19,9 @@ public class PlanetMesh : MonoBehaviour
     public float[] range;
 
     [Header("Terrain Settings")]
-    public TerrainGenerationMode terrainGenerationMode;
     public Texture2D heightMap;
     public int heightMapResolution;
     public float heightMapPower = 200;
-
-    public bool useHeightmapTexture;
 
     private int verticeFixedSize = 100000;  
     private int verticeFixedSizeCol = 75000;
@@ -517,7 +509,6 @@ public class PlanetMesh : MonoBehaviour
             tmpTriangleJobBordered = tmpTriangleBorderedN,
             borderedSizeIndex = borderedSizeIndex,
 
-            useHeightmap = (terrainGenerationMode == TerrainGenerationMode.HEIGHTMAP_TEXTURE ? true : false),
             isCollision = collision,
             uvMap = uvMap,
             heightmapDimensions =heightmapDimensions,

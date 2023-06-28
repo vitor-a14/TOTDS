@@ -124,10 +124,8 @@ public struct CalculatePositionJob : IJobParallelFor
                 Coordinate2D.y = (Coordinate2D.y / 4) + uvMap.x*0.25f;
                 uvBorder[count] = Coordinate2D;
                 pointOnSphere = math.normalize(pointOnCube);
-                if(useHeightmap)
-                    borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));
-                else 
-                    borderedVerticeArray[count] = pointOnSphere * radiusJob;
+
+                borderedVerticeArray[count] = pointOnSphere * (radiusJob+heightMapPower*CalculateHeightMap(uvBorder[count]));
                 count += 1;
             }
         }

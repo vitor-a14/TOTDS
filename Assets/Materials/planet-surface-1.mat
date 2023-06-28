@@ -131,6 +131,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _ShoreTexture:
+        m_Texture: {fileID: 2800000, guid: e7d72f925bc987a42a263f215aaa317b, type: 3}
+        m_Scale: {x: 2100, y: 2100}
+        m_Offset: {x: 0, y: 0}
     - _SmoothNoiseTexture:
         m_Texture: {fileID: 2800000, guid: e8e9c0879dbeb734c94e3134ebfb6ed4, type: 3}
         m_Scale: {x: 400, y: 400}
@@ -203,6 +207,8 @@ Material:
     - _GrassHeight: 0.25
     - _GrassThreshold: -0.1
     - _GrassWidth: 0.25
+    - _HeightMax: 900
+    - _HeightMin: 600
     - _Invert1: 0
     - _Invert2: 0
     - _Invert3: 0
@@ -215,13 +221,17 @@ Material:
     - _ReceiveShadows: 1
     - _RootTintSpread: 0.8
     - _RootTintStart: 0.2
+    - _ShoreBlend: 0.94
+    - _ShoreHeight: 1005.29
+    - _ShoreLow: 0.4
+    - _ShoreMax: 1
     - _SmoothDepthScale: 0
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _SteepNoiseStrength: 1
+    - _SteepNoiseStrength: 0.9
     - _SteepnessThreshold: 0.13
     - _Surface: 0
     - _TessellationGrassDistance: 0.03

@@ -5,10 +5,14 @@ Shader "Grass/GrassLayers"
         _FloorTexture("Floor Texture", 2D) = "white" {}
         _SteepTexture("Steep Texture", 2D) = "white" {}
         _SteepNoise("Steep Noise", 2D) = "white" {}
+        _ShoreTexture("Shore Texture", 2D) = "white" {}
         _FlatToSteepBlend("Flat To Steep Blend", Float) = 1 
         _SteepnessThreshold("Steepness Threshold", Float) = 1 
         _SteepNoiseStrength("Steep Noise Strength", Float) = 1 
         _SteepColor("Top color", Color) = (0, 1, 0, 1) 
+
+        _ShoreHeight("Shore Height", Float) = 1 
+        _ShoreBlend("Shore Blend", Float) = 1 
 
         _ColorStrength("Color strength", Float) = 1 
         _BaseColor("Base color", Color) = (0, 0.5, 0, 1) 
