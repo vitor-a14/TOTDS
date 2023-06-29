@@ -29,8 +29,9 @@
 
 	SubShader
 	{
-		Tags{"Queue" = "Transparent" "RenderType" = "Transparent"}
+		Tags { "QUEUE"="Background" "RenderType"="Background" "PreviewType"="Skybox" }
 		ZWrite Off
+		Cull Off
 		Blend One One
 		Pass 
 		{
