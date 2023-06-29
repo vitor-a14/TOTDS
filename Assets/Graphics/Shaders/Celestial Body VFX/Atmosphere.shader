@@ -6,7 +6,6 @@ Shader "Planet/Atmosphere"
         _BlueNoise ("Blue Noise", 2D) = "white" {}
         _OpticalDepthTexture ("Optical Depth Texture", 2D) = "white" {}
         _PlanetPosition ("Planet Position", Vector) = (0,0,0)
-        _SunDir ("Sun Direction", Vector) = (0,0,0)
         _AtmosphereRadius ("Atmosphere Radius", float) = 0
         _PlanetRadius ("Planet Radius", float) = 0
         _OceanRadius ("Ocean Radius", float) = 0

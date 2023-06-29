@@ -4,7 +4,6 @@ Shader "Planet/Ocean"
     {
         _MainTex ("Texture", 2D) = "white" {}
         _PlanetPosition("Position", Vector) = (0,0,0)
-        _SunDir("Sun Direction", Vector) = (0,0,0)
         _Radius("Ocean Radius", float) = 0
         _PlanetRadius("Planet Radius", float) = 20
         _ColorA("Color A", Color) = (1,1,1,1)
@@ -86,6 +85,7 @@ Shader "Planet/Ocean"
 			sampler2D waveNormalB;
 
             float3 _PlanetPosition;
+            float3 _SunDir;
             float _Radius;
             float4 _ColorA;
             float4 _ColorB;
@@ -131,11 +131,10 @@ Shader "Planet/Ocean"
 					waveNormal = normalize(lerp(oceanNormal, waveNormal, _WaveStrength));
 
                     //Light calculation
-                    float3 dirToSun = normalize(_WorldSpaceLightPos0.xyz);
-                    float specularAngle = acos(dot(normalize(dirToSun - rayDir), waveNormal));
+                    float specularAngle = acos(dot(normalize(_SunDir - rayDir), waveNormal));
                     float specularExponent = specularAngle / (1 - _Smoothness);
                     float specularHighlight = exp(-specularExponent * specularExponent);
-                    float diffuseLighting = saturate(dot(oceanNormal, dirToSun));
+                    float diffuseLighting = saturate(dot(oceanNormal, _SunDir));
 
                     float4 oceanColor = lerp(_ColorA, _ColorB, opticalDepth01) * diffuseLighting + specularHighlight;
 					return lerp(col, oceanColor, alpha);
