@@ -33,11 +33,6 @@ float3 GetViewDirectionFromPosition(float3 positionWS) {
 
 // URP Helpers
 
-// If this is the shadow caster pass, we also need this variable, which URP sets
-#ifdef SHADOW_CASTER_PASS
-float3 _LightDirection;
-#endif
-
 // Calculates the position in clip space, taking into account various strategies
 // to improve shadow quality in the shadow caster pass
 float4 CalculatePositionCSWithShadowCasterLogic(float3 positionWS, float3 normalWS) {
@@ -47,6 +42,7 @@ float4 CalculatePositionCSWithShadowCasterLogic(float3 positionWS, float3 normal
     // From URP's ShadowCasterPass.hlsl
     // If this is the shadow caster pass, we need to adjust the clip space position to account
     // for shadow bias and offset (this helps reduce shadow artifacts)
+    float3 _LightDirection = normalize(_SunPos - positionWS); //_SunPos is updated on the sun script
     positionCS = TransformWorldToHClip(ApplyShadowBias(positionWS, normalWS, _LightDirection));
 #if UNITY_REVERSED_Z
     positionCS.z = min(positionCS.z, positionCS.w * UNITY_NEAR_CLIP_VALUE);

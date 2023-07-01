@@ -1,6 +1,6 @@
 #pragma kernel CSMain
 
-#include "../Math.cginc"
+#include "../Utility/Math.cginc"
 
 RWTexture2D<float4> Result;
 int textureSize;

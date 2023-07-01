@@ -77,9 +77,6 @@ public class PlanetEffects : MonoBehaviour
 			atmosphereBlit.settings.blitMaterial.SetFloat("_ScaterringStrength", scatteringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringStrength", ditheringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringScale", ditheringScale);
-
-			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
-			atmosphereBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		} else {
 			if(atmosphereBlit != null) {
 				rendererData.rendererFeatures.Remove(atmosphereBlit);
@@ -114,9 +111,6 @@ public class PlanetEffects : MonoBehaviour
 			oceanBlit.settings.blitMaterial.SetFloat("_WaveScale", waveScale);
 			oceanBlit.settings.blitMaterial.SetTexture("waveNormalA", waveNormalA);
 			oceanBlit.settings.blitMaterial.SetTexture("waveNormalB", waveNormalB);
-
-			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
-			oceanBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		} else {
 			if(oceanBlit != null) {
 				rendererData.rendererFeatures.Remove(oceanBlit);
@@ -130,17 +124,14 @@ public class PlanetEffects : MonoBehaviour
 	}
 
 	// for now, just update positions
+	// The Sun Position doesn't need to be updated, it is updated on the Sun script globally!
 	private void UpdateEffects() {
 		if(hasAtmosphere && atmosphereBlit != null) {
-			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
 			atmosphereBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
-			atmosphereBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		}
 
 		if(hasOcean && oceanBlit != null) {
-			Vector3 sunDirection = (sunTransform.position - transform.position).normalized;
 			oceanBlit.settings.blitMaterial.SetVector("_PlanetPosition", transform.position);
-			oceanBlit.settings.blitMaterial.SetVector("_SunDir", sunDirection);
 		}
 	}
 

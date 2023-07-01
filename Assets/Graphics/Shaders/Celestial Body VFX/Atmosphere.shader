@@ -32,7 +32,7 @@ Shader "Planet/Atmosphere"
             static const float maxFloat = 3.402823466e+38;
 
             float3 _PlanetPosition;
-            float3 _SunDir;
+            float3 _SunPos; //Updated on the sun script globally
             float _AtmosphereRadius;
             float _PlanetRadius;
             float _OceanRadius;
@@ -155,6 +155,8 @@ Shader "Planet/Atmosphere"
                 float stepSize = rayLength / (_ScatteringPoints - 1);
                 float3 inScatteredLight = 0;
                 float viewRayOpticalDepth = 0;
+
+                float3 _SunDir = normalize(_SunPos - _PlanetPosition);
 
                 for(int i = 0; i < _ScatteringPoints; i++)
                 {

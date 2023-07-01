@@ -28,7 +28,7 @@ Shader "Planet/Ocean"
             #pragma fragment frag
 
             #include "UnityCG.cginc"
-            #include "../Triplanar.cginc"
+            #include "../Utility/Triplanar.cginc"
 
             static const float maxFloat = 3.402823466e+38;
 
@@ -85,7 +85,7 @@ Shader "Planet/Ocean"
 			sampler2D waveNormalB;
 
             float3 _PlanetPosition;
-            float3 _SunDir;
+            float3 _SunPos; //Updated on the sun script globally
             float _Radius;
             float4 _ColorA;
             float4 _ColorB;
@@ -119,6 +119,8 @@ Shader "Planet/Ocean"
 
                 if (oceanViewDepth > 0) 
                 {
+                    float3 _SunDir = normalize(_SunPos - _PlanetPosition);
+                    
                     float opticalDepth01 = 1 - exp(-oceanViewDepth / _PlanetRadius * _DepthMultiplier);
                     float alpha = 1 - exp(-oceanViewDepth / _PlanetRadius * _AlphaMultiplier);
                     float3 oceanNormal = normalize(rayPos + rayDir * dstToOcean - _PlanetPosition);

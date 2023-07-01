@@ -4937,6 +4937,8 @@ MonoBehaviour:
   useTransformParent: 0
   rigid: {fileID: 0}
   cloth: {fileID: 0}
+  material: {fileID: 2100000, guid: d9634205aa79eaf4782f6d6e3b4bb764, type: 2}
+  sunTransform: {fileID: 0}
 --- !u!1 &1027204214805595512
 GameObject:
   m_ObjectHideFlags: 0
@@ -9560,7 +9562,7 @@ Transform:
   - {fileID: 6329735610740949875}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -21452,6 +21454,7 @@ MonoBehaviour:
   lookPosition: {x: 0, y: 0, z: 0}
   lookRotation: {x: 0, y: 0, z: 0, w: 0}
   inCameraTransition: 0
+  CameraHalfExtends: {x: 0.3, y: 0.3, z: 0.3}
 --- !u!1 &6526962623598055177
 GameObject:
   m_ObjectHideFlags: 0
