@@ -25,6 +25,8 @@ public class CameraController : MonoBehaviour
     [HideInInspector] public Quaternion lookRotation;
     [HideInInspector] public bool inCameraTransition = false; //This is used when transitioning between the bird mode and character mode
 
+    public Vector3 CameraHalfExtends;
+
     private void Awake() {
         if(Instance == null) 
             Instance = this;
@@ -83,10 +85,11 @@ public class CameraController : MonoBehaviour
         Vector3 lookDirection = lookRotation * Vector3.forward;
 
         //Camera collision logic
-        if (Physics.Raycast(focusPoint, -lookDirection, out RaycastHit hit, distance, cameraCollisionMask))
-            lookPosition = focusPoint - lookDirection * hit.distance + (hit.normal * 0.12f);
-        else
+        if (Physics.BoxCast(focusPoint, CameraHalfExtends, -lookDirection, out RaycastHit hit, lookRotation, distance - Camera.main.nearClipPlane, cameraCollisionMask)) {
+			lookPosition = focusPoint - lookDirection * (hit.distance + Camera.main.nearClipPlane);
+		} else {
             lookPosition = focusPoint - lookDirection * distance;
+        }
 
         //Apply position
         camRigid.Move(lookPosition, lookRotation);

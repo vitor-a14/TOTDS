@@ -7,15 +7,6 @@
       "dependencies": {},
       "hash": "c481ef12a9b2f3013ad006099d29b0d085564678"
     },
-    "com.jimmycushnie.noisynodes": {
-      "version": "https://github.com/JimmyCushnie/Noisy-Nodes.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.shadergraph": "7.1.8"
-      },
-      "hash": "1f212c268860dc1dc260bbd60d03246908508b79"
-    },
     "com.unity.burst": {
       "version": "1.8.4",
       "depth": 1,

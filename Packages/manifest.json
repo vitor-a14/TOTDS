@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.64bleat.astronomy": "https://github.com/64bleat/AstronomicSkybox-Unity.git",
-    "com.jimmycushnie.noisynodes": "https://github.com/JimmyCushnie/Noisy-Nodes.git",
     "com.unity.collections": "1.2.4",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.inputsystem": "1.5.1",

@@ -8,6 +8,7 @@ public class PlanetMeshEditor : Editor {
     private SerializedProperty collisionMeshResolutionProp;
     private SerializedProperty updateIntervalProp;
     private SerializedProperty playerProp;
+    private SerializedProperty useShadowsProp;
     private SerializedProperty MaterialProp;
     private SerializedProperty resProp;
     private SerializedProperty rangeProp;
@@ -21,6 +22,7 @@ public class PlanetMeshEditor : Editor {
         collisionMeshResolutionProp = serializedObject.FindProperty("collisionMeshResolution");
         updateIntervalProp = serializedObject.FindProperty("updateInterval");
         MaterialProp = serializedObject.FindProperty("Material");
+        useShadowsProp = serializedObject.FindProperty("useShadows");
         resProp = serializedObject.FindProperty("res");
         rangeProp = serializedObject.FindProperty("range");
 
@@ -36,6 +38,7 @@ public class PlanetMeshEditor : Editor {
         EditorGUILayout.PropertyField(collisionMeshResolutionProp);
         EditorGUILayout.PropertyField(updateIntervalProp);
         EditorGUILayout.PropertyField(MaterialProp);
+        EditorGUILayout.PropertyField(useShadowsProp);
         EditorGUILayout.PropertyField(resProp);
         EditorGUILayout.PropertyField(rangeProp);
 

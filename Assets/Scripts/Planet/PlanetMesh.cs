@@ -14,6 +14,7 @@ public class PlanetMesh : MonoBehaviour
     public float updateInterval = 50;
     public Transform player;
     public Material Material;
+    public bool useShadows;
 
     [Range(2, 16)] public int res = 2;
     public float[] range;
@@ -109,7 +110,7 @@ public class PlanetMesh : MonoBehaviour
     private void InitializeScript() {
         maxDetail = range.Length;
         lod = new LOD();
-      
+        
         Color[] tmp = heightMap.GetPixels(0, 0, heightMapResolution, heightMapResolution);
         planetTextureData = new NativeArray<float>(tmp.Length, Allocator.Persistent);
         int len = tmp.Length;
@@ -247,7 +248,6 @@ public class PlanetMesh : MonoBehaviour
             JobCalculateTerrain(i,false);
             JobCalculateTerrain(i, true);
             cube[i].UpdateMesh();
-
         }
 
         finishedCount = 0;
@@ -607,14 +607,18 @@ public class PlanetMesh : MonoBehaviour
                 meshObj.layer = gameObject.layer;
                 meshObj.transform.localPosition = Vector3.zero;
                 meshObj.transform.localRotation = quaternion.identity;
-                meshObj.AddComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+                MeshRenderer meshRenderer = meshObj.AddComponent<MeshRenderer>();
+
+                if(!useShadows)
+                    meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
                 
                 meshFilters[i] = meshObj.AddComponent<MeshFilter>();
                 meshColliders[i] = meshObj.AddComponent<MeshCollider>();
                 meshFilters[i].sharedMesh = cube[i].mesh;
                 meshColliders[i].sharedMesh = cube[i].collisionMesh;
                 meshColliders[i].convex = false;
-                meshObj.GetComponent<MeshRenderer>().material = Material;
+                meshRenderer.material = Material;
                 cube[i].meshCollider = meshColliders[i];
 
                 meshChildren.Add(meshObj);
