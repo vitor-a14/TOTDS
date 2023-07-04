@@ -10,7 +10,7 @@ public class PhysicsObject : MonoBehaviour
     public bool useTransformParent = true; //if activated, the object will be attached to close celestial bodies with SetParent
 
     [HideInInspector] public Rigidbody rigid;
-    protected Vector3 mainForceDirection = Vector3.zero;
+    [HideInInspector] public Vector3 mainForceDirection = Vector3.zero;
     private List<Vector3> collisionVertices = new List<Vector3>();
 
     private float rotationSpeed = 85f;

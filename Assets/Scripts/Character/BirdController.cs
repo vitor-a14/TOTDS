@@ -135,6 +135,7 @@ public class BirdController : Interactable
         player.gameObject.SetActive(true);
         player.SetParent(null);
         PlayerController.Instance.inputs.Enable();
+        PlayerController.Instance.AdjustModelRotation();
         inputs.Disable();
         physics.userGravitacionalForce = true;
         physics.rigid.freezeRotation = false;

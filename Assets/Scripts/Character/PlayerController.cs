@@ -105,9 +105,18 @@ public class PlayerController : PhysicsObject
             CharacterAnimation.Instance.landing = false;
             Quaternion modelRotation = Quaternion.LookRotation(-direction.normalized, gravityDirection);
             characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+        } else {
+            Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
+            Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
+            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
         }
 
         CheckGround();
+    }
+
+    public void AdjustModelRotation() {
+        Vector3 gravityDirection = GetGravityDirection();
+        characterModel.rotation = Quaternion.LookRotation(transform.forward, gravityDirection);
     }
 
     private void FixedUpdate() {
