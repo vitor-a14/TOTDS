@@ -23,6 +23,7 @@ public class PlayerController : PhysicsObject
     public LayerMask walkableLayers;
     public float holdJumpTime;
 
+    [HideInInspector] public string floorTag;
     private bool shiftWalk = false; //only for keyboard
     private float jumpingTimer;
     private Vector2 input;
@@ -141,6 +142,7 @@ public class PlayerController : PhysicsObject
         RaycastHit hit;
         if (Physics.SphereCast(transform.position, 0.1f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
             surfaceNormal = hit.normal;
+            floorTag = hit.collider.transform.tag;
             onGround = true;
         } else {
             onGround = false;

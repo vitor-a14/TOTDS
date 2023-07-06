@@ -15,6 +15,7 @@ public class PlanetMesh : MonoBehaviour
     public Transform player;
     public Material Material;
     public bool useShadows;
+    public string floorTag;
 
     [Range(2, 16)] public int res = 2;
     public float[] range;
@@ -604,6 +605,7 @@ public class PlanetMesh : MonoBehaviour
                 GameObject meshObj = new GameObject("mesh" + i);
 
                 meshObj.transform.parent = transform;
+                meshObj.transform.tag = floorTag;
                 meshObj.layer = gameObject.layer;
                 meshObj.transform.localPosition = Vector3.zero;
                 meshObj.transform.localRotation = quaternion.identity;

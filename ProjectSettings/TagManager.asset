@@ -9,6 +9,9 @@ TagManager:
   - Listener
   - Bird
   - AuxCamera
+  - Grass
+  - Stone
+  - Sand
   layers:
   - Default
   - TransparentFX
