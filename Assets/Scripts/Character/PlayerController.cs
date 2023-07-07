@@ -31,6 +31,7 @@ public class PlayerController : PhysicsObject
     private Vector3 surfaceNormal;
     [HideInInspector] public Vector3 direction;
     public bool jumping;
+    public Cloth cape;
 
     //To detect if the player hit the ground and activate a callback to the animation
     private bool _onGround = true; //only for structure, use the variable below instead
@@ -173,7 +174,9 @@ public class PlayerController : PhysicsObject
     //Time window to know if the player is pressing the jumping button and apply a higher jump force
     private IEnumerator JumpWindow() {
         jumping = true;
+        cape.worldAccelerationScale = 0.1f;
         yield return new WaitForSeconds(1f);
+        cape.worldAccelerationScale = 1f;
         jumping = false;
     }  
 
