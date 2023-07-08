@@ -19,7 +19,7 @@ public class InteractableMessage : Interactable
         }
 
         CommunicationHandler.Instance.readingTarget = this;
-        PlayerController.Instance.reading = true;
+        player.Instance.reading = true;
         currentMessage = -1;
 
         ShowMessage();
@@ -29,7 +29,7 @@ public class InteractableMessage : Interactable
         currentMessage++;
         if(currentMessage > messageText.Length - 1) {
             UIManager.Instance.HideText();
-            PlayerController.Instance.reading = false;
+            player.Instance.reading = false;
         } else {
             UIManager.Instance.ShowText(messageText[currentMessage]);
         }

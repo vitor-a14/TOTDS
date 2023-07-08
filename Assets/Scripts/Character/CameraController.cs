@@ -36,14 +36,14 @@ public class CameraController : MonoBehaviour
 
     private void Start() {
         //Receive input system from character controller script
-        PlayerController.Instance.inputs.Character.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
-        PlayerController.Instance.inputs.Character.Camera.canceled += ctx => cameraInput = Vector2.zero;
+        player.Instance.inputs.Character.Camera.performed += ctx => cameraInput = ctx.ReadValue<Vector2>();
+        player.Instance.inputs.Character.Camera.canceled += ctx => cameraInput = Vector2.zero;
         focusPoint = transform.parent.position;
     }
 
     //Calculate the camera smooth follow position to the transform parent
     private void FixedUpdate() {
-        if(isActive && !PlayerController.Instance.reading) 
+        if(isActive && !player.Instance.reading) 
             CalculateInput();
 
         ApplyMotion();

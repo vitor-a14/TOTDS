@@ -7466,7 +7466,7 @@ Transform:
   - {fileID: 6329735610740949875}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -12129,12 +12129,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3891092162315636277}
-  m_LocalRotation: {x: 0.13907999, y: 0.69506216, z: 0.69173485, w: -0.13801564}
-  m_LocalPosition: {x: 0.000065458866, y: 0.0011383771, z: -0.000050960665}
-  m_LocalScale: {x: 0.052474134, y: 0.0537339, z: 0.03021821}
+  m_LocalRotation: {x: 0.13908, y: 0.695062, z: 0.6917351, w: -0.13801558}
+  m_LocalPosition: {x: 0.00006527434, y: 0.0011448044, z: -0.000050826064}
+  m_LocalScale: {x: 0.05232681, y: 0.05358304, z: 0.030388586}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5088472417042966426}
+  m_Father: {fileID: 5666793183078211842}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5051566176763546273
@@ -16918,6 +16918,7 @@ Transform:
   m_LocalScale: {x: 0.9999992, y: 1.0000001, z: 0.99999887}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5665276345000966607}
   - {fileID: 1289567119021331948}
   m_Father: {fileID: 6641287500989167236}
   m_RootOrder: -1
@@ -26988,7 +26989,6 @@ Transform:
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5665276345000966607}
   - {fileID: 9210912862985584670}
   m_Father: {fileID: 1614444797206210763}
   m_RootOrder: -1
@@ -27639,6 +27639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b9ac0eab3a8f34881b1c22381979d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  feetIK: {fileID: 0}
   landing: 0
   stoping: 0
 --- !u!114 &6061898532744425569
@@ -27654,6 +27655,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   footstepVolume: 0.09
+  audioSource: {fileID: 0}
   footsteps:
   - floorTag: Grass
     audios:

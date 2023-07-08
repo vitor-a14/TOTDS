@@ -40,7 +40,7 @@ public class CommunicationHandler : MonoBehaviour
     //If the player inputs a interaction with the keys, this function is called (setup in PlayerController)
     //Add the interaction to the queue and make sure to fit the size
     public void AddInteraction(Interaction interaction) {
-        if(PlayerController.Instance.reading) return;
+        if(player.Instance.reading) return;
 
         if(interactions.Count >= interactionsQueueSize)
             interactions.Dequeue();
@@ -72,7 +72,7 @@ public class CommunicationHandler : MonoBehaviour
     //The functions bellow handle a more conventional interaction system: push the button and interact with the object
 
     public void InteractWithCurrentTarget() {
-        if(simpleInteractionTarget == null || PlayerController.Instance.reading) return;
+        if(simpleInteractionTarget == null || player.Instance.reading) return;
         simpleInteractionTarget.Interact();
     }
 

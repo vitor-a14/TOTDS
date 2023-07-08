@@ -2,9 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : PhysicsObject
+public class player : PhysicsObject
 {
-    public static PlayerController Instance { get; private set; }
+    public static player Instance { get; private set; }
 
     [HideInInspector] public Inputs inputs;
 

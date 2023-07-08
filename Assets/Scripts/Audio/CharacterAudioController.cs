@@ -11,10 +11,11 @@ public class CharacterAudioController : MonoBehaviour
     }
 
     public float footstepVolume;
+    public AudioSource audioSource;
     public Footstep[] footsteps;
 
     public void PlayFootstep() {
-        string floorTag = PlayerController.Instance.floorTag;
+        string floorTag = player.Instance.floorTag;
 
         foreach(Footstep footstep in footsteps) {
             if(footstep.floorTag == floorTag) {

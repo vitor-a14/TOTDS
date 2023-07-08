@@ -28,7 +28,7 @@ public class HeadLiquid : MonoBehaviour
     }
 
     public void LookAtGravityDirection() {
-        Vector3 gravityDirection = PlayerController.Instance.GetGravityDirection();
+        Vector3 gravityDirection = player.Instance.GetGravityDirection();
 
         if(gravityDirection != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(gravityDirection, Vector3.up);

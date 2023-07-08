@@ -14,9 +14,25 @@ public class CharacterAnimation : MonoBehaviour
     private static readonly int land_hash = Animator.StringToHash("Land");
     private static readonly int stop_hash = Animator.StringToHash("Stop");
 
+    public Transform feetIK;
+
     [Header("Animation States")]
     public bool landing;
     public bool stoping;
+
+    private player player;
+
+    void OnAnimatorIK() {
+        if(anim) {
+            anim.SetLookAtWeight(1);
+            anim.SetLookAtPosition(Camera.main.transform.position);
+
+            anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
+            anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1);  
+            anim.SetIKPosition(AvatarIKGoal.LeftFoot, feetIK.position);
+            anim.SetIKRotation(AvatarIKGoal.LeftFoot, feetIK.rotation);
+        }
+    }
 
     private void Awake() {
         if(Instance == null) 
@@ -27,6 +43,7 @@ public class CharacterAnimation : MonoBehaviour
 
     void Start() {
         anim = GetComponent<Animator>();
+        player = player.Instance;
     }
 
     void Update() {
@@ -34,8 +51,8 @@ public class CharacterAnimation : MonoBehaviour
     }
 
     private int GetCurrentState() {
-        if(!PlayerController.Instance.onGround) {
-            if(PlayerController.Instance.jumping) 
+        if(!player.onGround) {
+            if(player.jumping) 
                 return jump_hash;
             else
                 return fall_hash;
@@ -43,9 +60,9 @@ public class CharacterAnimation : MonoBehaviour
             if(landing) 
                 return land_hash;
             else {
-                if(PlayerController.Instance.direction.magnitude > PlayerController.Instance.movementSpeed / 1.9f) 
+                if(player.direction.magnitude > player.movementSpeed / 1.9f) 
                     return run_hash;
-                else if(PlayerController.Instance.direction.magnitude < PlayerController.Instance.movementSpeed / 1.9f && PlayerController.Instance.direction.magnitude != 0) 
+                else if(player.Instance.direction.magnitude < player.movementSpeed / 1.9f && player.direction.magnitude != 0) 
                     return walk_hash;
                 else 
                     return idle_hash;
