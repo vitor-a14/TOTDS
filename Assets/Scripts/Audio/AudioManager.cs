@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public enum AudioType {
     SFX,
@@ -6,15 +7,27 @@ public enum AudioType {
     Music
 }
 
+public enum AudioSnapshot {
+    OUTDOOR,
+    INDOOR,
+    NONE
+}
+
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
     [Header("Settings")]
+    public AudioMixerGroup audioMixer;
+    public AudioMixerSnapshot indoorAudioSnapshot;
+    public AudioMixerSnapshot outsideAudioSnapshot;
+
     [Range(0, 10)] public float masterVolume;
     [Range(0, 1)] public float SFXVolume;
     [Range(0, 1)] public float ambienceVolume;
     [Range(0, 1)] public float musicVolume;
+
+    private static float snapshotTransitionDuration = 1.0f;
 
     private void Awake() {
         if(Instance == null)
@@ -25,9 +38,17 @@ public class AudioManager : MonoBehaviour
         AudioListener.volume = 1;
     }
 
+    public void ChangeAudioSnapshot(AudioSnapshot snapshot) {
+        if(snapshot == AudioSnapshot.INDOOR)
+            indoorAudioSnapshot.TransitionTo(snapshotTransitionDuration);
+        else if(snapshot == AudioSnapshot.OUTDOOR)
+            outsideAudioSnapshot.TransitionTo(snapshotTransitionDuration);
+    }
+
     //Create a 3D audio instance in a gameobject
     public void PlayOneShot3D(AudioClip audio, GameObject entity, AudioType type, float multiplier) {
         AudioSource audioSource = entity.AddComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = audioMixer;
 
         switch(type) {
         case AudioType.SFX:
@@ -52,6 +73,7 @@ public class AudioManager : MonoBehaviour
     //Create a 2D audio instance in a gameobject
     public void PlayOneShot2D(AudioClip audio, GameObject entity, AudioType type, float multiplier) {
         AudioSource audioSource = entity.AddComponent<AudioSource>();
+        audioSource.outputAudioMixerGroup = audioMixer;
 
         switch(type) {
         case AudioType.SFX:
@@ -75,6 +97,9 @@ public class AudioManager : MonoBehaviour
 
     //Use a already existent audio source to play a audio
     public void PlayOnAudioSorce(AudioClip audio, AudioSource audioSource, AudioType type, float multiplier) {
+        if(audioSource.outputAudioMixerGroup == null)
+            audioSource.outputAudioMixerGroup = audioMixer;
+
         switch(type) {
         case AudioType.SFX:
             audioSource.volume = SFXVolume;

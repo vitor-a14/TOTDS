@@ -14,7 +14,7 @@ public class PhysicsObject : MonoBehaviour
     private List<Vector3> collisionVertices = new List<Vector3>();
 
     private float rotationSpeed = 85f;
-    private float setParentThreshold = 150f; //the distance that will make the object be attached to the celestial body
+    private float setParentThreshold = 300f; //the distance that will make the object be attached to the celestial body
 
     private CelestialBody lastParentBody;
 

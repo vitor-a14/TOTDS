@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BirdController : Interactable
@@ -9,7 +8,6 @@ public class BirdController : Interactable
     public float changeModeDuration;
     public float movementSpeed;
     public float torqueSpeed;
-    public float boostForce;
     public float boostSpeed;
     public float boostCooldown;
     public float boostModeThreshold;
@@ -18,6 +16,7 @@ public class BirdController : Interactable
     private bool canCheckBoostModeStatus = true;
 
     [Header("Camera Settings")]
+    public Vector3 cameraHalfExtends;
     public Vector3 cameraOffset;
     public float cameraFollowSpeed, cameraRotationSpeed;
     [SerializeField] private Transform cam;
@@ -30,7 +29,12 @@ public class BirdController : Interactable
     private Vector2 inputMove, inputRotate;
     private float inputAltitude;
     private float inputRoll;
-    private Vector3 direction, torqueRotation;
+    private Vector3 forwardDirection, otherDirections, torqueRotation;
+
+    [Header("Animation")]
+    public Transform[] motorRings;
+    public float motorRotationVelocity;
+    private float motorCurrentRotationVelocity;
 
     private void Awake() {
         inputs = new Inputs();
@@ -51,20 +55,41 @@ public class BirdController : Interactable
     private void Update() {
         boostTimer += Time.deltaTime;
         boostTimer = Mathf.Clamp(boostTimer, 0, boostCooldown);
-        if(!piloting) return;
-        BirdInput();
+
+        if(piloting) 
+            BirdInput();
     }
 
     private void FixedUpdate() {
-        if(!piloting) return;
-        ProcessBirdMovement();
-        ProcessCameraMovement();
+        if(piloting) {
+            ProcessBirdMovement();
+            ProcessCameraMovement();
+            motorCurrentRotationVelocity = motorRotationVelocity * (1 + inputMove.magnitude * 2);
+        } else {
+            motorCurrentRotationVelocity = motorRotationVelocity;
+        }
+
+        ProcessAnimation();        
+    }
+
+    private void ProcessAnimation() {
+        int count = 0;
+        foreach(Transform ring in motorRings) {
+            if(count % 2 == 0) {
+                ring.Rotate(Vector3.up * motorCurrentRotationVelocity * Time.deltaTime);
+            } else {
+                ring.Rotate(Vector3.up * -motorCurrentRotationVelocity * Time.deltaTime);
+            }
+            count++;
+        }
     }
 
     private void BirdInput() {
         inputMove = ClampMagnitude(inputMove, 0.4f, 1.0f);
         inputRotate = ClampMagnitude(inputRotate, 0.4f, 1.0f);
-        direction = (transform.forward * inputMove.y + transform.right * inputMove.x + transform.up * inputAltitude) * movementSpeed;
+        
+        forwardDirection = (transform.forward * inputMove.y) * movementSpeed;
+        otherDirections = (transform.right * inputMove.x + transform.up * inputAltitude) * movementSpeed;
         torqueRotation = (Vector3.up * inputRotate.x + Vector3.forward * -inputRoll + Vector3.right * -inputRotate.y) * torqueSpeed;
     }
 
@@ -74,18 +99,33 @@ public class BirdController : Interactable
             aditionalForce = boostSpeed;
         }
 
-        physics.rigid.AddForce(direction * aditionalForce * Time.deltaTime, ForceMode.VelocityChange);
-        physics.rigid.AddRelativeTorque(torqueRotation * Time.deltaTime, ForceMode.VelocityChange);
+        physics.rigid.AddForce(forwardDirection * aditionalForce * physics.rigid.mass * Time.deltaTime, ForceMode.Acceleration);
+        physics.rigid.AddForce(otherDirections * physics.rigid.mass * Time.deltaTime, ForceMode.Acceleration);
 
-        if(physics.rigid.velocity.magnitude <= boostModeThreshold && canCheckBoostModeStatus) {
+        if(speedMode)
+            physics.rigid.AddRelativeTorque((torqueRotation / 2.5f) * Time.deltaTime, ForceMode.VelocityChange);
+        else
+            physics.rigid.AddRelativeTorque(torqueRotation * Time.deltaTime, ForceMode.VelocityChange);
+
+        if(inputMove.magnitude <= boostModeThreshold && canCheckBoostModeStatus) {
             speedMode = false;
         }
     }
 
     private void ProcessCameraMovement() {
         if(inCameraTransition) return;
+
         Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
-        Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
+        Quaternion lookRotation = cam.transform.rotation;
+        Vector3 lookDirection = lookRotation * Vector3.forward;
+        Vector3 camPos;
+
+        if (Physics.BoxCast(offsetPosition, cameraHalfExtends, -lookDirection, out RaycastHit hit, lookRotation, cameraOffset.z - Camera.main.nearClipPlane, CameraController.Instance.cameraCollisionMask)) {
+            camPos = offsetPosition - cam.forward * (hit.distance + Camera.main.nearClipPlane);
+		} else {
+            camPos = offsetPosition - cam.forward * cameraOffset.z;
+        }
+
         cam.rotation = Quaternion.Slerp(cam.rotation, transform.rotation, cameraRotationSpeed * Time.fixedDeltaTime);
         cam.position = Vector3.Lerp(cam.position, camPos, cameraFollowSpeed * Time.fixedDeltaTime);
     }
@@ -94,7 +134,6 @@ public class BirdController : Interactable
         if(!piloting) return;
         
         if(boostTimer >= boostCooldown) {
-            physics.rigid.AddForce(transform.forward * boostForce, ForceMode.VelocityChange);
             StartCoroutine(CheckBoostModeCooldown());
             speedMode = true;
             boostTimer = 0;

@@ -11,7 +11,8 @@ public class CharacterAudioController : MonoBehaviour
     }
 
     public float footstepVolume;
-    public AudioSource audioSource;
+    public AudioSource outdoorAudioSource;
+    public AudioSource indoorAudioSource;
     public Footstep[] footsteps;
 
     public void PlayFootstep() {
