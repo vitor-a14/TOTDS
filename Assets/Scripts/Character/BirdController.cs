@@ -15,6 +15,10 @@ public class BirdController : Interactable
     private bool speedMode = false;
     private bool canCheckBoostModeStatus = true;
 
+    private bool canFreezeRigid = false;
+    private float freezeRigidWait = 2f;
+    private float freezeVelocityThreshold = 1f;
+
     [Header("Camera Settings")]
     public Vector3 cameraHalfExtends;
     public Vector3 cameraOffset;
@@ -52,6 +56,10 @@ public class BirdController : Interactable
         inputs.Bird.Boost.performed += ctx => Boost();
     }
 
+    private void Start() {
+        StartCoroutine(FreezeRigid()); 
+    }
+
     private void Update() {
         boostTimer += Time.deltaTime;
         boostTimer = Mathf.Clamp(boostTimer, 0, boostCooldown);
@@ -64,9 +72,18 @@ public class BirdController : Interactable
         if(piloting) {
             ProcessBirdMovement();
             ProcessCameraMovement();
+            
             motorCurrentRotationVelocity = motorRotationVelocity * (1 + inputMove.magnitude * 2);
+            if(physics.rigid.isKinematic) { 
+                canFreezeRigid = false;
+                physics.rigid.isKinematic = false;
+            }
         } else {
             motorCurrentRotationVelocity = motorRotationVelocity;
+
+            //Freezes the bird physics after sometime still
+            if(physics.rigid.velocity.magnitude <= freezeVelocityThreshold && !physics.rigid.isKinematic && canFreezeRigid) 
+                physics.rigid.isKinematic = true;
         }
 
         ProcessAnimation();        
@@ -140,12 +157,6 @@ public class BirdController : Interactable
         }
     }
 
-    private IEnumerator CheckBoostModeCooldown() {
-        canCheckBoostModeStatus = false;
-        yield return new WaitForSeconds(0.5f);
-        canCheckBoostModeStatus = true;
-    }
-
     //The code below is for manage the in and out of the bird control state
 
     //The player will call this method in normal character mode
@@ -157,6 +168,7 @@ public class BirdController : Interactable
     public void EnterPilotMode() {
         if(!PlayerController.Instance.canMove && PlayerController.Instance.reading) return;
         StartCoroutine(EnterPilotModeCoroutine());
+        canFreezeRigid = false;
         CameraController.Instance.isActive = false;
         PlayerController.Instance.inputs.Disable();
         inputs.Enable();
@@ -170,6 +182,7 @@ public class BirdController : Interactable
     public void ExitPilotMode() {
         if(!piloting) return;
         StartCoroutine(ExitPilotModeCoroutine());
+        StartCoroutine(FreezeRigid());
         CameraController.Instance.isActive = true;
         player.gameObject.SetActive(true);
         player.SetParent(null);
@@ -235,5 +248,17 @@ public class BirdController : Interactable
     {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;
+    }
+
+        private IEnumerator CheckBoostModeCooldown() {
+        canCheckBoostModeStatus = false;
+        yield return new WaitForSeconds(0.5f);
+        canCheckBoostModeStatus = true;
+    }
+
+    // Allows the physics rigidbody to freeze after it stops
+    private IEnumerator FreezeRigid() {
+        yield return new WaitForSeconds(freezeRigidWait);
+        canFreezeRigid = true;
     }
 }
