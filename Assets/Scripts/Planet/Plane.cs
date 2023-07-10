@@ -201,17 +201,15 @@ public class Plane
     public void UpdateCollisionMesh() {
         collisionMesh.Clear();
 
-        if (quadtree.verticeCountCollision == 0) {
-            return;
+        if (quadtree.verticeCountCollision > 0) {
+            collisionMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            collisionMesh.SetVertices(verticeListFixedCol, 0, quadtree.verticeCountCollision);
+            collisionMesh.SetIndices(triangleListFixedCol, 0, quadtree.triangleCountCollision, MeshTopology.Triangles, 0, false, 0);
+            collisionMesh.SetNormals(normalListFixedCol, 0, quadtree.verticeCountCollision);
+            meshCollider.sharedMesh = collisionMesh;
         }
-
-        collisionMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-        collisionMesh.SetVertices(verticeListFixedCol, 0, quadtree.verticeCountCollision);
-        collisionMesh.SetIndices(triangleListFixedCol, 0, quadtree.triangleCountCollision, MeshTopology.Triangles, 0, false, 0);
-        collisionMesh.SetNormals(normalListFixedCol, 0, quadtree.verticeCountCollision);
-        meshCollider.sharedMesh = collisionMesh;
     }
-
+    
     public void ClearCollisionMesh() {
         collisionMesh.Clear();
         meshCollider.sharedMesh.Clear();

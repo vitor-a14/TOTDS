@@ -11,7 +11,7 @@ public class PlanetMesh : MonoBehaviour
     [Header("General Settings")]
     public float radius = 1000;
     public int collisionMeshResolution;
-    public float updateInterval = 50;
+    public float updateInterval = 120;
     public Transform player;
     public Material Material;
     public bool useShadows;
@@ -313,7 +313,7 @@ public class PlanetMesh : MonoBehaviour
     }
 
     private void Update() {
-        if(Vector3.Distance(gameObject.transform.position, player.position) > 2*radius && finishedCount==6) {
+        if(Vector3.Distance(gameObject.transform.position, player.position) > 2 * radius && finishedCount == 6) {
             return;
         }
 

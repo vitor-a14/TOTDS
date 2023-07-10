@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class BirdController : Interactable
 {
+    public static BirdController Instance { get; private set; }
+
     [Header("Movement Settings")]
     public bool piloting = false;
     public float changeModeDuration;
@@ -27,8 +29,9 @@ public class BirdController : Interactable
     private bool inCameraTransition = false;
 
     [Header("Dependencies")]
+    public BirdAudioManager audioManager;
     [SerializeField] private Transform player;
-    [SerializeField] private PhysicsObject physics;
+    [HideInInspector] [SerializeField] public PhysicsObject physics;
     private Inputs inputs;
     private Vector2 inputMove, inputRotate;
     private float inputAltitude;
@@ -41,6 +44,11 @@ public class BirdController : Interactable
     private float motorCurrentRotationVelocity;
 
     private void Awake() {
+        if(Instance == null) 
+            Instance = this;
+        else
+            Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
+
         inputs = new Inputs();
         inputs.Enable();
 
@@ -152,6 +160,7 @@ public class BirdController : Interactable
         
         if(boostTimer >= boostCooldown) {
             StartCoroutine(CheckBoostModeCooldown());
+            audioManager.Boost();
             speedMode = true;
             boostTimer = 0;
         }
@@ -172,6 +181,7 @@ public class BirdController : Interactable
         CameraController.Instance.isActive = false;
         PlayerController.Instance.inputs.Disable();
         inputs.Enable();
+        audioManager.EnterShip();
         player.SetParent(transform);
         player.gameObject.SetActive(false);
         physics.userGravitacionalForce = false;
@@ -189,6 +199,7 @@ public class BirdController : Interactable
         PlayerController.Instance.inputs.Enable();
         PlayerController.Instance.AdjustModelRotation();
         inputs.Disable();
+        audioManager.ExitShip();
         physics.userGravitacionalForce = true;
         physics.rigid.freezeRotation = false;
     }
