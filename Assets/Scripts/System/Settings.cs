@@ -13,10 +13,15 @@ public class Settings : MonoBehaviour
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
 
-        rendererData.rendererFeatures.Clear();
+        ClearRendererFeatures();
     }
 
     private void OnDisable() {
-        rendererData.rendererFeatures.Clear();
+        ClearRendererFeatures();
+    }
+
+    private void ClearRendererFeatures() {
+        rendererData.rendererFeatures.RemoveAll(rendererFeature => rendererFeature.GetType() == typeof(Blit));
+        rendererData.rendererFeatures.RemoveAll(rendererFeature => rendererFeature == null);
     }
 }

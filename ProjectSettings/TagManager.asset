@@ -12,6 +12,7 @@ TagManager:
   - Grass
   - Stone
   - Sand
+  - Trigger Zone
   layers:
   - Default
   - TransparentFX
