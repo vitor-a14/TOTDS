@@ -10,6 +10,7 @@ public enum AudioType {
 public enum AudioSnapshot {
     OUTDOOR,
     INDOOR,
+    SPACE,
     NONE
 }
 
@@ -21,13 +22,15 @@ public class AudioManager : MonoBehaviour
     public AudioMixerGroup audioMixer;
     public AudioMixerSnapshot indoorAudioSnapshot;
     public AudioMixerSnapshot outsideAudioSnapshot;
+    public AudioMixerSnapshot spaceAudioSnapshot;
+
+    public AudioSource outdoorAudioSource;
+    public AudioSource indoorAudioSource;
 
     [Range(0, 10)] public float masterVolume;
     [Range(0, 1)] public float SFXVolume;
     [Range(0, 1)] public float ambienceVolume;
     [Range(0, 1)] public float musicVolume;
-
-    private static float snapshotTransitionDuration = 1.0f;
 
     private void Awake() {
         if(Instance == null)
@@ -38,11 +41,13 @@ public class AudioManager : MonoBehaviour
         AudioListener.volume = 1;
     }
 
-    public void ChangeAudioSnapshot(AudioSnapshot snapshot) {
+    public void ChangeAudioSnapshot(AudioSnapshot snapshot, float transitionDuration) {
         if(snapshot == AudioSnapshot.INDOOR)
-            indoorAudioSnapshot.TransitionTo(snapshotTransitionDuration);
+            indoorAudioSnapshot.TransitionTo(transitionDuration);
         else if(snapshot == AudioSnapshot.OUTDOOR)
-            outsideAudioSnapshot.TransitionTo(snapshotTransitionDuration);
+            outsideAudioSnapshot.TransitionTo(transitionDuration);
+        else if(snapshot == AudioSnapshot.SPACE)
+            spaceAudioSnapshot.TransitionTo(transitionDuration);
     }
 
     //Create a 3D audio instance in a gameobject

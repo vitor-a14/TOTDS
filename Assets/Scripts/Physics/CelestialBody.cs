@@ -14,6 +14,7 @@ public class CelestialBody : MonoBehaviour
     public float orbitSpeed;
     public CelestialBody orbitAround;
     public Transform skyDome;
+    public AudioClip ambienceAudio;
     public bool isMoon;
     [HideInInspector] public Rigidbody rigid;
 
@@ -81,10 +82,18 @@ public class CelestialBody : MonoBehaviour
             }
 
             playerOnSurface = true;
+
+            AudioManager.Instance.outdoorAudioSource.clip = ambienceAudio;
+            if(!AudioManager.Instance.outdoorAudioSource.isPlaying)
+                AudioManager.Instance.outdoorAudioSource.Play();
+
+            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.OUTDOOR, 3f);
         } else if (perspective == PhysicsPerspective.SPACE) {
             foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
                 playerOnSurface = false;
             }
+
+            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.SPACE, 3f);
         }
     }
 

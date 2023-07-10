@@ -12,13 +12,13 @@ public class AudioSnapshotTransitionTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other) {
         if(other.transform.tag == "Player" && onEnterSnapshot != AudioSnapshot.NONE) {
-            audioManager.ChangeAudioSnapshot(onEnterSnapshot);
+            audioManager.ChangeAudioSnapshot(onEnterSnapshot, 1f);
         }
     }
 
     private void OnTriggerExit(Collider other) {
         if(other.transform.tag == "Player" && onEnterSnapshot != AudioSnapshot.NONE) {
-            audioManager.ChangeAudioSnapshot(onExitSnapshot);
+            audioManager.ChangeAudioSnapshot(onExitSnapshot, 1f);
         }
     }
 }

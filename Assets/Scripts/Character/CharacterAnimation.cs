@@ -20,7 +20,7 @@ public class CharacterAnimation : MonoBehaviour
     public bool landing;
     public bool stoping;
 
-    private player player;
+    private PlayerController player;
 
     void OnAnimatorIK() {
         if(anim) {
@@ -43,7 +43,7 @@ public class CharacterAnimation : MonoBehaviour
 
     void Start() {
         anim = GetComponent<Animator>();
-        player = player.Instance;
+        player = PlayerController.Instance;
     }
 
     void Update() {
@@ -62,7 +62,7 @@ public class CharacterAnimation : MonoBehaviour
             else {
                 if(player.direction.magnitude > player.movementSpeed / 1.9f) 
                     return run_hash;
-                else if(player.Instance.direction.magnitude < player.movementSpeed / 1.9f && player.direction.magnitude != 0) 
+                else if(player.direction.magnitude < player.movementSpeed / 1.9f && player.direction.magnitude != 0) 
                     return walk_hash;
                 else 
                     return idle_hash;

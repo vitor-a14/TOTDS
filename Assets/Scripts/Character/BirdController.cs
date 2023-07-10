@@ -155,10 +155,10 @@ public class BirdController : Interactable
 
     //This will hide the player and enter the "Bird Mode" to control the vehicle
     public void EnterPilotMode() {
-        if(!global::player.Instance.canMove && global::player.Instance.reading) return;
+        if(!PlayerController.Instance.canMove && PlayerController.Instance.reading) return;
         StartCoroutine(EnterPilotModeCoroutine());
         CameraController.Instance.isActive = false;
-        global::player.Instance.inputs.Disable();
+        PlayerController.Instance.inputs.Disable();
         inputs.Enable();
         player.SetParent(transform);
         player.gameObject.SetActive(false);
@@ -173,8 +173,8 @@ public class BirdController : Interactable
         CameraController.Instance.isActive = true;
         player.gameObject.SetActive(true);
         player.SetParent(null);
-        global::player.Instance.inputs.Enable();
-        global::player.Instance.AdjustModelRotation();
+        PlayerController.Instance.inputs.Enable();
+        PlayerController.Instance.AdjustModelRotation();
         inputs.Disable();
         physics.userGravitacionalForce = true;
         physics.rigid.freezeRotation = false;
