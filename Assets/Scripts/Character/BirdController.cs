@@ -158,7 +158,7 @@ public class BirdController : Interactable
     private void Boost() {
         if(!piloting) return;
         
-        if(boostTimer >= boostCooldown) {
+        if(boostTimer >= boostCooldown && !speedMode && inputMove.magnitude >= boostModeThreshold) {
             StartCoroutine(CheckBoostModeCooldown());
             audioManager.Boost();
             speedMode = true;

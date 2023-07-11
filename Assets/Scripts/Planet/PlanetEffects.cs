@@ -73,7 +73,7 @@ public class PlanetEffects : MonoBehaviour
 			atmosphereBlit.settings.blitMaterial.SetFloat("_OpticalDepthPoints", opticalDepthPoints);
 			atmosphereBlit.settings.blitMaterial.SetVector("_WaveLengths", waveLenghts);
 			atmosphereBlit.settings.blitMaterial.SetTexture("_OpticalDepthTexture", opticalDepthTexture);
-			atmosphereBlit.settings.blitMaterial.SetFloat("_OceanRadius", hasOcean ? (1 + oceanScale) * planetRadius : 0);
+			atmosphereBlit.settings.blitMaterial.SetFloat("_OceanRadius", (1 + oceanScale) * planetRadius);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_ScaterringStrength", scatteringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringStrength", ditheringStrength);
 			atmosphereBlit.settings.blitMaterial.SetFloat("_DitheringScale", ditheringScale);

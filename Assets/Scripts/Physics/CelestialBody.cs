@@ -23,6 +23,8 @@ public class CelestialBody : MonoBehaviour
     protected bool canOrbit = true;
     protected List<CelestialBody> children = new List<CelestialBody>();
 
+    private static float fadeAudioMultiplier = 200;
+
     private void Start() {
         rigid = GetComponent<Rigidbody>();
         celestialPosition = transform.position;
@@ -71,6 +73,16 @@ public class CelestialBody : MonoBehaviour
         } 
     }
 
+    private void LateUpdate() {
+        if(playerOnSurface) {
+            Vector3 direction = transform.position - PlayerController.Instance.transform.position;
+            float distance = (direction.magnitude - planetRadius) / fadeAudioMultiplier;
+            distance = Mathf.Clamp(distance, 0, 1);
+
+            AudioManager.Instance.outdoorAudioSource.volume = 1 - distance;
+        }
+    }
+
     //this will change the way the planet moves and rotates based on the perspective
     //if the perspective is PLANET_SURFACE, the planet will be static for the player move around withot rigidbody bugs
     //for the illusion of movement, all the movement and rotation that the planet would have will now be faked and applyed to all the other bodies in the space
@@ -87,13 +99,13 @@ public class CelestialBody : MonoBehaviour
             if(!AudioManager.Instance.outdoorAudioSource.isPlaying)
                 AudioManager.Instance.outdoorAudioSource.Play();
 
-            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.OUTDOOR, 3f);
+            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.OUTDOOR, 1f);
         } else if (perspective == PhysicsPerspective.SPACE) {
             foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
                 playerOnSurface = false;
             }
 
-            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.SPACE, 3f);
+            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.SPACE, 5f);
         }
     }
 
