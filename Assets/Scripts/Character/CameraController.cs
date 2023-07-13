@@ -15,7 +15,7 @@ public class CameraController : MonoBehaviour
     [Range(0f, 15f)] public float distance = 5f;
     [Range(0f, 1f)] public float focusCentering = 0.5f;
     [Min(0f)] public float focusRadius = 1f;
-    public Rigidbody camRigid; //The position and rotation is set with the rigidbody, not transform - this make a smooth movement with the player controller
+    public Transform cam; //The position and rotation is set with the rigidbody, not transform - this make a smooth movement with the player controller
     public LayerMask cameraCollisionMask; //The surfaces that the camera will avoid pass through
 
     private Vector2 cameraInput; //Input received from Engine
@@ -41,25 +41,26 @@ public class CameraController : MonoBehaviour
         focusPoint = transform.parent.position;
     }
 
-    //Calculate the camera smooth follow position to the transform parent
-    private void FixedUpdate() {
-        if(isActive && !PlayerController.Instance.reading) 
-            CalculateInput();
+    private void Update() {
+        //Receive input 
+        yaw += cameraInput.x * sensivity * Time.deltaTime;
+        pitch -= cameraInput.y * sensivity * Time.deltaTime;
+        pitch = Mathf.Clamp(pitch, -maxAngle, maxAngle);
 
         ApplyMotion();
     }
 
-    //Input calculation logic, also calculates the camera movement based on the player movement
-    private void CalculateInput() {
-        //Receive input 
-        yaw += cameraInput.x * sensivity * Time.fixedDeltaTime;
-        pitch -= cameraInput.y * sensivity * Time.fixedDeltaTime;
-        pitch = Mathf.Clamp(pitch, -maxAngle, maxAngle);
+    //Calculate the camera smooth follow position to the transform parent
+    private void FixedUpdate() {
+        if(isActive && !PlayerController.Instance.reading) 
+            CalculateMotion();
+    }
 
+    //Input calculation logic, also calculates the camera movement based on the player movement
+    public void CalculateMotion() {
         //Smooth following camera logic
         Vector3 targetPoint = transform.position;
-        if (focusRadius > 0f)
-        {
+        if (focusRadius > 0f) {
             float t = 1f;
             float distance = Vector3.Distance(targetPoint, focusPoint);
 
@@ -73,14 +74,14 @@ public class CameraController : MonoBehaviour
         }
         else
             focusPoint = targetPoint;
-
-        transform.localEulerAngles = new Vector3(pitch, yaw);
     }
 
     //Besides this being applied in the Update method, the movement is setted to the Camera Rigidbody
     //That makes the player movement and camera movement work smoothly together with rigidbody
-    private void ApplyMotion() {
+    public void ApplyMotion() {
         //Apply rotation
+        transform.localEulerAngles = new Vector3(pitch, yaw);
+
         lookRotation = transform.rotation;
         Vector3 lookDirection = lookRotation * Vector3.forward;
 
@@ -92,6 +93,6 @@ public class CameraController : MonoBehaviour
         }
 
         //Apply position
-        camRigid.Move(lookPosition, lookRotation);
+        cam.transform.SetPositionAndRotation(lookPosition, lookRotation);
     }
 }

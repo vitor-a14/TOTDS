@@ -11,7 +11,7 @@ public class StarView : MonoBehaviour
             transform.SetParent(null);
     }
 
-    private void FixedUpdate() {
+    private void Update() {
         transform.position = cam.position;
     }
 }

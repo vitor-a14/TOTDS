@@ -72,13 +72,8 @@ public class BirdController : Interactable
         boostTimer += Time.deltaTime;
         boostTimer = Mathf.Clamp(boostTimer, 0, boostCooldown);
 
-        if(piloting) 
-            BirdInput();
-    }
-
-    private void FixedUpdate() {
         if(piloting) {
-            ProcessBirdMovement();
+            BirdInput();
             ProcessCameraMovement();
             
             motorCurrentRotationVelocity = motorRotationVelocity * (1 + inputMove.magnitude * 2);
@@ -94,9 +89,14 @@ public class BirdController : Interactable
                 physics.rigid.isKinematic = true;
         }
 
-        ProcessAnimation();        
+        ProcessAnimation();  
     }
 
+    private void FixedUpdate() {
+        if(piloting)
+            ProcessBirdMovement();
+    }
+    
     private void ProcessAnimation() {
         int count = 0;
         foreach(Transform ring in motorRings) {
@@ -124,13 +124,13 @@ public class BirdController : Interactable
             aditionalForce = boostSpeed;
         }
 
-        physics.rigid.AddForce(forwardDirection * aditionalForce * physics.rigid.mass * Time.deltaTime, ForceMode.Acceleration);
-        physics.rigid.AddForce(otherDirections * physics.rigid.mass * Time.deltaTime, ForceMode.Acceleration);
+        physics.rigid.AddForce(forwardDirection * aditionalForce * physics.rigid.mass * Time.fixedDeltaTime, ForceMode.Acceleration);
+        physics.rigid.AddForce(otherDirections * physics.rigid.mass * Time.fixedDeltaTime, ForceMode.Acceleration);
 
         if(speedMode)
-            physics.rigid.AddRelativeTorque((torqueRotation / 2.5f) * Time.deltaTime, ForceMode.VelocityChange);
+            physics.rigid.AddRelativeTorque((torqueRotation / 2.5f) * Time.fixedDeltaTime, ForceMode.VelocityChange);
         else
-            physics.rigid.AddRelativeTorque(torqueRotation * Time.deltaTime, ForceMode.VelocityChange);
+            physics.rigid.AddRelativeTorque(torqueRotation * Time.fixedDeltaTime, ForceMode.VelocityChange);
 
         if(inputMove.magnitude <= boostModeThreshold && canCheckBoostModeStatus) {
             speedMode = false;
@@ -151,8 +151,8 @@ public class BirdController : Interactable
             camPos = offsetPosition - cam.forward * cameraOffset.z;
         }
 
-        cam.rotation = Quaternion.Slerp(cam.rotation, transform.rotation, cameraRotationSpeed * Time.fixedDeltaTime);
-        cam.position = Vector3.Lerp(cam.position, camPos, cameraFollowSpeed * Time.fixedDeltaTime);
+        cam.rotation = Quaternion.Slerp(cam.rotation, transform.rotation, cameraRotationSpeed * Time.deltaTime);
+        cam.position = Vector3.Lerp(cam.position, camPos, cameraFollowSpeed * Time.deltaTime);
     }
 
     private void Boost() {
