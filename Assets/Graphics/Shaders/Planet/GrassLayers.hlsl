@@ -115,7 +115,7 @@ void Geometry(triangle VertexOutput inputs[3], inout TriangleStream<GeometryOutp
 
     outputStream.RestartStrip();
             
-    if(distance(output.positionWS, _WorldSpaceCameraPos) < _LODDistance * 1.1)
+    if(distance(output.positionWS, _WorldSpaceCameraPos) < _LODDistance * 1.5)
     {
         for (int l = 1; l < GRASS_LAYERS; l++) 
         {
