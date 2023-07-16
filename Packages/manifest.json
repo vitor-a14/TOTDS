@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.64bleat.astronomy": "https://github.com/64bleat/AstronomicSkybox-Unity.git",
+    "com.unity.cinemachine": "2.9.7",
     "com.unity.collections": "1.2.4",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.inputsystem": "1.5.1",

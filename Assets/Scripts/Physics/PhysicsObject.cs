@@ -77,6 +77,11 @@ public class PhysicsObject : MonoBehaviour
         }
     }
 
+    public void SetRotationToGravityDirection() {
+        Quaternion targetRotation = Quaternion.FromToRotation(transform.up, mainForceDirection) * transform.rotation;
+        transform.rotation = targetRotation;
+    }
+
     public Vector3 GetGravityDirection() {
         return mainForceDirection;
     }

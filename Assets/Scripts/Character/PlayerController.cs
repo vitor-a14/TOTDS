@@ -115,11 +115,6 @@ public class PlayerController : PhysicsObject
         CheckGround();
     }
 
-    public void AdjustModelRotation() {
-        Vector3 gravityDirection = GetGravityDirection();
-        characterModel.rotation = Quaternion.LookRotation(transform.forward, gravityDirection);
-    }
-
     private void FixedUpdate() {
         UpdatePhysics();
         ApplyMotion();
@@ -127,7 +122,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void ApplyMotion() {
-        rigid.MovePosition(rigid.position + processedDirection * Time.deltaTime);
+        rigid.MovePosition(rigid.position + processedDirection * Time.fixedDeltaTime);
 
         if (onGround) {
             rigid.drag = rigidDrag;
@@ -136,6 +131,11 @@ public class PlayerController : PhysicsObject
             rigid.drag = 0f;
             processedDirection = direction;
         }
+    }
+
+    public void AdjustModelRotation() {
+        Vector3 gravityDirection = GetGravityDirection();
+        characterModel.rotation = Quaternion.LookRotation(transform.forward, gravityDirection);
     }
 
     private void CheckGround() {
@@ -154,7 +154,7 @@ public class PlayerController : PhysicsObject
         if(!jumping || !canMove || reading) return;
 
         if(jumpingTimer < holdJumpTime) {
-            jumpingTimer += Time.deltaTime;
+            jumpingTimer += Time.fixedDeltaTime;
             rigid.AddForce(transform.up * aditionalJumpForce, ForceMode.Acceleration);
         }
     }

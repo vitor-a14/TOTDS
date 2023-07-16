@@ -21,13 +21,6 @@ public class BirdController : Interactable
     private float freezeRigidWait = 2f;
     private float freezeVelocityThreshold = 1f;
 
-    [Header("Camera Settings")]
-    public Vector3 cameraHalfExtends;
-    public Vector3 cameraOffset;
-    public float cameraFollowSpeed, cameraRotationSpeed;
-    [SerializeField] private Transform cam;
-    private bool inCameraTransition = false;
-
     [Header("Dependencies")]
     public BirdAudioManager audioManager;
     [SerializeField] private Transform player;
@@ -37,6 +30,14 @@ public class BirdController : Interactable
     private float inputAltitude;
     private float inputRoll;
     private Vector3 forwardDirection, otherDirections, torqueRotation;
+
+    [Header("Camera")]
+    public Transform cameraPivot;
+    public Vector3 cameraOffset;
+    public Vector3 cameraRadius;
+    public float cameraFollowSpeed;
+    public float cameraRotationSpeed;
+    public LayerMask cameraCollisionLayers;
 
     [Header("Animation")]
     public Transform[] motorRings;
@@ -74,8 +75,7 @@ public class BirdController : Interactable
 
         if(piloting) {
             BirdInput();
-            ProcessCameraMovement();
-            
+
             motorCurrentRotationVelocity = motorRotationVelocity * (1 + inputMove.magnitude * 2);
             if(physics.rigid.isKinematic) { 
                 canFreezeRigid = false;
@@ -93,8 +93,26 @@ public class BirdController : Interactable
     }
 
     private void FixedUpdate() {
-        if(piloting)
+        if(piloting) {
             ProcessBirdMovement();
+            ProcessCameraMovement();
+        }
+    }
+
+    private void ProcessCameraMovement() {
+        Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
+        Quaternion lookRotation = cameraPivot.transform.rotation;
+        Vector3 lookDirection = lookRotation * Vector3.forward;
+        Vector3 camPos;
+
+        if (Physics.BoxCast(offsetPosition, cameraRadius, -lookDirection, out RaycastHit hit, lookRotation, cameraOffset.z - Camera.main.nearClipPlane, cameraCollisionLayers)) {
+            camPos = offsetPosition - cameraPivot.forward * (hit.distance + Camera.main.nearClipPlane);
+		} else {
+            camPos = offsetPosition - cameraPivot.forward * cameraOffset.z;
+        }
+
+        cameraPivot.rotation = cameraPivot.rotation;
+        cameraPivot.position = camPos;
     }
     
     private void ProcessAnimation() {
@@ -120,39 +138,20 @@ public class BirdController : Interactable
 
     private void ProcessBirdMovement() {
         float aditionalForce = 1;
+
         if(speedMode) {
+            physics.rigid.AddRelativeTorque((torqueRotation / 2.5f) * Time.fixedDeltaTime, ForceMode.VelocityChange);
             aditionalForce = boostSpeed;
+        } else {
+            physics.rigid.AddRelativeTorque(torqueRotation * Time.fixedDeltaTime, ForceMode.VelocityChange);
         }
 
         physics.rigid.AddForce(forwardDirection * aditionalForce * physics.rigid.mass * Time.fixedDeltaTime, ForceMode.Acceleration);
         physics.rigid.AddForce(otherDirections * physics.rigid.mass * Time.fixedDeltaTime, ForceMode.Acceleration);
 
-        if(speedMode)
-            physics.rigid.AddRelativeTorque((torqueRotation / 2.5f) * Time.fixedDeltaTime, ForceMode.VelocityChange);
-        else
-            physics.rigid.AddRelativeTorque(torqueRotation * Time.fixedDeltaTime, ForceMode.VelocityChange);
-
         if(inputMove.magnitude <= boostModeThreshold && canCheckBoostModeStatus) {
             speedMode = false;
         }
-    }
-
-    private void ProcessCameraMovement() {
-        if(inCameraTransition) return;
-
-        Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
-        Quaternion lookRotation = cam.transform.rotation;
-        Vector3 lookDirection = lookRotation * Vector3.forward;
-        Vector3 camPos;
-
-        if (Physics.BoxCast(offsetPosition, cameraHalfExtends, -lookDirection, out RaycastHit hit, lookRotation, cameraOffset.z - Camera.main.nearClipPlane, CameraController.Instance.cameraCollisionMask)) {
-            camPos = offsetPosition - cam.forward * (hit.distance + Camera.main.nearClipPlane);
-		} else {
-            camPos = offsetPosition - cam.forward * cameraOffset.z;
-        }
-
-        cam.rotation = Quaternion.Slerp(cam.rotation, transform.rotation, cameraRotationSpeed * Time.deltaTime);
-        cam.position = Vector3.Lerp(cam.position, camPos, cameraFollowSpeed * Time.deltaTime);
     }
 
     private void Boost() {
@@ -176,10 +175,11 @@ public class BirdController : Interactable
     //This will hide the player and enter the "Bird Mode" to control the vehicle
     public void EnterPilotMode() {
         if(!PlayerController.Instance.canMove && PlayerController.Instance.reading) return;
-        StartCoroutine(EnterPilotModeCoroutine());
-        canFreezeRigid = false;
         CameraController.Instance.isActive = false;
+        piloting = true;
+        canFreezeRigid = false;
         PlayerController.Instance.inputs.Disable();
+        CameraManager.Instance.ChangeToBirdCamera();
         inputs.Enable();
         audioManager.EnterShip();
         player.SetParent(transform);
@@ -191,77 +191,29 @@ public class BirdController : Interactable
     //This method can only be called in the bird mode
     public void ExitPilotMode() {
         if(!piloting) return;
-        StartCoroutine(ExitPilotModeCoroutine());
-        StartCoroutine(FreezeRigid());
         CameraController.Instance.isActive = true;
+        piloting = false;
+        StartCoroutine(FreezeRigid());
         player.gameObject.SetActive(true);
         player.SetParent(null);
         PlayerController.Instance.inputs.Enable();
         PlayerController.Instance.AdjustModelRotation();
+        PlayerController.Instance.SetRotationToGravityDirection();
+        PlayerController.Instance.cape.ClearTransformMotion();
+        CameraManager.Instance.ChangeToCharacterCamera();
         inputs.Disable();
         audioManager.ExitShip();
         physics.userGravitacionalForce = true;
         physics.rigid.freezeRotation = false;
     }
-
-    private IEnumerator EnterPilotModeCoroutine() {
-        yield return new WaitForEndOfFrame();
-
-        piloting = true;
-        inCameraTransition = true;
-        float elapsedTime = 0;
-        float smoothElapsedTime = 0;
-        Vector3 startPos = cam.position;
-        Quaternion startRot = cam.rotation;
-
-        while (elapsedTime < changeModeDuration)
-        {
-            Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
-            Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
-            cam.rotation = Quaternion.Slerp(startRot, transform.rotation, smoothElapsedTime);
-            cam.position = Vector3.Slerp(startPos, camPos, smoothElapsedTime);
-            elapsedTime += Time.fixedDeltaTime;
-            smoothElapsedTime = elapsedTime / changeModeDuration;
-            smoothElapsedTime = smoothElapsedTime * smoothElapsedTime * (3f - 2f * smoothElapsedTime);
-            yield return null;
-        }  
-
-        inCameraTransition = false;
-    }
-
-    private IEnumerator ExitPilotModeCoroutine() {
-        yield return new WaitForEndOfFrame();
-        piloting = false;
-        CameraController.Instance.inCameraTransition = true;
-
-        float elapsedTime = 0;
-        float smoothElapsedTime = 0;
-        Vector3 startPos = cam.position;
-        Quaternion startRot = cam.rotation;
-
-        while (elapsedTime < changeModeDuration)
-        {
-            Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
-            Vector3 camPos = offsetPosition - cam.forward * cameraOffset.z;
-            cam.rotation = Quaternion.Slerp(startRot, CameraController.Instance.lookRotation, smoothElapsedTime);
-            cam.position = Vector3.Slerp(startPos, CameraController.Instance.lookPosition, smoothElapsedTime);
-            elapsedTime += Time.fixedDeltaTime;
-            smoothElapsedTime = elapsedTime / changeModeDuration;
-            smoothElapsedTime = smoothElapsedTime * smoothElapsedTime * (3f - 2f * smoothElapsedTime);
-            yield return null;
-        } 
-
-        CameraController.Instance.inCameraTransition = false; 
-    }
     
     //Input process logic
-    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)
-    {
+    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude) {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;
     }
 
-        private IEnumerator CheckBoostModeCooldown() {
+    private IEnumerator CheckBoostModeCooldown() {
         canCheckBoostModeStatus = false;
         yield return new WaitForSeconds(0.5f);
         canCheckBoostModeStatus = true;

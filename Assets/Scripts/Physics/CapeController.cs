@@ -11,4 +11,8 @@ public class CapeController : PhysicsObject
         UpdatePhysics();
         Physics.clothGravity = -mainForceDirection * 12;
     }
+
+    public void ChangeWorldPos(Vector3 newOffset, Vector3 translation) {
+        cloth.ClearTransformMotion();
+    }
 }
