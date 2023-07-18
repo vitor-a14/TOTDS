@@ -114,7 +114,7 @@ public class PlayerController : PhysicsObject
 
             direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
 
-            if (processedInput != Vector2.zero) {
+            if (input != Vector2.zero) {
                 CharacterAnimation.Instance.landing = false;
                 Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
                 characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
