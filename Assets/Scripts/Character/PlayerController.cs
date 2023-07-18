@@ -25,12 +25,13 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public string floorTag;
     private bool shiftWalk = false; //only for keyboard
     private float jumpingTimer;
-    private Vector2 input;
+    [HideInInspector] public Vector2 input;
     private Vector3 processedDirection;
     private Vector3 surfaceNormal;
     [HideInInspector] public Vector3 direction;
     public bool jumping;
-    public Cloth cape;
+
+    [HideInInspector] public bool nearWall;
 
     //To detect if the player hit the ground and activate a callback to the animation
     private bool _onGround = true; //only for structure, use the variable below instead
@@ -94,25 +95,27 @@ public class PlayerController : PhysicsObject
             return;
         }
 
-        Vector3 gravityDirection = GetGravityDirection();
-        Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
-        Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
-
-        input = ClampMagnitude(input, 0.4f, 1.0f);
-        Vector2 processedInput = shiftWalk ? Vector2.ClampMagnitude(input, 0.4f) : input;
-        direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
-
-        if (input != Vector2.zero) {
-            CharacterAnimation.Instance.landing = false;
-            Quaternion modelRotation = Quaternion.LookRotation(-direction.normalized, gravityDirection);
-            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-        } else {
-            Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
-            Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
-            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-        }
-
         CheckGround();
+
+        if(onGround) {
+            Vector3 gravityDirection = GetGravityDirection();
+            Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
+            Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
+
+            input = ClampMagnitude(input, 0f, 1.0f);
+            Vector2 processedInput = shiftWalk ? Vector2.ClampMagnitude(input, 0.4f) : input;
+            direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
+
+            if (input != Vector2.zero) {
+                CharacterAnimation.Instance.landing = false;
+                Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
+                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+            } else {
+                Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
+                Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
+                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+            }
+        }
     }
 
     private void FixedUpdate() {
@@ -122,7 +125,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void ApplyMotion() {
-        rigid.MovePosition(rigid.position + processedDirection * Time.fixedDeltaTime);
+        Vector3 startPos = transform.position + transform.up * -0.5f;
 
         if (onGround) {
             rigid.drag = rigidDrag;
@@ -130,6 +133,13 @@ public class PlayerController : PhysicsObject
         } else {
             rigid.drag = 0f;
             processedDirection = direction;
+        }
+
+        if(!Physics.Linecast(startPos, startPos - characterModel.forward * 0.008f, walkableLayers) && input.magnitude > 0.4f) {
+            nearWall = false;
+            rigid.MovePosition(rigid.position + processedDirection * Time.fixedDeltaTime);
+        } else {
+            nearWall = true;
         }
     }
 
@@ -163,19 +173,17 @@ public class PlayerController : PhysicsObject
         if(!canMove || reading) return;
 
         if (onGround) {
+            CharacterAnimation.Instance.PlayJumpAnim();
             rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
-            rigid.drag = 0f;
-            jumpingTimer = 0f;
-            StartCoroutine(JumpWindow());
+            StartCoroutine(HandleJump());
         }
     }
 
     //Time window to know if the player is pressing the jumping button and apply a higher jump force
-    private IEnumerator JumpWindow() {
+    private IEnumerator HandleJump() {
+        jumpingTimer = 0f;
         jumping = true;
-        cape.worldAccelerationScale = 0.1f;
-        yield return new WaitForSeconds(1f);
-        cape.worldAccelerationScale = 1f;
+        yield return new WaitForSeconds(0.6f);
         jumping = false;
     }  
 

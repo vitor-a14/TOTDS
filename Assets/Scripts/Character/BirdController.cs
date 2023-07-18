@@ -30,6 +30,7 @@ public class BirdController : Interactable
     private float inputAltitude;
     private float inputRoll;
     private Vector3 forwardDirection, otherDirections, torqueRotation;
+    public Cloth characterCape;
 
     [Header("Camera")]
     public Transform cameraPivot;
@@ -199,7 +200,7 @@ public class BirdController : Interactable
         PlayerController.Instance.inputs.Enable();
         PlayerController.Instance.AdjustModelRotation();
         PlayerController.Instance.SetRotationToGravityDirection();
-        PlayerController.Instance.cape.ClearTransformMotion();
+        characterCape.ClearTransformMotion();
         CameraManager.Instance.ChangeToCharacterCamera();
         inputs.Disable();
         audioManager.ExitShip();
