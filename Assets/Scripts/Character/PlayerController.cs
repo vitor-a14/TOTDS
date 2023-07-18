@@ -14,6 +14,7 @@ public class PlayerController : PhysicsObject
     public float movementSpeed;
     public float rigidDrag;
     public Transform characterModel;
+    public float inputSmoothDamp;
 
     [Header("Jump Settings")]
     public float jumpForce;
@@ -21,15 +22,19 @@ public class PlayerController : PhysicsObject
     public float groundDistanceCheck;
     public LayerMask walkableLayers;
     public float holdJumpTime;
+    public bool jumping;
+    public float jumpCooldown;
+    private bool canJump = true;
+    private float jumpCooldownCounter = 0;
 
     [HideInInspector] public string floorTag;
     private bool shiftWalk = false; //only for keyboard
     private float jumpingTimer;
-    [HideInInspector] public Vector2 input;
+    private Vector2 input;
+    [HideInInspector] public Vector2 processedInput;
     private Vector3 processedDirection;
     private Vector3 surfaceNormal;
     [HideInInspector] public Vector3 direction;
-    public bool jumping;
 
     [HideInInspector] public bool nearWall;
 
@@ -102,11 +107,14 @@ public class PlayerController : PhysicsObject
             Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
             Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
 
-            input = ClampMagnitude(input, 0f, 1.0f);
-            Vector2 processedInput = shiftWalk ? Vector2.ClampMagnitude(input, 0.4f) : input;
+            if(shiftWalk)
+                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
+            else 
+                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
+
             direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
 
-            if (input != Vector2.zero) {
+            if (processedInput != Vector2.zero) {
                 CharacterAnimation.Instance.landing = false;
                 Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
                 characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
@@ -135,7 +143,7 @@ public class PlayerController : PhysicsObject
             processedDirection = direction;
         }
 
-        if(!Physics.Linecast(startPos, startPos - characterModel.forward * 0.008f, walkableLayers) && input.magnitude > 0.4f) {
+        if(!Physics.Linecast(startPos, startPos + characterModel.forward * 0.02f, walkableLayers) && input.magnitude > 0.4f) {
             nearWall = false;
             rigid.MovePosition(rigid.position + processedDirection * Time.fixedDeltaTime);
         } else {
@@ -154,6 +162,8 @@ public class PlayerController : PhysicsObject
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
             onGround = true;
+            if(!canJump)
+                HandleJumpCooldown();
         } else {
             onGround = false;
         }
@@ -172,10 +182,11 @@ public class PlayerController : PhysicsObject
     private void Jump() {
         if(!canMove || reading) return;
 
-        if (onGround) {
+        if (onGround && canJump) {
             CharacterAnimation.Instance.PlayJumpAnim();
             rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
             StartCoroutine(HandleJump());
+            canJump = false;
         }
     }
 
@@ -186,6 +197,15 @@ public class PlayerController : PhysicsObject
         yield return new WaitForSeconds(0.6f);
         jumping = false;
     }  
+
+    private void HandleJumpCooldown() {
+        if(jumpCooldownCounter >= jumpCooldown) {
+            jumpCooldownCounter = 0;
+            canJump = true;
+        } else {
+            jumpCooldownCounter += Time.deltaTime;
+        }
+    }
 
     //A custom clamp magnite with min and max. The built in unity ClampMagnitude only has the max parameter
     private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)

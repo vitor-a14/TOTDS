@@ -7,6 +7,9 @@ public class CharacterAnimation : MonoBehaviour
 
     private Animator anim;
     private static readonly int velocity_hash = Animator.StringToHash("Velocity");
+    private static readonly int grounded_hash = Animator.StringToHash("Grounded");
+    private static readonly int jumping_hash = Animator.StringToHash("Jumping");
+    private static readonly int near_hash = Animator.StringToHash("NearWall");
 
     [Header("Animation States")]
     public bool landing;
@@ -27,11 +30,10 @@ public class CharacterAnimation : MonoBehaviour
     }
 
     void Update() {
-        anim.SetFloat(velocity_hash, player.input.magnitude);
-        anim.SetBool("Grounded", player.onGround);
-        anim.SetBool("Jumping", player.jumping);
-
-        //anim.CrossFade(GetCurrentState(), 0, 0);
+        anim.SetFloat(velocity_hash, player.processedInput.magnitude);
+        anim.SetBool(grounded_hash, player.onGround);
+        anim.SetBool(jumping_hash, player.jumping);
+        anim.SetBool(near_hash, player.nearWall);
     }
 
     public void PlayJumpAnim() {
