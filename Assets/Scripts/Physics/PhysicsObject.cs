@@ -7,7 +7,7 @@ public class PhysicsObject : MonoBehaviour
     [Header("Physics Settings")]
     public bool userGravitacionalForce = true;
     public bool autoRotate = false;
-    public bool useTransformParent = true; //if activated, the object will be attached to close celestial bodies with SetParent
+    public bool setParentToPlanet = true; //if activated, the object will be attached to close celestial bodies with SetParent
 
     [HideInInspector] public Rigidbody rigid;
     [HideInInspector] public Vector3 mainForceDirection = Vector3.zero;
@@ -16,7 +16,7 @@ public class PhysicsObject : MonoBehaviour
     private float rotationSpeed = 85f;
     private float setParentThreshold = 300f; //the distance that will make the object be attached to the celestial body
 
-    private CelestialBody lastParentBody;
+    [HideInInspector] public CelestialBody lastParentBody;
 
     private void Start() {
         InitializePhysics();
@@ -47,7 +47,7 @@ public class PhysicsObject : MonoBehaviour
             if(force.magnitude > greatestForce.magnitude)
                 greatestForce = force;
 
-            if(useTransformParent && distance - celestialBody.planetRadius <= setParentThreshold) {
+            if(setParentToPlanet && distance - celestialBody.planetRadius <= setParentThreshold) {
                 celestialBodyNear = true;
                 if(transform.parent != celestialBody.transform) {
                     transform.SetParent(celestialBody.transform);
@@ -64,7 +64,7 @@ public class PhysicsObject : MonoBehaviour
                 rigid.AddForce(force);
         }
 
-        if(useTransformParent && !celestialBodyNear && transform.parent != null) {
+        if(setParentToPlanet && !celestialBodyNear && transform.parent != null) {
             lastParentBody.ChangePhysicsPerspective(PhysicsPerspective.SPACE);
             lastParentBody = null;
             transform.SetParent(null);

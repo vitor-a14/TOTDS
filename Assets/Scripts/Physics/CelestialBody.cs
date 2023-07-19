@@ -16,6 +16,7 @@ public class CelestialBody : MonoBehaviour
     public Transform skyDome;
     public AudioClip ambienceAudio;
     public bool isMoon;
+    public bool hasSoundPropagation;
     [HideInInspector] public Rigidbody rigid;
 
     private bool playerOnSurface;
@@ -74,7 +75,7 @@ public class CelestialBody : MonoBehaviour
     }
 
     private void LateUpdate() {
-        if(playerOnSurface) {
+        if(playerOnSurface && hasSoundPropagation) {
             Vector3 direction = transform.position - PlayerController.Instance.transform.position;
             float distance = (direction.magnitude - planetRadius) / fadeAudioMultiplier;
             distance = Mathf.Clamp(distance, 0, 1);
@@ -95,11 +96,15 @@ public class CelestialBody : MonoBehaviour
 
             playerOnSurface = true;
 
-            AudioManager.Instance.outdoorAudioSource.clip = ambienceAudio;
-            if(!AudioManager.Instance.outdoorAudioSource.isPlaying)
-                AudioManager.Instance.outdoorAudioSource.Play();
+            if(hasSoundPropagation) {
+                AudioManager.Instance.outdoorAudioSource.clip = ambienceAudio;
+                if(!AudioManager.Instance.outdoorAudioSource.isPlaying)
+                    AudioManager.Instance.outdoorAudioSource.Play();
 
-            AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.OUTDOOR, 1f);
+                AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.OUTDOOR, 1f);
+            } else {
+                AudioManager.Instance.ChangeAudioSnapshot(AudioSnapshot.SPACE, 1f);
+            }
         } else if (perspective == PhysicsPerspective.SPACE) {
             foreach(CelestialBody celestialBody in UniversePhysics.Instance.celestialBodies) {
                 playerOnSurface = false;
