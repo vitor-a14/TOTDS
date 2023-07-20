@@ -133,7 +133,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void ApplyMotion() {
-        Vector3 startPos = transform.position + transform.up * -0.5f;
+        Vector3 startPos = transform.position + transform.up * -0.4f;
 
         if (onGround) {
             rigid.drag = rigidDrag;
