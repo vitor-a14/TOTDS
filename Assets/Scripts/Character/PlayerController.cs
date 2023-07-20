@@ -133,7 +133,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void ApplyMotion() {
-        Vector3 startPos = transform.position + transform.up * -0.4f;
+        Vector3 startPos = transform.position - transform.up * 0.4f;
 
         if (onGround) {
             rigid.drag = rigidDrag;
@@ -144,8 +144,8 @@ public class PlayerController : PhysicsObject
         }
 
         if(!Physics.Linecast(startPos, startPos + characterModel.forward * 0.02f, walkableLayers) && input.magnitude > 0.4f) {
+            rigid.position += processedDirection * Time.fixedDeltaTime;
             nearWall = false;
-            rigid.MovePosition(rigid.position + processedDirection * Time.fixedDeltaTime);
         } else {
             nearWall = true;
         }
