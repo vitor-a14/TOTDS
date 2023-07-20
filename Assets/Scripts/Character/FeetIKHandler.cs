@@ -44,6 +44,9 @@ public class FeetIKHandler : MonoBehaviour
         characterAnimation.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
         characterAnimation.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
 
+        characterAnimation.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f - PlayerController.Instance.direction.magnitude);
+        characterAnimation.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f - PlayerController.Instance.direction.magnitude);
+
         MoveFeetToIKPoint(AvatarIKGoal.LeftFoot, leftFootIKPosition, leftFootIKRotation, ref lastLeftFootPositionY);
         MoveFeetToIKPoint(AvatarIKGoal.RightFoot, rightFootIKPosition, rightFootIKRotation, ref lastRightFootPositionY);
     }  
@@ -55,7 +58,7 @@ public class FeetIKHandler : MonoBehaviour
             positionIKHolder = transform.InverseTransformPoint(positionIKHolder); 
             targetIKPosition = transform.InverseTransformPoint(targetIKPosition);
 
-            float variable = Mathf.Lerp(lastFootPositionY, positionIKHolder.y, feetToIKPositionSpeed * Time.fixedDeltaTime);
+            float variable = Mathf.Lerp(lastFootPositionY, positionIKHolder.y, Time.fixedDeltaTime / 1.0f);
             targetIKPosition.y += variable;
             lastFootPositionY = variable;
 
@@ -87,7 +90,7 @@ public class FeetIKHandler : MonoBehaviour
     }
 
     private void MovePelvisHeight() {
-        if(rightFootIKPosition == Vector3.zero || leftFootIKPosition == Vector3.zero || lastPelvisPositionY == 0) {
+        if(rightFootIKPosition == Vector3.zero || leftFootIKPosition == Vector3.zero || lastPelvisPositionY == 0 || PlayerController.Instance.direction.sqrMagnitude > 0.4f) {
             lastPelvisPositionY = transform.InverseTransformPoint(characterAnimation.bodyPosition).y;
             return;
         }
@@ -103,7 +106,7 @@ public class FeetIKHandler : MonoBehaviour
         float totalOffset = (leftOffsetPosition < rightOffsetPosition) ? leftOffsetPosition : rightOffsetPosition;
         Vector3 newPelvisPosition = relativeBodyPosition + Vector3.up * totalOffset; //my code
 
-        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, pelvisUpAndDownSpeed * Time.fixedDeltaTime);
+        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, Time.fixedDeltaTime / 0.1f);
         characterAnimation.bodyPosition = transform.TransformPoint(newPelvisPosition);
         lastPelvisPositionY = relativeBodyPosition.y;
     }

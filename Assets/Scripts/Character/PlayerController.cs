@@ -12,7 +12,6 @@ public class PlayerController : PhysicsObject
     public bool reading = false;
     public Transform cam;
     public float movementSpeed;
-    public float rigidDrag;
     public Transform characterModel;
     public float inputSmoothDamp;
 
@@ -38,8 +37,12 @@ public class PlayerController : PhysicsObject
 
     [HideInInspector] public bool nearWall;
 
+    public float upStepHeight;
+    public float lowerRayLength, upperRayLength;
+
     //To detect if the player hit the ground and activate a callback to the animation
-    private bool _onGround = true; //only for structure, use the variable below instead
+    public bool _onGround = true; //only for structure, use the variable below instead
+    [SerializeField]
     public bool onGround 
     {
         get { return _onGround; }
@@ -100,8 +103,6 @@ public class PlayerController : PhysicsObject
             return;
         }
 
-        CheckGround();
-
         if(onGround) {
             Vector3 gravityDirection = GetGravityDirection();
             Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
@@ -127,23 +128,24 @@ public class PlayerController : PhysicsObject
     }
 
     private void FixedUpdate() {
+        CheckGround();
         UpdatePhysics();
         ApplyMotion();
         JumpAditionalForce();
+        StepUp();
     }
 
     private void ApplyMotion() {
-        Vector3 startPos = transform.position - transform.up * 0.4f;
+        Vector3 startPos = transform.position + transform.up * 0.1f;
 
         if (onGround) {
-            rigid.drag = rigidDrag;
             processedDirection = Vector3.ProjectOnPlane(direction, surfaceNormal);
         } else {
-            rigid.drag = 0f;
             processedDirection = direction;
         }
 
-        if(!Physics.Linecast(startPos, startPos + characterModel.forward * 0.02f, walkableLayers) && input.magnitude > 0.4f) {
+        Debug.DrawLine(startPos, startPos + characterModel.forward * 0.4f, Color.yellow);
+        if(!Physics.Linecast(startPos, startPos + characterModel.forward * 0.4f, walkableLayers) && input.magnitude > 0.4f) {
             rigid.position += processedDirection * Time.fixedDeltaTime;
             nearWall = false;
         } else {
@@ -158,7 +160,7 @@ public class PlayerController : PhysicsObject
 
     private void CheckGround() {
         RaycastHit hit;
-        if (Physics.SphereCast(transform.position, 0.1f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
+        if (Physics.SphereCast(transform.position, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
             onGround = true;
@@ -166,6 +168,39 @@ public class PlayerController : PhysicsObject
                 HandleJumpCooldown();
         } else {
             onGround = false;
+        }
+    }
+
+    private void StepUp() {
+        if(!onGround || !canMove || reading) return;
+
+        RaycastHit lowerHit;
+        bool lowerRayHit;
+        bool upperRayHit;
+
+        //lower ray
+        Debug.DrawRay(characterModel.position + transform.up * 0.1f, characterModel.forward * 0.2f, Color.cyan);
+        if(Physics.Raycast(characterModel.position + transform.up * 0.1f, characterModel.TransformDirection(Vector3.forward), out lowerHit, lowerRayLength, walkableLayers)) {
+            lowerRayHit = true;
+        } else {
+            lowerRayHit = false;
+        }
+
+        //upper ray
+        Debug.DrawRay(characterModel.position + transform.up * 0.5f, characterModel.forward * 0.4f, Color.cyan);
+        if(Physics.Raycast(characterModel.position + transform.up * 0.5f, characterModel.TransformDirection(Vector3.forward), upperRayLength, walkableLayers)) {
+            upperRayHit = true;
+        } else {
+            upperRayHit = false;
+        }
+
+        float stepness = Vector3.Dot(lowerHit.normal, transform.up);
+
+        //steep detected
+        if(lowerRayHit && !upperRayHit && direction.sqrMagnitude > 0.4f && stepness < 0.6f) {
+            Vector3 origin = characterModel.position + transform.up * 0.5f + characterModel.transform.TransformDirection(Vector3.forward) * upperRayLength;
+            Vector3 pos = rigid.position + transform.up * upStepHeight;
+            rigid.position = pos;
         }
     }
 
@@ -184,7 +219,7 @@ public class PlayerController : PhysicsObject
 
         if (onGround && canJump) {
             CharacterAnimation.Instance.PlayJumpAnim();
-            rigid.AddForce(transform.up * jumpForce, ForceMode.VelocityChange);
+            rigid.AddForce(surfaceNormal * jumpForce, ForceMode.VelocityChange);
             StartCoroutine(HandleJump());
             canJump = false;
         }
@@ -208,8 +243,7 @@ public class PlayerController : PhysicsObject
     }
 
     //A custom clamp magnite with min and max. The built in unity ClampMagnitude only has the max parameter
-    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude)
-    {
+    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude) {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;
     }
