@@ -12,6 +12,7 @@ public class FeetIKHandler : MonoBehaviour
 
     [SerializeField] [Range(0, 2f)] private float raycastHeightFromGround = 1.14f;
     [SerializeField] [Range(0, 2f)] private float raycastDistance = 1.5f;
+    [SerializeField] private float pelvisOffset;
 
     public bool enableFeetIK;
     public bool showDebug = false;
@@ -55,7 +56,7 @@ public class FeetIKHandler : MonoBehaviour
             positionIKHolder = transform.InverseTransformPoint(positionIKHolder); 
             targetIKPosition = transform.InverseTransformPoint(targetIKPosition);
 
-            float variable = Mathf.Lerp(lastFootPositionY, positionIKHolder.y, Time.fixedDeltaTime / 1.0f);
+            float variable = Mathf.Lerp(lastFootPositionY, positionIKHolder.y, Time.fixedDeltaTime / 0.1f);
             targetIKPosition.y += variable;
             lastFootPositionY = variable;
 
@@ -75,7 +76,7 @@ public class FeetIKHandler : MonoBehaviour
         if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, PlayerController.Instance.walkableLayers) 
         && PlayerController.Instance.onGround && !PlayerController.Instance.jumping) {
             feetIKPositions = upPosition;
-            feetIKPositions = hit.point; 
+            feetIKPositions = hit.point + transform.up * pelvisOffset; 
             feetIKRotations = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
 
             return;
@@ -85,7 +86,7 @@ public class FeetIKHandler : MonoBehaviour
     }
 
     private void MovePelvisHeight() {
-        if(rightFootIKPosition == Vector3.zero || leftFootIKPosition == Vector3.zero || lastPelvisPositionY == 0 || PlayerController.Instance.direction.sqrMagnitude > 0.4f) {
+        if(rightFootIKPosition == Vector3.zero || leftFootIKPosition == Vector3.zero || lastPelvisPositionY == 0) {
             lastPelvisPositionY = transform.InverseTransformPoint(characterAnimation.bodyPosition).y;
             return;
         }
@@ -101,7 +102,8 @@ public class FeetIKHandler : MonoBehaviour
         float totalOffset = (leftOffsetPosition < rightOffsetPosition) ? leftOffsetPosition : rightOffsetPosition;
         Vector3 newPelvisPosition = relativeBodyPosition + Vector3.up * totalOffset; //my code
 
-        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, Time.fixedDeltaTime / 0.1f);
+        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, 0.001f * Time.fixedDeltaTime);
+        relativeBodyPosition = transform.TransformPoint(relativeBodyPosition);
         characterAnimation.bodyPosition = transform.TransformPoint(newPelvisPosition);
         lastPelvisPositionY = relativeBodyPosition.y;
     }

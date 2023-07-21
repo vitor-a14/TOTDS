@@ -7,6 +7,7 @@ public class CharacterAnimation : MonoBehaviour
 
     private Animator anim;
     private static readonly int velocity_hash = Animator.StringToHash("Velocity");
+    private static readonly int stepness_hash = Animator.StringToHash("Stepness");
     private static readonly int grounded_hash = Animator.StringToHash("Grounded");
     private static readonly int jumping_hash = Animator.StringToHash("Jumping");
     private static readonly int near_hash = Animator.StringToHash("NearWall");
@@ -16,6 +17,7 @@ public class CharacterAnimation : MonoBehaviour
     public bool stoping;
 
     private PlayerController player;
+    private float smoothedStepness;
 
     private void Awake() {
         if(Instance == null) 
@@ -30,7 +32,12 @@ public class CharacterAnimation : MonoBehaviour
     }
 
     void Update() {
-        anim.SetFloat(velocity_hash, player.processedInput.magnitude);
+        anim.SetFloat(velocity_hash, player.processedInput.sqrMagnitude);
+
+        float stepness = player.onSlope == true ? 1 : 0;
+        smoothedStepness = Mathf.Lerp(smoothedStepness, stepness, 5 * Time.deltaTime);
+
+        anim.SetFloat(stepness_hash, smoothedStepness);
         anim.SetBool(grounded_hash, player.onGround);
         anim.SetBool(jumping_hash, player.jumping);
         anim.SetBool(near_hash, player.nearWall);

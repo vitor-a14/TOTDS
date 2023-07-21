@@ -35,7 +35,7 @@ Transform:
   - {fileID: 6928336060708878722}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -57,9 +57,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.2
-  m_Height: 1.7
+  m_Height: 1.7651012
   m_Direction: 1
-  m_Center: {x: 0, y: -0.12, z: 0}
+  m_Center: {x: 9.917418e-11, y: -0.103263676, z: -2.1970984e-15}
 --- !u!54 &858901465228497963
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -108,9 +108,9 @@ MonoBehaviour:
   canMove: 1
   reading: 0
   cam: {fileID: 0}
-  movementSpeed: 4
+  movementSpeed: 3.5
   characterModel: {fileID: 6928336060708878722}
-  inputSmoothDamp: 12
+  inputSmoothDamp: 8
   jumpForce: 6
   aditionalJumpForce: 6
   groundDistanceCheck: 1.7
@@ -120,13 +120,17 @@ MonoBehaviour:
   holdJumpTime: 1
   jumping: 0
   jumpCooldown: 0.5
-  floorTag: 
-  processedInput: {x: 0, y: 0}
-  direction: {x: 0, y: 0, z: 0}
-  nearWall: 0
+  slopeAngleTrigger: 0.95
+  slopeMovementDecrease: 0.1
   upStepHeight: 0.13
   lowerRayLength: 0.25
   upperRayLength: 0.4
+  floorTag: 
+  input: {x: 0, y: 0}
+  processedInput: {x: 0, y: 0}
+  direction: {x: 0, y: 0, z: 0}
+  onSlope: 0
+  nearWall: 0
   _onGround: 1
 --- !u!114 &839571361355240087
 MonoBehaviour:
@@ -191,6 +195,8 @@ MonoBehaviour:
   sensivity: 10
   maxAngle: 65
   smoothVelocity: 14
+  smothedPitch: 0
+  smothedYaw: 0
 --- !u!1001 &5438995256496414403
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2701,6 +2707,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8207193328101294952}
+    - targetCorrespondingSourceObject: {fileID: -382261573113801249, guid: 43ffb88b3bc3f1a479e672769f3901e9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4712189356939200436}
+    - targetCorrespondingSourceObject: {fileID: -382261573113801249, guid: 43ffb88b3bc3f1a479e672769f3901e9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3398668393031752723}
     - targetCorrespondingSourceObject: {fileID: 3903107654161473826, guid: 43ffb88b3bc3f1a479e672769f3901e9,
         type: 3}
       insertIndex: -1
@@ -2717,6 +2731,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8606219682649691890}
+    - targetCorrespondingSourceObject: {fileID: -5508630967664926532, guid: 43ffb88b3bc3f1a479e672769f3901e9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7923904171314427825}
+    - targetCorrespondingSourceObject: {fileID: -5508630967664926532, guid: 43ffb88b3bc3f1a479e672769f3901e9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 670810596821698129}
     - targetCorrespondingSourceObject: {fileID: -6775894948083892356, guid: 43ffb88b3bc3f1a479e672769f3901e9,
         type: 3}
       insertIndex: -1
@@ -2817,6 +2839,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!135 &8207193328101294952
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097888608012503990}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0.03, z: 0}
+--- !u!114 &4712189356939200436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097888608012503990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628bc10f59fcce040b9e53e616440ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &3398668393031752723
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3120,6 +3175,39 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0.03, z: 0}
+--- !u!114 &7923904171314427825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062325444029726421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628bc10f59fcce040b9e53e616440ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &670810596821698129
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062325444029726421}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0.03, z: 0}
 --- !u!1 &6166161014690228365 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3620409528871335652, guid: 43ffb88b3bc3f1a479e672769f3901e9,
@@ -3223,10 +3311,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterAnimation: {fileID: 3946921446959817720}
-  pelvisOffset: 0
   raycastHeightFromGround: 0.406
   raycastDistance: 0.85
-  pelvisUpAndDownSpeed: 12
-  feetToIKPositionSpeed: 12
+  pelvisOffset: 0
   enableFeetIK: 1
   showDebug: 1

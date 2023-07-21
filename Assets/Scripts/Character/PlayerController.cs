@@ -4,7 +4,6 @@ using UnityEngine;
 public class PlayerController : PhysicsObject
 {
     public static PlayerController Instance { get; private set; }
-
     [HideInInspector] public Inputs inputs;
 
     [Header("Movement Settings")]
@@ -23,22 +22,28 @@ public class PlayerController : PhysicsObject
     public float holdJumpTime;
     public bool jumping;
     public float jumpCooldown;
+
     private bool canJump = true;
     private float jumpCooldownCounter = 0;
 
-    [HideInInspector] public string floorTag;
-    private bool shiftWalk = false; //only for keyboard
-    private float jumpingTimer;
-    [HideInInspector] public Vector2 input;
-    [HideInInspector] public Vector2 processedInput;
-    private Vector3 processedDirection;
-    private Vector3 surfaceNormal;
-    [HideInInspector] public Vector3 direction;
+    [Header("Slope Movement")]
+    public float slopeAngleTrigger;
+    public float slopeMovementDecrease;
 
-    [HideInInspector] public bool nearWall;
-
+    [Header("Step Up")]
     public float upStepHeight;
     public float lowerRayLength, upperRayLength;
+
+    private bool shiftWalk = false; //only for keyboard
+    private float jumpingTimer;
+    private Vector3 processedDirection;
+    private Vector3 surfaceNormal;
+    [HideInInspector] public string floorTag;
+    [HideInInspector] public Vector2 input;
+    [HideInInspector] public Vector2 processedInput;
+    [HideInInspector] public Vector3 direction;
+    [HideInInspector] public bool onSlope;
+    [HideInInspector] public bool nearWall;
 
     //To detect if the player hit the ground and activate a callback to the animation
     public bool _onGround = true; //only for structure, use the variable below instead
@@ -110,10 +115,13 @@ public class PlayerController : PhysicsObject
 
             if(shiftWalk)
                 processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
-            else 
+            else
                 processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
 
-            direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
+            if(onSlope)
+                direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed * (1 - slopeMovementDecrease);
+            else 
+                direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
 
             if (input != Vector2.zero) {
                 CharacterAnimation.Instance.landing = false;
@@ -145,7 +153,7 @@ public class PlayerController : PhysicsObject
         }
 
         Debug.DrawLine(startPos, startPos + characterModel.forward * 0.25f, Color.yellow);
-        if(!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * 0.25f, walkableLayers) && input.magnitude > 0.4f) {
+        if(!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * 0.25f, walkableLayers)) {
             rigid.position += processedDirection * Time.fixedDeltaTime;
             nearWall = false;
         } else {
@@ -161,6 +169,7 @@ public class PlayerController : PhysicsObject
     private void CheckGround() {
         RaycastHit hit;
         if (Physics.SphereCast(transform.position, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
+            onSlope = Vector3.Dot(transform.up, surfaceNormal) < slopeAngleTrigger ? true : false;
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
             onGround = true;
