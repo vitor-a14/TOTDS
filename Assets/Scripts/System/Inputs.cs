@@ -731,6 +731,54 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Debug"",
+            ""id"": ""41fb4015-a52b-454f-8c00-668b9124ed4d"",
+            ""actions"": [
+                {
+                    ""name"": ""ShowPanel"",
+                    ""type"": ""Button"",
+                    ""id"": ""868d675c-e704-4c94-90a5-66544bc37fd4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DebugCamera"",
+                    ""type"": ""Button"",
+                    ""id"": ""b91f43ed-5b89-4016-bcab-46d382e71697"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""df85f71c-3dbc-4317-ada0-d3c563ad8eb2"",
+                    ""path"": ""<Keyboard>/f3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ShowPanel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1ffa397b-d927-48cc-97fe-c8a1e8851fb3"",
+                    ""path"": ""<Keyboard>/f2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DebugCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -768,6 +816,10 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         m_Bird_Boost = m_Bird.FindAction("Boost", throwIfNotFound: true);
         m_Bird_Roll = m_Bird.FindAction("Roll", throwIfNotFound: true);
         m_Bird_Altitude = m_Bird.FindAction("Altitude", throwIfNotFound: true);
+        // Debug
+        m_Debug = asset.FindActionMap("Debug", throwIfNotFound: true);
+        m_Debug_ShowPanel = m_Debug.FindAction("ShowPanel", throwIfNotFound: true);
+        m_Debug_DebugCamera = m_Debug.FindAction("DebugCamera", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1059,6 +1111,60 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         }
     }
     public BirdActions @Bird => new BirdActions(this);
+
+    // Debug
+    private readonly InputActionMap m_Debug;
+    private List<IDebugActions> m_DebugActionsCallbackInterfaces = new List<IDebugActions>();
+    private readonly InputAction m_Debug_ShowPanel;
+    private readonly InputAction m_Debug_DebugCamera;
+    public struct DebugActions
+    {
+        private @Inputs m_Wrapper;
+        public DebugActions(@Inputs wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ShowPanel => m_Wrapper.m_Debug_ShowPanel;
+        public InputAction @DebugCamera => m_Wrapper.m_Debug_DebugCamera;
+        public InputActionMap Get() { return m_Wrapper.m_Debug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DebugActions set) { return set.Get(); }
+        public void AddCallbacks(IDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_DebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Add(instance);
+            @ShowPanel.started += instance.OnShowPanel;
+            @ShowPanel.performed += instance.OnShowPanel;
+            @ShowPanel.canceled += instance.OnShowPanel;
+            @DebugCamera.started += instance.OnDebugCamera;
+            @DebugCamera.performed += instance.OnDebugCamera;
+            @DebugCamera.canceled += instance.OnDebugCamera;
+        }
+
+        private void UnregisterCallbacks(IDebugActions instance)
+        {
+            @ShowPanel.started -= instance.OnShowPanel;
+            @ShowPanel.performed -= instance.OnShowPanel;
+            @ShowPanel.canceled -= instance.OnShowPanel;
+            @DebugCamera.started -= instance.OnDebugCamera;
+            @DebugCamera.performed -= instance.OnDebugCamera;
+            @DebugCamera.canceled -= instance.OnDebugCamera;
+        }
+
+        public void RemoveCallbacks(IDebugActions instance)
+        {
+            if (m_Wrapper.m_DebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_DebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_DebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public DebugActions @Debug => new DebugActions(this);
     private int m_GamepadSchemeIndex = -1;
     public InputControlScheme GamepadScheme
     {
@@ -1091,5 +1197,10 @@ public partial class @Inputs: IInputActionCollection2, IDisposable
         void OnBoost(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
         void OnAltitude(InputAction.CallbackContext context);
+    }
+    public interface IDebugActions
+    {
+        void OnShowPanel(InputAction.CallbackContext context);
+        void OnDebugCamera(InputAction.CallbackContext context);
     }
 }

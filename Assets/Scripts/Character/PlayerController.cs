@@ -29,7 +29,7 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public string floorTag;
     private bool shiftWalk = false; //only for keyboard
     private float jumpingTimer;
-    private Vector2 input;
+    [HideInInspector] public Vector2 input;
     [HideInInspector] public Vector2 processedInput;
     private Vector3 processedDirection;
     private Vector3 surfaceNormal;
@@ -144,8 +144,8 @@ public class PlayerController : PhysicsObject
             processedDirection = direction;
         }
 
-        Debug.DrawLine(startPos, startPos + characterModel.forward * 0.4f, Color.yellow);
-        if(!Physics.Linecast(startPos, startPos + characterModel.forward * 0.4f, walkableLayers) && input.magnitude > 0.4f) {
+        Debug.DrawLine(startPos, startPos + characterModel.forward * 0.25f, Color.yellow);
+        if(!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * 0.25f, walkableLayers) && input.magnitude > 0.4f) {
             rigid.position += processedDirection * Time.fixedDeltaTime;
             nearWall = false;
         } else {
@@ -172,7 +172,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void StepUp() {
-        if(!onGround || !canMove || reading) return;
+        if(!onGround || !canMove || reading || jumping) return;
 
         RaycastHit lowerHit;
         bool lowerRayHit;

@@ -709,6 +709,54 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "Debug",
+            "id": "41fb4015-a52b-454f-8c00-668b9124ed4d",
+            "actions": [
+                {
+                    "name": "ShowPanel",
+                    "type": "Button",
+                    "id": "868d675c-e704-4c94-90a5-66544bc37fd4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "DebugCamera",
+                    "type": "Button",
+                    "id": "b91f43ed-5b89-4016-bcab-46d382e71697",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "df85f71c-3dbc-4317-ada0-d3c563ad8eb2",
+                    "path": "<Keyboard>/f3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ShowPanel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1ffa397b-d927-48cc-97fe-c8a1e8851fb3",
+                    "path": "<Keyboard>/f2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

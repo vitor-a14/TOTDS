@@ -39,7 +39,7 @@ public class CelestialBody : MonoBehaviour
             canOrbit = true;  
             if(orbitAround != null) {
                 float combinedRotationSpeed = rotationSpeed + orbitSpeed;
-                skyDome.Rotate(transform.up * combinedRotationSpeed * Time.fixedDeltaTime);
+                skyDome.Rotate(skyDome.transform.up * -combinedRotationSpeed * Time.fixedDeltaTime);
                 orbitAround.RotateAround(transform.position, orbitAround.transform.up, combinedRotationSpeed * Time.fixedDeltaTime);
 
                 if(isMoon) {    

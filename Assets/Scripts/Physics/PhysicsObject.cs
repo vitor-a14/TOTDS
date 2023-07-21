@@ -73,7 +73,7 @@ public class PhysicsObject : MonoBehaviour
         //Rotate the object towards the greatest force attractor
         if(autoRotate && mainForceDirection != Vector3.zero) {
             Quaternion targetRotation = Quaternion.FromToRotation(transform.up, mainForceDirection) * transform.rotation;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.fixedDeltaTime);
         }
     }
 

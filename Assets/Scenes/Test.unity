@@ -4318,16 +4318,6 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 1205916170}
-    - target: {fileID: 1073340587606637838, guid: 4f6f73c63986d2e4c999e46ae3d768f5,
-        type: 3}
-      propertyPath: upStepHeight
-      value: 0.13
-      objectReference: {fileID: 0}
-    - target: {fileID: 2156368940567612425, guid: 4f6f73c63986d2e4c999e46ae3d768f5,
-        type: 3}
-      propertyPath: raycastHeightFromGround
-      value: 0.406
-      objectReference: {fileID: 0}
     - target: {fileID: 2429615437108190100, guid: 4f6f73c63986d2e4c999e46ae3d768f5,
         type: 3}
       propertyPath: m_Name

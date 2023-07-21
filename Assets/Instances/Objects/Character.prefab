@@ -124,6 +124,7 @@ MonoBehaviour:
   processedInput: {x: 0, y: 0}
   direction: {x: 0, y: 0, z: 0}
   nearWall: 0
+  upStepHeight: 0.13
   lowerRayLength: 0.25
   upperRayLength: 0.4
   _onGround: 1
@@ -3223,7 +3224,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterAnimation: {fileID: 3946921446959817720}
   pelvisOffset: 0
-  raycastHeightFromGround: 0.705
+  raycastHeightFromGround: 0.406
   raycastDistance: 0.85
   pelvisUpAndDownSpeed: 12
   feetToIKPositionSpeed: 12

@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
     private Vector3 focusPoint; //Target position
     private float yaw, pitch; //Input translated into transform rotation 
 
-    private float smothedPitch, smothedYaw;
+    [HideInInspector] public float smothedPitch, smothedYaw;
 
     private void Awake() {
         if(Instance == null) 

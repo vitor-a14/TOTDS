@@ -5,7 +5,6 @@ public class FeetIKHandler : MonoBehaviour
     public static FeetIKHandler Instance { get; private set; }
 
     public Animator characterAnimation;
-    [SerializeField] private float pelvisOffset;
 
     private Vector3 rightFootPosition, leftFootPosition, leftFootIKPosition, rightFootIKPosition;
     private Quaternion leftFootIKRotation, rightFootIKRotation;
@@ -13,8 +12,6 @@ public class FeetIKHandler : MonoBehaviour
 
     [SerializeField] [Range(0, 2f)] private float raycastHeightFromGround = 1.14f;
     [SerializeField] [Range(0, 2f)] private float raycastDistance = 1.5f;
-    [SerializeField] [Range(0, 12f)] private float pelvisUpAndDownSpeed = 0.28f;
-    [SerializeField] [Range(0, 12f)] private float feetToIKPositionSpeed = 0.5f;
 
     public bool enableFeetIK;
     public bool showDebug = false;
@@ -69,19 +66,17 @@ public class FeetIKHandler : MonoBehaviour
         characterAnimation.SetIKPosition(foot, targetIKPosition);
     }
 
-    private void FeetPositionSolver(Vector3 upPosition, ref Vector3 feetIKPositions, ref Quaternion feetIKRotations, Transform footTransform) {
+    private void FeetPositionSolver(Vector3 upPosition, ref Vector3 feetIKPositions, ref Quaternion feetIKRotations, Transform foot) {
         RaycastHit hit;
         if(showDebug) {
             Debug.DrawRay(upPosition, -transform.up * (raycastDistance + raycastHeightFromGround), Color.yellow);
         }
 
-        if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, PlayerController.Instance.walkableLayers) && PlayerController.Instance.onGround) {
+        if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, PlayerController.Instance.walkableLayers) 
+        && PlayerController.Instance.onGround && !PlayerController.Instance.jumping) {
             feetIKPositions = upPosition;
-            feetIKPositions = hit.point + transform.up * pelvisOffset; 
-
-            Quaternion rp = Quaternion.LookRotation(footTransform.parent.forward, footTransform.parent.up);
-            Vector3 footRot = new Vector3(0f, Quaternion.Inverse(rp).eulerAngles.y, 0f);
-            feetIKRotations = Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.Euler(footRot);
+            feetIKPositions = hit.point; 
+            feetIKRotations = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
 
             return;
         }
