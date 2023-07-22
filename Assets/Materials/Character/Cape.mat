@@ -115,7 +115,7 @@ Material:
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
     - _Fresnel_Power: 0.3
-    - _Fresnel_Size: 1
+    - _Fresnel_Size: 3
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -123,8 +123,8 @@ Material:
     - _MAIN_LIGHT_SHADOWS: 1
     - _Metallic: 0
     - _Noise_Blend: 1.36
-    - _Noise_Height: -0.36
-    - _Noise_Strength: 0.89
+    - _Noise_Height: 1.4
+    - _Noise_Strength: 0.83
     - _Noise_Update_Scale: 0.19
     - _OcclusionStrength: 1
     - _Opacity: 0

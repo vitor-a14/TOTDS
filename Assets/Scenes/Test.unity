@@ -2230,8 +2230,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8797962fd8f38c94195eaf30af900260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugPanel: {fileID: 0}
   frameRateText: {fileID: 845468397}
   posText: {fileID: 160106462}
+  debugCameraPivot: {fileID: 0}
+  debugCameraMover: {fileID: 0}
+  debugCamera: {fileID: 0}
+  movementSpeed: 0
   bird: {fileID: 1612878071}
   player: {fileID: 1772068085}
 --- !u!114 &1154213753
