@@ -17,6 +17,8 @@ public class PlanetMesh : MonoBehaviour
     public bool useShadows;
     public string floorTag;
 
+    public List<GameObject> planetPlaceHolder;
+
     [Range(2, 16)] public int res = 2;
     public float[] range;
 
@@ -25,8 +27,8 @@ public class PlanetMesh : MonoBehaviour
     public int heightMapResolution;
     public float heightMapPower = 200;
 
-    private int verticeFixedSize = 100000;  
-    private int verticeFixedSizeCol = 75000;
+    private int verticeFixedSize = 80000;  
+    private int verticeFixedSizeCol = 80000;
     int triangleFixedSizeCol;
     int triangleFixedSize;
     int maxDetail;
@@ -104,9 +106,9 @@ public class PlanetMesh : MonoBehaviour
     int2 heightmapDimensions;
     [HideInInspector] public LOD lod;
 
-    [HideInInspector] [SerializeField] List<GameObject> meshChildren;
-    [HideInInspector] [SerializeField] MeshFilter[] meshFilters;
-    [HideInInspector] [SerializeField] MeshCollider[] meshColliders;
+    [HideInInspector] List<GameObject> meshChildren;
+    [HideInInspector] MeshFilter[] meshFilters;
+    [HideInInspector] MeshCollider[] meshColliders;
 
     private void InitializeScript() {
         maxDetail = range.Length;
@@ -182,8 +184,8 @@ public class PlanetMesh : MonoBehaviour
     }
 
     private void Awake() {
-        foreach(GameObject mesh in meshChildren) {
-            DestroyImmediate(mesh);
+        foreach(GameObject face in planetPlaceHolder) {
+            Destroy(face);
         }
 
         InitializeScript();
@@ -198,8 +200,8 @@ public class PlanetMesh : MonoBehaviour
     }
 
     IEnumerator RenderPreviewCorotuine() {
-        foreach(GameObject mesh in meshChildren) {
-            DestroyImmediate(mesh);
+        foreach(GameObject face in planetPlaceHolder) {
+            Destroy(face);
         }
 
         InitializeScript();
@@ -207,7 +209,7 @@ public class PlanetMesh : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
 
-        OnDestroy();
+        ClearMeshData();
     }
 
     private void CreateMesh() {
@@ -254,7 +256,7 @@ public class PlanetMesh : MonoBehaviour
         finishedCount = 0;
     }
 
-    private void OnDestroy() {
+    private void ClearMeshData() {
         verticeListFixed0.Dispose();
         triangleListFixed0.Dispose();
         normalListFixed0.Dispose();
@@ -310,6 +312,12 @@ public class PlanetMesh : MonoBehaviour
         normalListFixedCol5.Dispose();
 
         planetTextureData.Dispose();
+
+        Caching.ClearCache();
+    }
+
+    private void OnDestroy() {
+       ClearMeshData();
     }
 
     private void Update() {
@@ -622,8 +630,6 @@ public class PlanetMesh : MonoBehaviour
                 meshColliders[i].convex = false;
                 meshRenderer.material = Material;
                 cube[i].meshCollider = meshColliders[i];
-
-                meshChildren.Add(meshObj);
             };
         }
     }

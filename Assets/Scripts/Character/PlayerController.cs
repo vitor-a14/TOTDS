@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : PhysicsObject
@@ -8,12 +9,13 @@ public class PlayerController : PhysicsObject
 
     [Header("Movement Settings")]
     public bool canMove = true;
+    public bool stopCharacterNearWalls = false;
     public LayerMask walkableLayers;
     public Transform cam;
     public Transform characterModel;
+    public CapsuleCollider characterCollider;
     public float movementSpeed;
     public float inputSmoothDamp;
-    public float detectWallRayLength = 0.25f; //This ray detects if a wall is in front of the character to prevent moving
     public float onAirMovementDecrease = 0;
 
     private bool shiftWalk = false; //only for keyboard
@@ -30,8 +32,7 @@ public class PlayerController : PhysicsObject
     public float slopeMovementDecrease;
 
     [Header("Step Up")]
-    public float upStepHeight;
-    public float lowerRayLength, upperRayLength;
+    public float maxStepHeight = 0.4f;
 
     [HideInInspector] public bool onSlope;
     [HideInInspector] public bool nearWall;
@@ -40,10 +41,13 @@ public class PlayerController : PhysicsObject
     public float jumpForce;
     public float jumpAditionalForce;
     public float groundDistanceCheck;
-    public float jumpCooldown;
     public float landIdleDuration;
     public float jumpIdleDuration;
-    public Cloth cape;
+
+    public float colliderHeightOnJump;
+    public Vector3 colliderCenterOnJump;
+    private float characterColliderHeight;
+    private Vector3 characterColliderCenter;
 
     private bool canJump = true; //also used to see if the player is on a jump
     private bool jumpButtonIsDown = false;
@@ -51,7 +55,7 @@ public class PlayerController : PhysicsObject
 
     [HideInInspector] public bool onGround = true; 
     //To detect if the player hit the ground and activate a callback to the animation
-    public bool hitOnGround = false;
+    private bool hitOnGround = false;
 
     //Instance and input setup
     private void Awake() {
@@ -75,6 +79,13 @@ public class PlayerController : PhysicsObject
         inputs.Communication.Right.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.RIGHT);        
         inputs.Communication.Left.performed += ctx => CommunicationHandler.Instance.AddInteraction(Interaction.LEFT);      
         inputs.Communication.Interact.performed += ctx => InteractHandler();
+
+        characterColliderCenter = characterCollider.center;
+        characterColliderHeight = characterCollider.height;
+    }
+
+    private void Start() {
+        InitializePhysics();
     }
 
     //Handle screen message show. If the player is already in reading mode, go to next message until it's gone
@@ -89,40 +100,35 @@ public class PlayerController : PhysicsObject
         }
     }
 
-    private void Start() {
-        InitializePhysics();
-    }
-
-    private void Update() {
-        if (!canMove || reading) {
-            direction = Vector3.zero;
-            return;
+    private void Update() {        
+        if (canJump) {
+            if (shiftWalk)
+                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
+            else
+                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
         }
-        
-        Vector3 gravityDirection = GetGravityDirection();
-        Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
-        Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
-        float movementMultiplier = 1;
 
-        if (onSlope)
-            movementMultiplier = (1 - slopeMovementDecrease);
-        else if (!onGround)
-            movementMultiplier = (1 - onAirMovementDecrease);
- 
-        direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed * movementMultiplier;
+        if(canMove && !reading) {
+            Vector3 gravityDirection = GetGravityDirection();
+            Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
+            Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
+            float movementMultiplier = 1;
 
-        if (shiftWalk)
-            processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
-        else
-            processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
+            if (onSlope)
+                movementMultiplier = (1 - slopeMovementDecrease);
+            else if (!onGround)
+                movementMultiplier = (1 - onAirMovementDecrease);
 
-        if (direction != Vector3.zero && input != Vector2.zero) {
-            Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
-            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-        } else {
-            Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
-            Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
-            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+            direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed * movementMultiplier;
+
+            if (direction != Vector3.zero && input != Vector2.zero) {
+                Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
+                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+            } else {
+                Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
+                Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
+                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+            }
         }
     }
 
@@ -134,21 +140,30 @@ public class PlayerController : PhysicsObject
     }
 
     private void ApplyMotion() {
-        Vector3 startPos = transform.position + transform.up * 0.1f;
+        if(!canMove) return;
 
+        //Readjust direction if not in ground to avoid null direction
         if (onGround) {
             processedDirection = Vector3.ProjectOnPlane(direction, surfaceNormal);
         } else {
             processedDirection = direction;
         }
 
-        if (!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * detectWallRayLength, walkableLayers)) {
-            rigid.position += processedDirection * Time.fixedDeltaTime;
-            nearWall = false;
+        //Move if is not near a wall
+        if(stopCharacterNearWalls) {
+            float detectWallRayLength = characterCollider.radius + 0.1f;
+            Debug.DrawRay(transform.position, characterModel.TransformDirection(Vector3.forward) * detectWallRayLength, Color.magenta);
+            if (!Physics.Raycast(transform.position, characterModel.TransformDirection(Vector3.forward), detectWallRayLength, walkableLayers)) {
+                rigid.position += processedDirection * Time.fixedDeltaTime;
+                nearWall = false;
+            } else {
+                nearWall = true;
+            }
         } else {
-            nearWall = true;
+            rigid.position += processedDirection * Time.fixedDeltaTime;
         }
 
+        //Additional jump force when jump button is hold down
         if(jumpButtonIsDown && !canJump) {
             rigid.AddForce(transform.up * jumpAditionalForce, ForceMode.Acceleration);
         }
@@ -174,37 +189,33 @@ public class PlayerController : PhysicsObject
         }
     }
 
-    // GO BACK HERE TO IMPROVE //
     private void StepUp() {
         if(!onGround || !canMove || reading) return;
 
-        RaycastHit lowerHit;
-        bool lowerRayHit;
-        bool upperRayHit;
+        bool stepDetected = true;
+        float heightOffset = 0;
 
-        //lower ray
-        Debug.DrawRay(characterModel.position + transform.up * 0.1f, characterModel.forward * 0.2f, Color.cyan);
-        if(Physics.Raycast(characterModel.position + transform.up * 0.1f, characterModel.TransformDirection(Vector3.forward), out lowerHit, lowerRayLength, walkableLayers)) {
-            lowerRayHit = true;
+        Debug.DrawRay(characterModel.position + characterModel.up * 0.02f, characterModel.forward * (characterCollider.radius + 0.05f), Color.yellow);
+        if(Physics.Raycast(characterModel.position + characterModel.up * 0.08f, characterModel.forward, out RaycastHit frontHit, characterCollider.radius + 0.05f, walkableLayers)) {
+            float stepness = Vector3.Dot(transform.up, frontHit.normal);
+            if(stepness > 0.2f) 
+                stepDetected = false;
         } else {
-            lowerRayHit = false;
+            stepDetected = false;
         }
 
-        //upper ray
-        Debug.DrawRay(characterModel.position + transform.up * 0.5f, characterModel.forward * 0.4f, Color.cyan);
-        if(Physics.Raycast(characterModel.position + transform.up * 0.5f, characterModel.TransformDirection(Vector3.forward), upperRayLength, walkableLayers)) {
-            upperRayHit = true;
+        Vector3 startPos = characterModel.position + characterModel.forward * (characterCollider.radius + 0.05f) + characterModel.up;
+        Debug.DrawRay(startPos, -characterModel.up * 2f, Color.yellow);
+        if(Physics.Raycast(startPos, -characterModel.up, out RaycastHit downHit, 2f, walkableLayers)) {
+            heightOffset = Vector3.Distance(downHit.point, (characterModel.position + characterModel.forward * (characterCollider.radius + 0.05f)));
+            if(heightOffset > maxStepHeight)
+                stepDetected = false;
         } else {
-            upperRayHit = false;
+            stepDetected = false;
         }
 
-        float stepness = Vector3.Dot(lowerHit.normal, transform.up);
-
-        //steep detected
-        if(lowerRayHit && !upperRayHit && direction.sqrMagnitude > 0.4f && stepness < 0.6f) {
-            Vector3 origin = characterModel.position + transform.up * 0.5f + characterModel.transform.TransformDirection(Vector3.forward) * upperRayLength;
-            Vector3 pos = rigid.position + transform.up * upStepHeight;
-            rigid.position = pos;
+        if(stepDetected) {
+            rigid.position += characterModel.up * (heightOffset + 0.02f) + characterModel.forward * 0.067f;
         }
     }
     

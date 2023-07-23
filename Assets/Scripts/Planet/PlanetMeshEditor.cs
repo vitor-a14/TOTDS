@@ -13,6 +13,7 @@ public class PlanetMeshEditor : Editor {
     private SerializedProperty resProp;
     private SerializedProperty rangeProp;
     private SerializedProperty floorTagProp;
+    private SerializedProperty planetPlaceholderProp;
 
     private SerializedProperty heightMapProp;
     private SerializedProperty heightMapResolutionProp;
@@ -28,6 +29,7 @@ public class PlanetMeshEditor : Editor {
         resProp = serializedObject.FindProperty("res");
         rangeProp = serializedObject.FindProperty("range");
         floorTagProp = serializedObject.FindProperty("floorTag");
+        planetPlaceholderProp = serializedObject.FindProperty("planetPlaceHolder");
 
         heightMapProp = serializedObject.FindProperty("heightMap");
         heightMapResolutionProp = serializedObject.FindProperty("heightMapResolution");
@@ -46,6 +48,7 @@ public class PlanetMeshEditor : Editor {
         EditorGUILayout.PropertyField(resProp);
         EditorGUILayout.PropertyField(rangeProp);
         EditorGUILayout.PropertyField(floorTagProp);
+        EditorGUILayout.PropertyField(planetPlaceholderProp);
 
         EditorGUILayout.PropertyField(heightMapProp);
         EditorGUILayout.PropertyField(heightMapResolutionProp);

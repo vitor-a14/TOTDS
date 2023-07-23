@@ -13,6 +13,9 @@ public class CharacterAnimation : MonoBehaviour
 
     private PlayerController player;
     private float smoothedStepness;
+    private float smoothedInput;
+    public float smoothedDirection;
+    private float stepness;
 
     private void Awake() {
         if(Instance == null) 
@@ -27,11 +30,23 @@ public class CharacterAnimation : MonoBehaviour
     }
 
     void Update() {
-        anim.SetFloat(velocity_hash, player.processedInput.sqrMagnitude);
+        if(player.canMove) {
+            if(player.stopCharacterNearWalls) {
+                if(!player.nearWall)
+                    smoothedInput = player.processedInput.sqrMagnitude;
+                else 
+                    smoothedInput = Mathf.Lerp(smoothedInput, 0, 5 * Time.fixedDeltaTime);
+            } else {
+                smoothedInput = player.processedInput.sqrMagnitude;
+            }
+        } else {
+            smoothedInput = Mathf.Lerp(smoothedInput, 0, 5 * Time.fixedDeltaTime);
+        }
 
-        float stepness = player.onSlope == true ? 1 : 0;
+        stepness = player.onSlope == true ? 1 : 0;
         smoothedStepness = Mathf.Lerp(smoothedStepness, stepness, 5 * Time.deltaTime);
 
+        anim.SetFloat(velocity_hash, smoothedInput);
         anim.SetFloat(stepness_hash, smoothedStepness);
         anim.SetBool(grounded_hash, player.onGround);
         anim.SetBool(near_hash, player.nearWall);
