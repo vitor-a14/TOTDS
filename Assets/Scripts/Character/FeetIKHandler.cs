@@ -5,23 +5,24 @@ public class FeetIKHandler : MonoBehaviour
     public static FeetIKHandler Instance { get; private set; }
 
     public Animator characterAnimation;
+    [Range(0, 2f)] public float raycastHeightFromGround = 1.14f;
+    [Range(0, 2f)] public float raycastDistance = 1.5f;
+    public bool enableFeetIK;
 
     private Vector3 rightFootPosition, leftFootPosition, leftFootIKPosition, rightFootIKPosition;
     private Quaternion leftFootIKRotation, rightFootIKRotation;
     private float lastPelvisPositionY, lastRightFootPositionY, lastLeftFootPositionY;
-
-    [SerializeField] [Range(0, 2f)] private float raycastHeightFromGround = 1.14f;
-    [SerializeField] [Range(0, 2f)] private float raycastDistance = 1.5f;
-    [SerializeField] private float pelvisOffset;
-
-    public bool enableFeetIK;
-    public bool showDebug = false;
+    private PlayerController player;
 
     private void Awake() {
         if(Instance == null) 
             Instance = this;
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
+    }
+
+    private void Start() {
+        player = PlayerController.Instance;
     }
 
     private void FixedUpdate() {
@@ -69,14 +70,10 @@ public class FeetIKHandler : MonoBehaviour
 
     private void FeetPositionSolver(Vector3 upPosition, ref Vector3 feetIKPositions, ref Quaternion feetIKRotations, Transform foot) {
         RaycastHit hit;
-        if(showDebug) {
-            Debug.DrawRay(upPosition, -transform.up * (raycastDistance + raycastHeightFromGround), Color.yellow);
-        }
 
-        if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, PlayerController.Instance.walkableLayers) 
-        && PlayerController.Instance.onGround && !PlayerController.Instance.jumping) {
+        if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, player.walkableLayers) && player.onGround) {
             feetIKPositions = upPosition;
-            feetIKPositions = hit.point + transform.up * pelvisOffset; 
+            feetIKPositions = hit.point; 
             feetIKRotations = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
 
             return;
@@ -100,9 +97,9 @@ public class FeetIKHandler : MonoBehaviour
         float rightOffsetPosition = relativeRightFootOffset.y - relativeTransform.y;
 
         float totalOffset = (leftOffsetPosition < rightOffsetPosition) ? leftOffsetPosition : rightOffsetPosition;
-        Vector3 newPelvisPosition = relativeBodyPosition + Vector3.up * totalOffset; //my code
+        Vector3 newPelvisPosition = relativeBodyPosition + Vector3.up * totalOffset; 
 
-        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, 0.001f * Time.fixedDeltaTime);
+        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, Time.fixedDeltaTime / 0.1f);
         relativeBodyPosition = transform.TransformPoint(relativeBodyPosition);
         characterAnimation.bodyPosition = transform.TransformPoint(newPelvisPosition);
         lastPelvisPositionY = relativeBodyPosition.y;

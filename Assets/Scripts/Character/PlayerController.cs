@@ -8,23 +8,22 @@ public class PlayerController : PhysicsObject
 
     [Header("Movement Settings")]
     public bool canMove = true;
-    public bool reading = false;
-    public Transform cam;
-    public float movementSpeed;
-    public Transform characterModel;
-    public float inputSmoothDamp;
-
-    [Header("Jump Settings")]
-    public float jumpForce;
-    public float aditionalJumpForce;
-    public float groundDistanceCheck;
     public LayerMask walkableLayers;
-    public float holdJumpTime;
-    public bool jumping;
-    public float jumpCooldown;
+    public Transform cam;
+    public Transform characterModel;
+    public float movementSpeed;
+    public float inputSmoothDamp;
+    public float detectWallRayLength = 0.25f; //This ray detects if a wall is in front of the character to prevent moving
+    public float onAirMovementDecrease = 0;
 
-    private bool canJump = true;
-    private float jumpCooldownCounter = 0;
+    private bool shiftWalk = false; //only for keyboard
+    private Vector3 processedDirection;
+    private Vector3 surfaceNormal;
+    [HideInInspector] public string floorTag;
+    [HideInInspector] public Vector2 input;
+    [HideInInspector] public Vector2 processedInput;
+    [HideInInspector] public Vector3 direction;
+    [HideInInspector] public bool reading = false;
 
     [Header("Slope Movement")]
     public float slopeAngleTrigger;
@@ -34,38 +33,29 @@ public class PlayerController : PhysicsObject
     public float upStepHeight;
     public float lowerRayLength, upperRayLength;
 
-    private bool shiftWalk = false; //only for keyboard
-    private float jumpingTimer;
-    private Vector3 processedDirection;
-    private Vector3 surfaceNormal;
-    [HideInInspector] public string floorTag;
-    [HideInInspector] public Vector2 input;
-    [HideInInspector] public Vector2 processedInput;
-    [HideInInspector] public Vector3 direction;
     [HideInInspector] public bool onSlope;
     [HideInInspector] public bool nearWall;
 
+    [Header("Jump Settings")]
+    public float jumpForce;
+    public float jumpAditionalForce;
+    public float groundDistanceCheck;
+    public float jumpCooldown;
+    public float landIdleDuration;
+    public float jumpIdleDuration;
+    public Cloth cape;
+
+    private bool canJump = true; //also used to see if the player is on a jump
+    private bool jumpButtonIsDown = false;
+    private RaycastHit hit;
+
+    [HideInInspector] public bool onGround = true; 
     //To detect if the player hit the ground and activate a callback to the animation
-    public bool _onGround = true; //only for structure, use the variable below instead
-    [SerializeField]
-    public bool onGround 
-    {
-        get { return _onGround; }
-        set
-        {
-            if (_onGround != value && value == true) {
-                _onGround = value;
-                StartCoroutine(CharacterAnimation.Instance.LandingWindow());
-            }
-            else {
-                _onGround = value;
-            }
-        }
-    }
+    public bool hitOnGround = false;
 
     //Instance and input setup
     private void Awake() {
-        if(Instance == null) 
+        if (Instance == null) 
             Instance = this;
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
@@ -76,6 +66,7 @@ public class PlayerController : PhysicsObject
         inputs.Character.Movement.performed += ctx => input = ctx.ReadValue<Vector2>();
         inputs.Character.Movement.canceled += ctx => input = Vector2.zero;
         inputs.Character.Jump.performed += ctx => Jump();
+        inputs.Character.Jump.canceled += ctx => jumpButtonIsDown = false;
         inputs.Character.ShiftWalk.performed += ctx => shiftWalk = true;
         inputs.Character.ShiftWalk.canceled += ctx => shiftWalk = false; 
 
@@ -89,9 +80,9 @@ public class PlayerController : PhysicsObject
     //Handle screen message show. If the player is already in reading mode, go to next message until it's gone
     //If player is not in reading mode, show the reading screen
     private void InteractHandler() {
-        if(!canMove) return; //validate this line
+        if (!canMove) return; //validate this line
 
-        if(reading) {
+        if (reading) {
             CommunicationHandler.Instance.readingTarget.ShowMessage();
         } else {
             CommunicationHandler.Instance.InteractWithCurrentTarget();
@@ -103,43 +94,42 @@ public class PlayerController : PhysicsObject
     }
 
     private void Update() {
-        if(!canMove || reading) {
+        if (!canMove || reading) {
             direction = Vector3.zero;
             return;
         }
+        
+        Vector3 gravityDirection = GetGravityDirection();
+        Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
+        Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
+        float movementMultiplier = 1;
 
-        if(onGround) {
-            Vector3 gravityDirection = GetGravityDirection();
-            Vector3 forward = Vector3.Cross(-gravityDirection, cam.right).normalized;
-            Vector3 right = Vector3.Cross(-gravityDirection, -cam.forward).normalized;
+        if (onSlope)
+            movementMultiplier = (1 - slopeMovementDecrease);
+        else if (!onGround)
+            movementMultiplier = (1 - onAirMovementDecrease);
+ 
+        direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed * movementMultiplier;
 
-            if(shiftWalk)
-                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
-            else
-                processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
+        if (shiftWalk)
+            processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 0.41f), inputSmoothDamp * Time.deltaTime);
+        else
+            processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
 
-            if(onSlope)
-                direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed * (1 - slopeMovementDecrease);
-            else 
-                direction = (forward * processedInput.y + right * processedInput.x) * movementSpeed;
-
-            if (input != Vector2.zero) {
-                CharacterAnimation.Instance.landing = false;
-                Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
-                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-            } else {
-                Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
-                Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
-                characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
-            }
+        if (direction != Vector3.zero && input != Vector2.zero) {
+            Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
+            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
+        } else {
+            Vector3 forwardDir = Vector3.Cross(gravityDirection, characterModel.right);
+            Quaternion modelRotation = Quaternion.LookRotation(-forwardDir, gravityDirection);
+            characterModel.rotation = Quaternion.Slerp(characterModel.rotation, modelRotation, 15f * Time.deltaTime);
         }
     }
 
     private void FixedUpdate() {
-        CheckGround();
         UpdatePhysics();
+        CheckGround();
         ApplyMotion();
-        JumpAditionalForce();
         StepUp();
     }
 
@@ -152,12 +142,15 @@ public class PlayerController : PhysicsObject
             processedDirection = direction;
         }
 
-        Debug.DrawLine(startPos, startPos + characterModel.forward * 0.25f, Color.yellow);
-        if(!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * 0.25f, walkableLayers)) {
+        if (!Physics.Linecast(startPos, startPos + characterModel.TransformDirection(Vector3.forward) * detectWallRayLength, walkableLayers)) {
             rigid.position += processedDirection * Time.fixedDeltaTime;
             nearWall = false;
         } else {
             nearWall = true;
+        }
+
+        if(jumpButtonIsDown && !canJump) {
+            rigid.AddForce(transform.up * jumpAditionalForce, ForceMode.Acceleration);
         }
     }
 
@@ -167,21 +160,23 @@ public class PlayerController : PhysicsObject
     }
 
     private void CheckGround() {
-        RaycastHit hit;
         if (Physics.SphereCast(transform.position, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
             onSlope = Vector3.Dot(transform.up, surfaceNormal) < slopeAngleTrigger ? true : false;
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
             onGround = true;
-            if(!canJump)
-                HandleJumpCooldown();
+            if(!hitOnGround) {
+                StartCoroutine(HandleLandCoroutine());
+            }
         } else {
             onGround = false;
+            hitOnGround = false;
         }
     }
 
+    // GO BACK HERE TO IMPROVE //
     private void StepUp() {
-        if(!onGround || !canMove || reading || jumping) return;
+        if(!onGround || !canMove || reading) return;
 
         RaycastHit lowerHit;
         bool lowerRayHit;
@@ -212,46 +207,39 @@ public class PlayerController : PhysicsObject
             rigid.position = pos;
         }
     }
-
-    //If the player is holding the jump button, the character will jump higher
-    private void JumpAditionalForce() {
-        if(!jumping || !canMove || reading) return;
-
-        if(jumpingTimer < holdJumpTime) {
-            jumpingTimer += Time.fixedDeltaTime;
-            rigid.AddForce(transform.up * aditionalJumpForce, ForceMode.Acceleration);
-        }
-    }
-
+    
+    //Called when the jump button is pressed
     private void Jump() {
-        if(!canMove || reading) return;
+        jumpButtonIsDown = true;
 
-        if (onGround && canJump) {
-            CharacterAnimation.Instance.PlayJumpAnim();
-            rigid.AddForce(surfaceNormal * jumpForce, ForceMode.VelocityChange);
-            StartCoroutine(HandleJump());
-            canJump = false;
+        if (onGround && canJump && canMove && !reading) {
+            StartCoroutine(HandleJumpCoroutine());
         }
     }
 
     //Time window to know if the player is pressing the jumping button and apply a higher jump force
-    private IEnumerator HandleJump() {
-        jumpingTimer = 0f;
-        jumping = true;
-        yield return new WaitForSeconds(0.6f);
-        jumping = false;
+    private IEnumerator HandleJumpCoroutine() {
+        canMove = false;
+        canJump = false;
+        CharacterAnimation.Instance.PlayJumpAnim();
+
+        yield return new WaitForSeconds(jumpIdleDuration);
+
+        rigid.AddForce(surfaceNormal * jumpForce, ForceMode.VelocityChange);
+        canMove = true;
     }  
 
-    private void HandleJumpCooldown() {
-        if(jumpCooldownCounter >= jumpCooldown) {
-            jumpCooldownCounter = 0;
-            canJump = true;
-        } else {
-            jumpCooldownCounter += Time.deltaTime;
-        }
+    private IEnumerator HandleLandCoroutine() {
+        canMove = false;
+        hitOnGround = true;
+        CharacterAnimation.Instance.PlayLandAnim();
+        processedInput = Vector2.zero;
+        yield return new WaitForSeconds(landIdleDuration);
+        canJump = true;
+        canMove = true;
     }
 
-    //A custom clamp magnite with min and max. The built in unity ClampMagnitude only has the max parameter
+    //A custom clamp magnitude with min and max. The built in unity ClampMagnitude only has the max parameter
     private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude) {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;
