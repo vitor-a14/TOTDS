@@ -17,7 +17,6 @@ public class CelestialBody : MonoBehaviour
     public AudioClip ambienceAudio;
     public bool isMoon;
     public bool hasSoundPropagation;
-    [HideInInspector] public Rigidbody rigid;
 
     private bool playerOnSurface;
     private Vector3 celestialPosition;
@@ -26,7 +25,11 @@ public class CelestialBody : MonoBehaviour
 
     private static float fadeAudioMultiplier = 200;
 
+    private PlayerController player;
+    [HideInInspector] public Rigidbody rigid;
+
     private void Start() {
+        player = PlayerController.Instance;
         rigid = GetComponent<Rigidbody>();
         celestialPosition = transform.position;
         if(orbitAround != null) {
@@ -76,7 +79,7 @@ public class CelestialBody : MonoBehaviour
 
     private void LateUpdate() {
         if(playerOnSurface && hasSoundPropagation) {
-            Vector3 direction = transform.position - PlayerController.Instance.transform.position;
+            Vector3 direction = transform.position - player.transform.position;
             float distance = (direction.magnitude - planetRadius) / fadeAudioMultiplier;
             distance = Mathf.Clamp(distance, 0, 1);
 

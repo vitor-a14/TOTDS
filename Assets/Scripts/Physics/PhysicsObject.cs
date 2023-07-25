@@ -5,18 +5,24 @@ using UnityEngine;
 public class PhysicsObject : MonoBehaviour
 {
     [Header("Physics Settings")]
+
+    [Tooltip("Use this custom physics script")]
     public bool userGravitacionalForce = true;
+
+    [Tooltip("Rotate the object to the strongest atractor")]
     public bool autoRotate = false;
+
+    [Tooltip("Set the parent to the strongest atractor, useful to follow objects")]
     public bool setParentToPlanet = true; //if activated, the object will be attached to close celestial bodies with SetParent
+
+    public bool isPlayer = false;
 
     [HideInInspector] public Rigidbody rigid;
     [HideInInspector] public Vector3 mainForceDirection = Vector3.zero;
-    private List<Vector3> collisionVertices = new List<Vector3>();
+    [HideInInspector] public CelestialBody lastParentBody;
 
     private float rotationSpeed = 85f;
     private float setParentThreshold = 300f; //the distance that will make the object be attached to the celestial body
-
-    [HideInInspector] public CelestialBody lastParentBody;
 
     private void Start() {
         InitializePhysics();

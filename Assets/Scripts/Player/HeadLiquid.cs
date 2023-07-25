@@ -22,13 +22,19 @@ public class HeadLiquid : MonoBehaviour
     Vector3 lastRot;  
     Vector3 angularVelocity;
 
+    private PlayerController player;
+
+    private void Start() {
+        player = PlayerController.Instance;
+    }
+
     private void FixedUpdate() {
         LookAtGravityDirection();
         SetWobbleValue();
     }
 
     public void LookAtGravityDirection() {
-        Vector3 gravityDirection = PlayerController.Instance.GetGravityDirection();
+        Vector3 gravityDirection = player.GetGravityDirection();
 
         if(gravityDirection != Vector3.zero)
             transform.rotation = Quaternion.LookRotation(gravityDirection, Vector3.up);

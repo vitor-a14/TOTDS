@@ -23,6 +23,12 @@ public class FootstepHandler : MonoBehaviour
     private AudioSource audioSource;
     private string floorTag = "";
 
+    private PlayerController player;
+
+    private void Start() {
+        player = PlayerController.Instance;
+    }
+
     public void PlayFootstep(AnimationEvent animationEvent) {
         if(animationEvent.animatorClipInfo.weight < 0.5f) return;
 
@@ -36,7 +42,7 @@ public class FootstepHandler : MonoBehaviour
 
         useRightFoot = !useRightFoot;
 
-        if(Physics.Raycast(foot.position + transform.up * 0.1f, -transform.up, out hit, 1.2f, PlayerController.Instance.walkableLayers)) {
+        if(Physics.Raycast(foot.position + transform.up * 0.1f, -transform.up, out hit, 1.2f, player.walkableLayers)) {
             floorTag = hit.transform.tag;
         }
 

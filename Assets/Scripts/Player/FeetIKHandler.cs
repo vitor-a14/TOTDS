@@ -43,8 +43,8 @@ public class FeetIKHandler : MonoBehaviour
         characterAnimation.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
         characterAnimation.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
 
-        characterAnimation.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f - PlayerController.Instance.direction.magnitude);
-        characterAnimation.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f - PlayerController.Instance.direction.magnitude);
+        characterAnimation.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f - player.processedInput.sqrMagnitude);
+        characterAnimation.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f - player.processedInput.sqrMagnitude);
 
         MoveFeetToIKPoint(AvatarIKGoal.LeftFoot, leftFootIKPosition, leftFootIKRotation, ref lastLeftFootPositionY);
         MoveFeetToIKPoint(AvatarIKGoal.RightFoot, rightFootIKPosition, rightFootIKRotation, ref lastRightFootPositionY);

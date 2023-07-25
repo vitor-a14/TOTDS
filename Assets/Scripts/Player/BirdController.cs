@@ -23,7 +23,7 @@ public class BirdController : Interactable
 
     [Header("Dependencies")]
     public BirdAudioManager audioManager;
-    [SerializeField] private Transform player;
+    [SerializeField] private Transform playerTransform;
     [HideInInspector] [SerializeField] public PhysicsObject physics;
     private Inputs inputs;
     private Vector2 inputMove, inputRotate;
@@ -45,11 +45,15 @@ public class BirdController : Interactable
     public float motorRotationVelocity;
     private float motorCurrentRotationVelocity;
 
+    private PlayerController player;
+
     private void Awake() {
         if(Instance == null) 
             Instance = this;
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
+
+        player = PlayerController.Instance;
 
         inputs = new Inputs();
         inputs.Enable();
@@ -175,15 +179,15 @@ public class BirdController : Interactable
 
     //This will hide the player and enter the "Bird Mode" to control the vehicle
     public void EnterPilotMode() {
-        if(!PlayerController.Instance.canMove && PlayerController.Instance.reading) return;
+        if(!player.canMove) return;
         CameraController.Instance.isActive = false;
         piloting = true;
         canFreezeRigid = false;
-        PlayerController.Instance.inputs.Disable();
+        player.inputs.Disable();
         CameraManager.Instance.ChangeToBirdCamera();
         inputs.Enable();
         audioManager.EnterShip();
-        player.SetParent(transform);
+        playerTransform.SetParent(transform);
         player.gameObject.SetActive(false);
         physics.userGravitacionalForce = false;
         physics.rigid.freezeRotation = true;
@@ -196,10 +200,10 @@ public class BirdController : Interactable
         piloting = false;
         StartCoroutine(FreezeRigid());
         player.gameObject.SetActive(true);
-        player.SetParent(null);
-        PlayerController.Instance.inputs.Enable();
-        PlayerController.Instance.AdjustModelRotation();
-        PlayerController.Instance.SetRotationToGravityDirection();
+        playerTransform.SetParent(null);
+        player.inputs.Enable();
+        player.AdjustModelRotation();
+        player.SetRotationToGravityDirection();
         characterCape.ClearTransformMotion();
         CameraManager.Instance.ChangeToCharacterCamera();
         inputs.Disable();

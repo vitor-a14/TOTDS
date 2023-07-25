@@ -8,8 +8,7 @@ public class CharacterAnimation : MonoBehaviour
     private Animator anim;
     private static readonly int velocity_hash = Animator.StringToHash("Velocity");
     private static readonly int stepness_hash = Animator.StringToHash("Stepness");
-    private static readonly int grounded_hash = Animator.StringToHash("Grounded");
-    private static readonly int near_hash = Animator.StringToHash("NearWall");
+    private static readonly int falling_hash = Animator.StringToHash("Falling");
 
     private PlayerController player;
     private float smoothedStepness;
@@ -48,15 +47,30 @@ public class CharacterAnimation : MonoBehaviour
 
         anim.SetFloat(velocity_hash, smoothedInput);
         anim.SetFloat(stepness_hash, smoothedStepness);
-        anim.SetBool(grounded_hash, player.onGround);
-        anim.SetBool(near_hash, player.nearWall);
+        anim.SetBool(falling_hash, player.isFalling);
+    }
+
+    public float GetCurrentAnimationLength() {
+        return anim.GetCurrentAnimatorClipInfo(0).Length;
+    }
+
+    public void PlayStrumbleAnim() {
+        anim.Play("Strumble");
+    }
+
+    public void PlayJumpAnim() {
+        anim.Play("Jump");
+    }
+
+    public void PlayFallAnim() {
+        anim.Play("Fall");
     }
 
     public void PlayLandAnim() {
         anim.Play("Land");
     }
 
-    public void PlayJumpAnim() {
-        anim.Play("Jump");
+    public void PlayHardLand() {
+        anim.Play("Hard Land");
     }
 }
