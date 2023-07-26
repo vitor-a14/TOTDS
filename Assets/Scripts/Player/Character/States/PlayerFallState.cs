@@ -16,12 +16,10 @@ public class PlayerFallState : PlayerState
     public override void Enter() { 
         handleFall = true;
         fallingDuration = 0f;
-        FeetIKHandler.Instance.enableFeetIK = false;
         player.isFalling = true;
     }
 
     public override void Exit() { 
-        FeetIKHandler.Instance.enableFeetIK = true;
         player.isFalling = false;
     }
 

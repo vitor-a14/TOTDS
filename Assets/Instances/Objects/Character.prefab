@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4295151000436490853}
   - component: {fileID: 171924097479384646}
   - component: {fileID: 858901465228497963}
-  - component: {fileID: 1073340587606637838}
   - component: {fileID: 839571361355240087}
+  - component: {fileID: 5194546558032341425}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -35,7 +35,7 @@ Transform:
   - {fileID: 6928336060708878722}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -87,55 +87,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 1
---- !u!114 &1073340587606637838
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2429615437108190100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98cd25c395a10e14c99cf672bd4c9565, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  userGravitacionalForce: 1
-  autoRotate: 1
-  setParentToPlanet: 1
-  rigid: {fileID: 858901465228497963}
-  mainForceDirection: {x: 0.015606355, y: -0.029526733, z: -0.99944216}
-  lastParentBody: {fileID: 0}
-  canMove: 1
-  stopCharacterNearWalls: 1
-  walkableLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  cam: {fileID: 0}
-  characterModel: {fileID: 6928336060708878722}
-  characterCollider: {fileID: 171924097479384646}
-  movementSpeed: 3.5
-  inputSmoothDamp: 8
-  onAirMovementDecrease: 0.1
-  floorTag: Grass
-  input: {x: 0, y: 0}
-  processedInput: {x: 0, y: 0.000029326062}
-  direction: {x: -0.000058378166, y: 0.00010686476, z: -0.0000040687078}
-  reading: 0
-  slopeAngleTrigger: 0.95
-  slopeMovementDecrease: 0.1
-  upStepHeight: 0.13
-  lowerRayLength: 0.25
-  upperRayLength: 0.4
-  onSlope: 0
-  nearWall: 0
-  jumpForce: 6
-  jumpAditionalForce: 3
-  groundDistanceCheck: 1.1
-  landIdleDuration: 0.6
-  jumpIdleDuration: 0.3
-  colliderHeightOnJump: 1
-  colliderCenterOnJump: {x: 0, y: 0.1, z: 0}
-  onGround: 1
 --- !u!114 &839571361355240087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,6 +102,53 @@ MonoBehaviour:
   interactionsQueueSize: 10
   queueDuration: 1
   readingTarget: {fileID: 0}
+--- !u!114 &5194546558032341425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2429615437108190100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab92f572ed68d54f8175f22dbb0738d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  userGravitacionalForce: 1
+  autoRotate: 1
+  setParentToPlanet: 1
+  isPlayer: 1
+  rigid: {fileID: 0}
+  mainForceDirection: {x: 0, y: 0, z: 0}
+  lastParentBody: {fileID: 0}
+  canMove: 1
+  stopCharacterNearWalls: 1
+  walkableLayers:
+    serializedVersion: 2
+    m_Bits: 8
+  characterModel: {fileID: 6928336060708878722}
+  cam: {fileID: 0}
+  characterCollider: {fileID: 171924097479384646}
+  inputSmoothDamp: 8
+  movementSpeed: 3.5
+  movementSpeedOnSlope: 3
+  movementSpeedOnAir: 4
+  slopeAngleTrigger: 0.95
+  maxStepHeight: 0.45
+  jumpForce: 6
+  groundDistanceCheck: 1
+  landIdleDuration: 0.6
+  jumpIdleDuration: 0.3
+  normalFallDuration: 0.5
+  input: {x: 0, y: 0}
+  processedInput: {x: 0, y: 0}
+  jumpButtonIsPressed: 0
+  surfaceNormal: {x: 0, y: 0, z: 0}
+  floorTag: 
+  isFalling: 0
+  onGround: 0
+  onSlope: 0
+  nearWall: 0
 --- !u!1 &6524105239492796227
 GameObject:
   m_ObjectHideFlags: 0
@@ -408,6 +406,7 @@ MonoBehaviour:
   userGravitacionalForce: 1
   autoRotate: 0
   setParentToPlanet: 0
+  isPlayer: 0
   rigid: {fileID: 0}
   mainForceDirection: {x: 0, y: 0, z: 0}
   lastParentBody: {fileID: 0}
@@ -485,12 +484,38 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.03
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.03
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
@@ -630,6 +655,12 @@ Cloth:
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.001
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
@@ -660,56 +691,6 @@ Cloth:
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.002
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.002
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.002
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
-    collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
@@ -859,6 +840,14 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.002
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.002
+    collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
@@ -873,9 +862,19 @@ Cloth:
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
-  - maxDistance: 0.05
+  - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.3
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.002
+    collisionSphereDistance: 3.4028235e+38
+  - maxDistance: 0.002
     collisionSphereDistance: 3.4028235e+38
   - maxDistance: 0.3
     collisionSphereDistance: 3.4028235e+38
@@ -1605,7 +1604,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135c4fbb99b1c9d4cb38ea179a5f0aa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  footstepVolume: 0.2
+  footstepVolume: 0.18
   footsteps:
   - floorTag: Stone
     audios:

@@ -43,7 +43,7 @@ public class FootstepHandler : MonoBehaviour
         useRightFoot = !useRightFoot;
 
         if(Physics.Raycast(foot.position + transform.up * 0.1f, -transform.up, out hit, 1.2f, player.walkableLayers)) {
-            floorTag = hit.transform.tag;
+            floorTag = hit.collider.tag;
         }
 
         foreach(Footstep footstep in footsteps) {

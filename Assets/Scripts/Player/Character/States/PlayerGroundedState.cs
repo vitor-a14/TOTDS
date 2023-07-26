@@ -8,6 +8,9 @@ public class PlayerGroundedState : PlayerState
     private float durationOffGround;
     private float maxOffGroundDuration = 0.16f;
 
+    private float stepTimer = 0f;
+    private float stepDuration = 0.3f;
+
     public PlayerGroundedState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter() { 
@@ -21,13 +24,17 @@ public class PlayerGroundedState : PlayerState
         Vector3 right = Vector3.Cross(-gravityDirection, -player.cam.forward).normalized;
         float movementMultiplier = 1;
 
+        HandleSlopes();
+
         if (player.onSlope)
             movementMultiplier = player.movementSpeedOnSlope;
         else 
             movementMultiplier = player.movementSpeed;
 
+        //Calculate movement direction
         direction = (forward * player.processedInput.y + right * player.processedInput.x) * movementMultiplier;
 
+        //Rotate player model
         if (direction != Vector3.zero && player.input != Vector2.zero) {
             Quaternion modelRotation = Quaternion.LookRotation(direction.normalized, gravityDirection);
             player.characterModel.rotation = Quaternion.Slerp(player.characterModel.rotation, modelRotation, 15f * Time.deltaTime);
@@ -37,16 +44,21 @@ public class PlayerGroundedState : PlayerState
             player.characterModel.rotation = Quaternion.Slerp(player.characterModel.rotation, modelRotation, 15f * Time.deltaTime);
         }
 
+        //Start jump
         if(player.jumpButtonIsPressed && player.onGround) {
             stateMachine.ChangeState(player.JumpState);
         }
 
+        //Check if the player is falling
         if(!player.onGround) {
             durationOffGround += Time.deltaTime;
             if(durationOffGround > maxOffGroundDuration) {
                 player.StateMachine.ChangeState(player.FallState);
             } 
         } else {
+            if(durationOffGround > 0f) {
+                stepTimer = 0f;
+            }
             durationOffGround = 0f;
         }
     }
@@ -56,6 +68,16 @@ public class PlayerGroundedState : PlayerState
             
         if(!player.nearWall) {
             player.rigid.position += direction * Time.fixedDeltaTime;
+        }
+    }
+
+    private void HandleSlopes() {
+        //Check if the player need to strumble
+        if(stepTimer < stepDuration) {
+            stepTimer += Time.deltaTime;
+            player.onSlope = true;
+        } else {
+            player.onSlope = Vector3.Dot(player.transform.up, player.surfaceNormal) < player.slopeAngleTrigger ? true : false; 
         }
     }
 
@@ -82,6 +104,7 @@ public class PlayerGroundedState : PlayerState
         }
 
         if(stepDetected) {
+            stepTimer = 0f;
             player.rigid.position += characterModel.up * (heightOffset + 0.02f) + characterModel.forward * 0.067f;
         }
     }

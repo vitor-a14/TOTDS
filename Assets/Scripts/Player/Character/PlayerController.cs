@@ -114,7 +114,6 @@ public class PlayerController : PhysicsObject
         if (Physics.SphereCast(transform.position, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
-            onSlope = Vector3.Dot(transform.up, surfaceNormal) < slopeAngleTrigger ? true : false; //Also check the angle of the ground
             onGround = true;
         } else {
             onGround = false;
