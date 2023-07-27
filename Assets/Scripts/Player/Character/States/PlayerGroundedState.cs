@@ -8,14 +8,19 @@ public class PlayerGroundedState : PlayerState
     private float durationOffGround;
     private float maxOffGroundDuration = 0.16f;
 
+    private float jumpCooldownCounter;
+    private float jumpCooldown = 1f; //Cooldown until the player can jump
+
     private float stepTimer = 0f;
     private float stepDuration = 0.3f;
+    private float teeterHeighTrigger = 1.6f;
 
     public PlayerGroundedState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter() { 
         player.processedInput = Vector2.zero;
         durationOffGround = 0f;
+        jumpCooldownCounter = 0f;
     }
 
     public override void StateUpdate() { 
@@ -44,8 +49,13 @@ public class PlayerGroundedState : PlayerState
             player.characterModel.rotation = Quaternion.Slerp(player.characterModel.rotation, modelRotation, 15f * Time.deltaTime);
         }
 
+        //Jump cooldown handler
+        if(jumpCooldownCounter < jumpCooldown) {
+            jumpCooldownCounter += Time.deltaTime;
+        }
+
         //Start jump
-        if(player.jumpButtonIsPressed && player.onGround) {
+        if(player.jumpButtonIsPressed && player.onGround && jumpCooldownCounter >= jumpCooldown) {
             stateMachine.ChangeState(player.JumpState);
         }
 
@@ -64,10 +74,20 @@ public class PlayerGroundedState : PlayerState
     }
 
     public override void StateFixedUpdate() {
-        StepUp();
-            
+        HandleSteps();
+        HandleEdges();
+
         if(!player.nearWall) {
             player.rigid.position += direction * Time.fixedDeltaTime;
+        }
+    }
+
+    private void HandleEdges() {
+        Vector3 pos = player.characterModel.position + player.characterModel.up + player.characterModel.forward * (player.characterCollider.radius + 0.05f);
+        if(Physics.Raycast(pos, -player.characterModel.up, out RaycastHit edgeHit, teeterHeighTrigger, player.walkableLayers)) {
+            player.onEdge = false;
+        } else {
+            player.onEdge = true;
         }
     }
 
@@ -81,7 +101,7 @@ public class PlayerGroundedState : PlayerState
         }
     }
 
-    private void StepUp() {
+    private void HandleSteps() {
         bool stepDetected = true;
         float heightOffset = 0;
         Transform characterModel = player.characterModel;

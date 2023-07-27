@@ -38,7 +38,7 @@ public class PlayerController : PhysicsObject
     [Tooltip("Duration of preparation of the player before the jump")]
     public float jumpIdleDuration;
 
-    [Tooltip("Defines if the landing will be easy or heavy depending on the duration")]
+    public float smallFallDuration;
     public float normalFallDuration;
 
     //Input variables
@@ -52,6 +52,7 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public string floorTag;
     [HideInInspector] public bool isFalling;
     [HideInInspector] public bool onGround; 
+    [HideInInspector] public bool onEdge;
     [HideInInspector] public bool onSlope;
     [HideInInspector] public bool nearWall;
 
@@ -87,12 +88,14 @@ public class PlayerController : PhysicsObject
     private void Update() {
         processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
         StateMachine.CurrentState.StateUpdate();
+
+        CheckGround();
     }
 
     private void FixedUpdate() {
         UpdatePhysics();
         DetectWalls();
-        CheckGround();
+
 
         StateMachine.CurrentState.StateFixedUpdate();
     }

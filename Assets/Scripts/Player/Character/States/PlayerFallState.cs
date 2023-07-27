@@ -7,7 +7,7 @@ public class PlayerFallState : PlayerState
     private bool handleFall;
     private MonoBehaviour monoBehaviour;
 
-    private float faintDuration = 3f;
+    private float faintDuration = 3.8f;
 
     public PlayerFallState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) {
         monoBehaviour = player.GetComponent<MonoBehaviour>();
@@ -17,6 +17,7 @@ public class PlayerFallState : PlayerState
         handleFall = true;
         fallingDuration = 0f;
         player.isFalling = true;
+        CharacterAnimation.Instance.PlayFallAnim();
     }
 
     public override void Exit() { 
@@ -25,10 +26,12 @@ public class PlayerFallState : PlayerState
 
     public override void StateUpdate() {
         if(player.onGround && handleFall) {
-            if(fallingDuration <= player.normalFallDuration) {
-                monoBehaviour.StartCoroutine(HandleNormalFall());
+            if(fallingDuration <= player.smallFallDuration) {
+                monoBehaviour.StartCoroutine(HandleSmallLand());
+            } else if(fallingDuration <= player.normalFallDuration) {
+                monoBehaviour.StartCoroutine(HandleMediumLand());
             } else {
-                monoBehaviour.StartCoroutine(HandleBigFall());
+                monoBehaviour.StartCoroutine(HandleBigLand());
             }
 
             handleFall = false;
@@ -37,16 +40,27 @@ public class PlayerFallState : PlayerState
         }
     }
 
-    private IEnumerator HandleNormalFall() {
-        CharacterAnimation.Instance.PlayLandAnim();
+    private IEnumerator HandleSmallLand() {
+        if(player.input.sqrMagnitude > 0.3f) {
+            CharacterAnimation.Instance.PlaySmallLandMoving();
+            player.rigid.AddForce(player.characterModel.forward * player.jumpForce, ForceMode.VelocityChange);
+        } else {
+            CharacterAnimation.Instance.PlaySmallLandIdle();
+        }
+        yield return new WaitForSeconds(player.landIdleDuration/2);
+        player.StateMachine.ChangeState(player.GroundedState);
+    }
+
+    private IEnumerator HandleMediumLand() {
+        CharacterAnimation.Instance.PlayMediumLandAnim();
         yield return new WaitForSeconds(player.landIdleDuration);
         player.StateMachine.ChangeState(player.GroundedState);
     }
 
-    private IEnumerator HandleBigFall() {
+    private IEnumerator HandleBigLand() {
         CharacterAnimation.Instance.PlayHardLand();
         player.isFalling = false;
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(faintDuration);
         player.StateMachine.ChangeState(player.GroundedState);
     }
 

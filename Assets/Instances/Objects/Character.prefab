@@ -35,7 +35,7 @@ Transform:
   - {fileID: 6928336060708878722}
   - {fileID: 2613923663172793748}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -139,7 +139,8 @@ MonoBehaviour:
   groundDistanceCheck: 1
   landIdleDuration: 0.6
   jumpIdleDuration: 0.3
-  normalFallDuration: 0.5
+  smallFallDuration: 0.8
+  normalFallDuration: 1.3
   input: {x: 0, y: 0}
   processedInput: {x: 0, y: 0}
   jumpButtonIsPressed: 0
@@ -147,6 +148,7 @@ MonoBehaviour:
   floorTag: 
   isFalling: 0
   onGround: 0
+  onEdge: 0
   onSlope: 0
   nearWall: 0
 --- !u!1 &6524105239492796227
@@ -1312,7 +1314,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -1575,7 +1577,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b9ac0eab3a8f34881b1c22381979d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smoothedDirection: 0
 --- !u!114 &2156368940567612425
 MonoBehaviour:
   m_ObjectHideFlags: 0
