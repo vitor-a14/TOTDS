@@ -54,11 +54,6 @@ public class PlayerGroundedState : PlayerState
             jumpCooldownCounter += Time.deltaTime;
         }
 
-        //Start jump
-        if(player.jumpButtonIsPressed && player.onGround && jumpCooldownCounter >= jumpCooldown) {
-            stateMachine.ChangeState(player.JumpState);
-        }
-
         //Check if the player is falling
         if(!player.onGround) {
             durationOffGround += Time.deltaTime;
@@ -79,6 +74,18 @@ public class PlayerGroundedState : PlayerState
 
         if(!player.nearWall) {
             player.rigid.position += direction * Time.fixedDeltaTime;
+        }
+    }
+
+    public override void Interact() {
+        if(player.onGround && player.canMove) {
+            player.communicationHandler.InteractWithCurrentTarget();
+        }
+    }
+
+    public override void Jump() {
+        if(player.onGround && jumpCooldownCounter >= jumpCooldown && player.canMove) {
+            stateMachine.ChangeState(player.JumpState);
         }
     }
 
@@ -128,6 +135,4 @@ public class PlayerGroundedState : PlayerState
             player.rigid.position += characterModel.up * (heightOffset + 0.02f) + characterModel.forward * 0.067f;
         }
     }
-
-    public override void Exit() { }
 }

@@ -11,16 +11,16 @@ public enum Interaction {
 
 public class CommunicationHandler : MonoBehaviour
 {
+    //Conventional interaction variables
+    private Interactable simpleInteractionTarget;
+    [HideInInspector] public InteractableMessage readingTarget;
+
     //Communication interaction variables
     public static CommunicationHandler Instance { get; private set; }
     private Queue<Interaction> interactions = new Queue<Interaction>();
     public int interactionsQueueSize; //the max number of interactions
     public float queueDuration; //the max duration the queue persist without the player interacting
     private float queueTimer  = 0; 
-
-    //Conventional interaction variables
-    private Interactable simpleInteractionTarget;
-    [HideInInspector] public InteractableMessage readingTarget;
 
     private void Awake() {
         if(Instance == null) 
@@ -66,10 +66,9 @@ public class CommunicationHandler : MonoBehaviour
 
         interactions.Clear(); //if the code get this far this means the result will be true, them we can clear the queue
         return true;
-    }
+    } 
 
     //The functions bellow handle a more conventional interaction system: push the button and interact with the object
-
     public void InteractWithCurrentTarget() {
         if(simpleInteractionTarget == null) return;
         simpleInteractionTarget.Interact();

@@ -1,15 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractableMessage : Interactable
+public class InteractableMessage : MonoBehaviour, Interactable
 {
     public int id;
     private Message message;
     private int currentMessage = 0;
     private string[] messageText;
 
-    public override void Interact() {
+    public void Interact() {
         message = MessagesLoader.Instance.FindMessage(id);
         if(message == null) return;
 

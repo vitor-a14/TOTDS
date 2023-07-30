@@ -1,6 +1,4 @@
-using UnityEngine;
-
-public class Interactable : MonoBehaviour
+public interface Interactable 
 {
-    public virtual void Interact() { } 
+    void Interact();
 }

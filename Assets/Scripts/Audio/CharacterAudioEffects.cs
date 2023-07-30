@@ -5,13 +5,14 @@ public class CharacterAudioEffects : MonoBehaviour
     public static CharacterAudioEffects Instance { get; private set; }
 
     [Header("Velocity Audio Effect")]
-    public Rigidbody characterRigid; // these rigidbody will check the velocity of the player
-    public Rigidbody birdRigid;
-    public BirdController birdController;
+    public Rigidbody characterRigid; 
+    public Rigidbody spaceShipRigid;
 
     public AudioSource velocityAudioSource; // the audio source for the velocity sound effect
     public float velocityAudioThreshold; // the audio fades in when surpass this threshold
     public float lerpVelocity; // transition velocity between off/on
+
+    private GameObject player;
 
     private void Awake() {
         if(Instance == null) 
@@ -20,17 +21,22 @@ public class CharacterAudioEffects : MonoBehaviour
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
     }
 
+    private void Start() {
+        player = PlayerController.Instance.gameObject;
+    }
+
     void LateUpdate() {
         VelocityAudioEffect();
     }
 
     private void VelocityAudioEffect() {
         Rigidbody rigid;
-        
-        if(birdController.piloting) {
-            rigid = birdRigid;
-        } else {
+
+        //todo: improve this section
+        if(player.activeSelf) {
             rigid = characterRigid;
+        } else {
+            rigid = spaceShipRigid;
         }
 
         if(rigid.velocity.magnitude >= velocityAudioThreshold) {

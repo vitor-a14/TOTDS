@@ -46,6 +46,7 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public Vector2 input;
     [HideInInspector] public Vector2 processedInput; // use this to calculate animations
     [HideInInspector] public bool jumpButtonIsPressed;
+    [HideInInspector] public bool shiftButtonIsPressed;
 
     //General condition variables
     [HideInInspector] public Vector3 surfaceNormal;
@@ -56,7 +57,10 @@ public class PlayerController : PhysicsObject
     [HideInInspector] public bool onSlope;
     [HideInInspector] public bool nearWall;
 
+    [HideInInspector] public CommunicationHandler communicationHandler;
+
     private RaycastHit hit; 
+    private Vector2 clampedInput;
 
     private void Awake() {
         //Setup instance to be called from other scripts
@@ -76,8 +80,13 @@ public class PlayerController : PhysicsObject
         inputs.Enable();
         inputs.Character.Movement.performed += ctx => input = ctx.ReadValue<Vector2>();
         inputs.Character.Movement.canceled += ctx => input = Vector2.zero;
-        inputs.Character.Jump.performed += ctx => jumpButtonIsPressed = true;
-        inputs.Character.Jump.canceled += ctx => jumpButtonIsPressed = false;
+        inputs.Character.ShiftWalk.performed += ctx => shiftButtonIsPressed = true;
+        inputs.Character.ShiftWalk.canceled += ctx => shiftButtonIsPressed = false;
+        inputs.Communication.Interact.performed += ctx => StateMachine.CurrentState.Interact();
+        inputs.Character.Jump.performed += ctx => StateMachine.CurrentState.Jump();
+
+        //Interactions and communication
+        communicationHandler = GetComponent<CommunicationHandler>();
     }
 
     private void Start() {
@@ -86,18 +95,24 @@ public class PlayerController : PhysicsObject
     }
 
     private void Update() {
-        processedInput = Vector2.Lerp(processedInput, ClampMagnitude(input, 0f, 1f), inputSmoothDamp * Time.deltaTime);
-        StateMachine.CurrentState.StateUpdate();
+        if(shiftButtonIsPressed && onGround)
+            clampedInput = ClampMagnitude(input, 0.0f, 0.4f);
+        else 
+            clampedInput = ClampMagnitude(input, 0.0f, 1.0f);
 
-        CheckGround();
+        processedInput = Vector2.Lerp(processedInput, clampedInput, inputSmoothDamp * Time.deltaTime);
+
+        if(canMove)
+            StateMachine.CurrentState.StateUpdate();
     }
 
     private void FixedUpdate() {
         UpdatePhysics();
         DetectWalls();
+        CheckGround();
 
-
-        StateMachine.CurrentState.StateFixedUpdate();
+        if(canMove)
+            StateMachine.CurrentState.StateFixedUpdate();
     }
 
     private void DetectWalls() {
@@ -124,7 +139,7 @@ public class PlayerController : PhysicsObject
     }
 
     //Custom clamp function to define the min and max magnitude
-    private Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude) {
+    public Vector2 ClampMagnitude(Vector2 vector, float minMagnitude, float maxMagnitude) {
         float magnitude = Mathf.Clamp(vector.magnitude, minMagnitude, maxMagnitude);
         return vector.normalized * magnitude;
     }

@@ -63,6 +63,4 @@ public class PlayerFallState : PlayerState
         yield return new WaitForSeconds(faintDuration);
         player.StateMachine.ChangeState(player.GroundedState);
     }
-
-    public override void StateFixedUpdate() { }
 }

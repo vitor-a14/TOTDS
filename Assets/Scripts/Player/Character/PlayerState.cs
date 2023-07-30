@@ -8,6 +8,8 @@ public abstract class PlayerState
         this.stateMachine = stateMachine;
     }
 
+    //State functions
+
     public virtual void Enter() { }
 
     public virtual void Exit() { }
@@ -15,4 +17,11 @@ public abstract class PlayerState
     public virtual void StateUpdate() { }
 
     public virtual void StateFixedUpdate() { }
+
+
+    //Input functions
+
+    public virtual void Interact() { }
+
+    public virtual void Jump() { }
 } 

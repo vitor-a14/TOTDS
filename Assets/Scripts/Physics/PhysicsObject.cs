@@ -7,7 +7,7 @@ public class PhysicsObject : MonoBehaviour
     [Header("Physics Settings")]
 
     [Tooltip("Use this custom physics script")]
-    public bool userGravitacionalForce = true;
+    public bool useGravitacionalForce = true;
 
     [Tooltip("Rotate the object to the strongest atractor")]
     public bool autoRotate = false;
@@ -57,7 +57,7 @@ public class PhysicsObject : MonoBehaviour
                 celestialBodyNear = true;
                 if(transform.parent != celestialBody.transform) {
                     transform.SetParent(celestialBody.transform);
-                    if(transform.tag == "Player") {
+                    if(transform.tag == "Player" || transform.tag == "SpaceShip") {
                         celestialBody.ChangePhysicsPerspective(PhysicsPerspective.PLANET_SURFACE);
                         lastParentBody = celestialBody;
                     }
@@ -66,7 +66,7 @@ public class PhysicsObject : MonoBehaviour
 
             mainForceDirection = -greatestForce.normalized;
 
-            if(userGravitacionalForce) 
+            if(useGravitacionalForce) 
                 rigid.AddForce(force);
         }
 
