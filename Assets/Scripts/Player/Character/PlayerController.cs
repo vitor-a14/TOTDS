@@ -17,6 +17,7 @@ public class PlayerController : PhysicsObject
     public Transform characterModel;
     public Transform cam; //Used to calculate the direction that the player will move
     public CapsuleCollider characterCollider;
+    public Cloth characterCape;
     public float inputSmoothDamp;
     public float movementSpeed;
     public float movementSpeedOnSlope;
