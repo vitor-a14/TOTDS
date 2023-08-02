@@ -155,6 +155,7 @@ public class PlayerController : PhysicsObject
     }
 
     public void DisablePlayer() {
+        FeetIKHandler.Instance.enableFeetIK = false;
         characterModel.gameObject.SetActive(false);
         inputs.Disable();
         
@@ -166,6 +167,7 @@ public class PlayerController : PhysicsObject
 
     public void EnablePlayer() {
         characterModel.gameObject.SetActive(true);
+        FeetIKHandler.Instance.enableFeetIK = true;
         AdjustModelRotation(); 
         SetRotationToGravityDirection();  
         characterCape.ClearTransformMotion();
