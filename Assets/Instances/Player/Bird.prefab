@@ -601,7 +601,7 @@ Transform:
   - {fileID: 5051881652158807280}
   - {fileID: 8229622454334755801}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1600953796108263525
 Rigidbody:
@@ -615,8 +615,8 @@ Rigidbody:
   m_Drag: 1
   m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_InertiaTensor: {x: 1200, y: 1200, z: 1200}
+  m_InertiaRotation: {x: 0.15849362, y: 0.5915064, z: 0.5915065, w: -0.52451897}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -637,7 +637,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7157900496682030117}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: cc18e839f211cec478469bb8917bdde0, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -785,25 +785,38 @@ MonoBehaviour:
   rigid: {fileID: 0}
   mainForceDirection: {x: 0, y: 0, z: 0}
   lastParentBody: {fileID: 0}
-  changeModeDuration: 3
-  movementSpeed: 15
-  torqueSpeed: 2
-  boostSpeed: 6
-  boostCooldown: 2
-  boostModeThreshold: 0.3
+  debugMode: 0
+  maxSpeed: 80
+  torque: 160
+  acceleration: 2
+  avoidanceForce: 25
+  avoidanceDistance: 3
   cameraPivot: {fileID: 8229622454334755801}
   cameraOffset: {x: 0, y: 5, z: 20}
   cameraRadius: {x: 0.5, y: 0.5, z: 0.5}
   cameraCollisionLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   coreAnimator: {fileID: 1213761922937084656}
   dissolveEffect: {fileID: 2356610537578422785, guid: 25bae033589303342b72cd0ed92480cb,
     type: 3}
   trailEffect: {fileID: 4382365744385531600, guid: ae96a427a00881d45acfc7b90ac0f95f,
     type: 3}
+  dustEffect: {fileID: 6975309615933284036, guid: 2773bbc0a754eb046b2a79ec42862909,
+    type: 3}
+  motorRings:
+  - {fileID: 5462929951577834372}
+  - {fileID: 6485542324227398737}
+  - {fileID: 7307737174078436542}
+  - {fileID: 3218057074198981904}
+  - {fileID: 6973774614911521263}
+  movementInput: {x: 0, y: 0}
+  rotationInput: {x: 0, y: 0}
+  inputAltitude: 0
+  inputRoll: 0
   player: {fileID: 0}
   audioHandler: {fileID: 0}
+  playerTeleportPoint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4724657426945563419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -912,6 +925,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: fc47bddd3da6b2b4782a2698d5fedc3f, type: 2}
+    - target: {fileID: 781257090290354434, guid: a4300bd036a268740bd73a6a373d9f8d,
+        type: 3}
+      propertyPath: m_Name
+      value: Motor Ring 4
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a4300bd036a268740bd73a6a373d9f8d,
         type: 3}
       propertyPath: m_Name
@@ -936,6 +954,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2363428571265417200, guid: a4300bd036a268740bd73a6a373d9f8d,
+        type: 3}
+      propertyPath: m_Name
+      value: Motor Ring 3
       objectReference: {fileID: 0}
     - target: {fileID: 2824028304131654852, guid: a4300bd036a268740bd73a6a373d9f8d,
         type: 3}
@@ -987,9 +1010,21 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8319011941034204428}
   m_SourcePrefab: {fileID: 100100000, guid: a4300bd036a268740bd73a6a373d9f8d, type: 3}
+--- !u!4 &3218057074198981904 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1352892715992320501, guid: a4300bd036a268740bd73a6a373d9f8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4724657426945563419}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5051881652158807280 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: a4300bd036a268740bd73a6a373d9f8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4724657426945563419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5462929951577834372 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8484391108839483233, guid: a4300bd036a268740bd73a6a373d9f8d,
     type: 3}
   m_PrefabInstance: {fileID: 4724657426945563419}
   m_PrefabAsset: {fileID: 0}
@@ -1157,3 +1192,21 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 0
   m_Center: {x: 0, y: 0, z: -0.35}
+--- !u!4 &6485542324227398737 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1986118789096638282, guid: a4300bd036a268740bd73a6a373d9f8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4724657426945563419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6973774614911521263 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6821112897898263820, guid: a4300bd036a268740bd73a6a373d9f8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4724657426945563419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7307737174078436542 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6558623314722623579, guid: a4300bd036a268740bd73a6a373d9f8d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4724657426945563419}
+  m_PrefabAsset: {fileID: 0}

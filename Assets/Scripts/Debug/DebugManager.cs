@@ -72,7 +72,7 @@ public class DebugManager : MonoBehaviour
 
     private void Update() {
         if(usingDebugCamera) {
-            debugCameraPivot.localEulerAngles = new Vector3(CameraController.Instance.smothedPitch, CameraController.Instance.smothedYaw);
+            debugCameraPivot.localEulerAngles = new Vector3(CameraController.Instance.smoothedPitch, CameraController.Instance.smoothedYaw);
             direction = (debugCameraPivot.forward * player.input.y + debugCameraPivot.right * player.input.x) * movementSpeed;
             debugCameraMover.Translate(direction * Time.deltaTime, Space.World);
         }

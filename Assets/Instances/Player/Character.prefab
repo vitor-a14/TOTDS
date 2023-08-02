@@ -16,7 +16,7 @@ GameObject:
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -33,9 +33,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6928336060708878722}
-  - {fileID: 2613923663172793748}
+  - {fileID: 8330698917836061308}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &171924097479384646
 CapsuleCollider:
@@ -59,7 +59,7 @@ CapsuleCollider:
   m_Radius: 0.2
   m_Height: 1.72
   m_Direction: 1
-  m_Center: {x: 0, y: -0.13, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!54 &858901465228497963
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -99,9 +99,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec7b4e6f317e0ee4083f86486d9a2eb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  readingTarget: {fileID: 0}
   interactionsQueueSize: 10
   queueDuration: 1
-  readingTarget: {fileID: 0}
 --- !u!114 &5194546558032341425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ab92f572ed68d54f8175f22dbb0738d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userGravitacionalForce: 1
+  useGravitacionalForce: 1
   autoRotate: 1
   setParentToPlanet: 1
   isPlayer: 1
@@ -129,12 +129,13 @@ MonoBehaviour:
   characterModel: {fileID: 6928336060708878722}
   cam: {fileID: 0}
   characterCollider: {fileID: 171924097479384646}
+  characterCape: {fileID: 7091758532352719630}
   inputSmoothDamp: 8
   movementSpeed: 3.5
   movementSpeedOnSlope: 3
   movementSpeedOnAir: 4
   slopeAngleTrigger: 0.95
-  maxStepHeight: 0.45
+  maxStepHeight: 0.54
   jumpForce: 6
   groundDistanceCheck: 1
   landIdleDuration: 0.6
@@ -144,6 +145,7 @@ MonoBehaviour:
   input: {x: 0, y: 0}
   processedInput: {x: 0, y: 0}
   jumpButtonIsPressed: 0
+  shiftButtonIsPressed: 0
   surfaceNormal: {x: 0, y: 0, z: 0}
   floorTag: 
   isFalling: 0
@@ -151,7 +153,8 @@ MonoBehaviour:
   onEdge: 0
   onSlope: 0
   nearWall: 0
---- !u!1 &6524105239492796227
+  communicationHandler: {fileID: 0}
+--- !u!1 &6992441320301424571
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -159,8 +162,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2613923663172793748}
-  - component: {fileID: 1203614282405076946}
+  - component: {fileID: 8330698917836061308}
+  - component: {fileID: 1207486617617061562}
   m_Layer: 0
   m_Name: Camera Pivot
   m_TagString: Untagged
@@ -168,28 +171,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2613923663172793748
+--- !u!4 &8330698917836061308
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6524105239492796227}
+  m_GameObject: {fileID: 6992441320301424571}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0}
+  m_LocalPosition: {x: 0, y: 1.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4295151000436490853}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1203614282405076946
+--- !u!114 &1207486617617061562
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6524105239492796227}
+  m_GameObject: {fileID: 6992441320301424571}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b1dc8e9f407ef94a8ecf57291a65d8a, type: 3}
@@ -199,8 +202,8 @@ MonoBehaviour:
   sensivity: 10
   maxAngle: 65
   smoothVelocity: 14
-  smothedPitch: 0
-  smothedYaw: 0
+  smoothedPitch: 0
+  smoothedYaw: 0
 --- !u!1001 &5438995256496414403
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -405,7 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcdef753cdca6904882fddd994afce2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  userGravitacionalForce: 1
+  useGravitacionalForce: 1
   autoRotate: 0
   setParentToPlanet: 0
   isPlayer: 0
@@ -1057,7 +1060,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 43ffb88b3bc3f1a479e672769f3901e9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 43ffb88b3bc3f1a479e672769f3901e9,
         type: 3}

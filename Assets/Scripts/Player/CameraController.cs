@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
     private Vector3 focusPoint; //Target position
     private float yaw, pitch; //Input translated into transform rotation 
 
-    [HideInInspector] public float smothedPitch, smothedYaw;
+    [HideInInspector] public float smoothedPitch, smoothedYaw;
 
     private void Awake() {
         if(Instance == null) 
@@ -37,11 +37,11 @@ public class CameraController : MonoBehaviour
         pitch -= cameraInput.y * sensivity * Time.deltaTime;
         pitch = Mathf.Clamp(pitch, -maxAngle, maxAngle);
 
-        smothedPitch = Mathf.Lerp(smothedPitch, pitch, smoothVelocity * Time.deltaTime);
-        smothedYaw = Mathf.Lerp(smothedYaw, yaw, smoothVelocity * Time.deltaTime);
+        smoothedPitch = Mathf.Lerp(smoothedPitch, pitch, smoothVelocity * Time.deltaTime);
+        smoothedYaw = Mathf.Lerp(smoothedYaw, yaw, smoothVelocity * Time.deltaTime);
 
         if(isActive) {
-            transform.localEulerAngles = new Vector3(smothedPitch, smothedYaw);
+            transform.localEulerAngles = new Vector3(smoothedPitch, smoothedYaw);
         }
     }
 }

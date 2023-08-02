@@ -24,10 +24,6 @@ public class CameraManager : MonoBehaviour
         ChangeCamera(characterCamera);
     }
 
-    public void PanOutCameraEffect(float duration) {
-        StartCoroutine(HandleCameraPanOut(duration));
-    } 
-
     public void ChangeWorldPos(Vector3 newOffset, Vector3 translation) {
         characterCamera.OnTargetObjectWarped(characterCamera.Follow, translation);
         birdCamera.OnTargetObjectWarped(birdCamera.Follow, translation);
@@ -47,29 +43,5 @@ public class CameraManager : MonoBehaviour
 
         newCamera.Priority = primaryCameraPriority;
         currentCamera = newCamera;
-    }
-
-    private IEnumerator HandleCameraPanOut(float duration) {
-        var componentBase = characterCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
-        float startingDistance = (componentBase as Cinemachine3rdPersonFollow).CameraDistance;
-        float elapsedTime = 0f;
-        float waitTime = 3f;
-
-        while (elapsedTime < waitTime) {
-            (componentBase as Cinemachine3rdPersonFollow).CameraDistance = Mathf.Lerp((componentBase as Cinemachine3rdPersonFollow).CameraDistance, 10, (elapsedTime / waitTime));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }  
-
-        yield return new WaitForSeconds(duration);
-
-        elapsedTime = 0f;
-        while (elapsedTime < waitTime) {
-            (componentBase as Cinemachine3rdPersonFollow).CameraDistance = Mathf.Lerp((componentBase as Cinemachine3rdPersonFollow).CameraDistance, startingDistance, (elapsedTime / waitTime));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }  
-
-        (componentBase as Cinemachine3rdPersonFollow).CameraDistance = startingDistance;
     }
 }

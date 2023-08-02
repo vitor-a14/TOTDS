@@ -79,10 +79,13 @@ public class PlayerController : PhysicsObject
         //Setup input
         inputs = new Inputs();
         inputs.Enable();
+
         inputs.Character.Movement.performed += ctx => input = ctx.ReadValue<Vector2>();
         inputs.Character.Movement.canceled += ctx => input = Vector2.zero;
+
         inputs.Character.ShiftWalk.performed += ctx => shiftButtonIsPressed = true;
         inputs.Character.ShiftWalk.canceled += ctx => shiftButtonIsPressed = false;
+        
         inputs.Communication.Interact.performed += ctx => StateMachine.CurrentState.Interact();
         inputs.Character.Jump.performed += ctx => StateMachine.CurrentState.Jump();
 
@@ -119,7 +122,7 @@ public class PlayerController : PhysicsObject
     private void DetectWalls() {
         if(stopCharacterNearWalls) {
             float detectWallRayLength = characterCollider.radius + 0.1f;
-            if (Physics.Raycast(transform.position - transform.up * 0.3f, characterModel.TransformDirection(Vector3.forward), detectWallRayLength, walkableLayers)) {
+            if (Physics.Raycast(transform.position + transform.up * 0.8f, characterModel.TransformDirection(Vector3.forward), detectWallRayLength, walkableLayers)) {
                 nearWall = true;
             } else {
                 nearWall = false;
@@ -130,7 +133,7 @@ public class PlayerController : PhysicsObject
     }
 
     private void CheckGround() {
-        if (Physics.SphereCast(transform.position, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
+        if (Physics.SphereCast(transform.position + transform.up * 0.5f, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
             surfaceNormal = hit.normal;
             floorTag = hit.collider.transform.tag;
             onGround = true;
@@ -149,5 +152,28 @@ public class PlayerController : PhysicsObject
     public void AdjustModelRotation() {
         Vector3 gravityDirection = GetGravityDirection();
         characterModel.rotation = Quaternion.LookRotation(transform.forward, gravityDirection);
+    }
+
+    public void DisablePlayer() {
+        characterModel.gameObject.SetActive(false);
+        inputs.Disable();
+        
+        characterCollider.enabled = false;
+        setParentToPlanet = false;
+        rigid.isKinematic = true;
+        canMove = false;
+    }
+
+    public void EnablePlayer() {
+        characterModel.gameObject.SetActive(true);
+        AdjustModelRotation(); 
+        SetRotationToGravityDirection();  
+        characterCape.ClearTransformMotion();
+        inputs.Enable();
+
+        characterCollider.enabled = true;
+        setParentToPlanet = true;
+        rigid.isKinematic = false;
+        canMove = true;
     }
 }
