@@ -11,13 +11,14 @@ public class PlayerFallState : PlayerState
 
     public PlayerFallState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) {
         monoBehaviour = player.GetComponent<MonoBehaviour>();
+        handleFall = false;
     }
 
     public override void Enter() { 
+        CharacterAnimation.Instance.PlayFallAnim();
         handleFall = true;
         fallingDuration = 0f;
         player.isFalling = true;
-        CharacterAnimation.Instance.PlayFallAnim();
     }
 
     public override void Exit() { 

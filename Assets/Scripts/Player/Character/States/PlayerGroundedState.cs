@@ -6,7 +6,7 @@ public class PlayerGroundedState : PlayerState
     private Vector3 processedDirection;
 
     private float durationOffGround;
-    private float maxOffGroundDuration = 0.16f;
+    private float maxOffGroundDuration = 0.18f;
 
     private float jumpCooldownCounter;
     private float jumpCooldown = 1f; //Cooldown until the player can jump
@@ -31,10 +31,18 @@ public class PlayerGroundedState : PlayerState
 
         HandleSlopes();
 
-        if (player.onSlope)
+        if (player.onSlope) {
             movementMultiplier = player.movementSpeedOnSlope;
-        else 
+
+            //handle feet placement IK animation
+            //If the player is in a step, the character heep will be more higher
+            FeetIKHandler.Instance.currentRootYHeight = FeetIKHandler.Instance.slopeRootYMin;
+        } else {
             movementMultiplier = player.movementSpeed;
+
+            //If not in slope, the heep will get in a lower position
+            FeetIKHandler.Instance.currentRootYHeight = FeetIKHandler.Instance.normalRootYMin;
+        }
 
         //Calculate movement direction
         direction = (forward * player.processedInput.y + right * player.processedInput.x) * movementMultiplier;
@@ -111,9 +119,11 @@ public class PlayerGroundedState : PlayerState
     private void HandleSteps() {
         bool stepDetected = true;
         float heightOffset = 0;
-        Transform characterModel = player.characterModel;
+        Transform characterModel = player.transform;
+        Vector3 characterModelForward = player.characterModel.forward;
 
-        if(Physics.Raycast(characterModel.position + characterModel.up * 0.08f, characterModel.forward, out RaycastHit frontHit, player.characterCollider.radius + 0.05f, player.walkableLayers)) {
+        Debug.DrawRay(characterModel.position + characterModel.up * 0.08f, characterModelForward * (player.characterCollider.radius + 0.05f), Color.blue);
+        if(Physics.Raycast(characterModel.position + characterModel.up * 0.08f, characterModelForward, out RaycastHit frontHit, player.characterCollider.radius + 0.05f, player.walkableLayers)) {
             float stepness = Vector3.Dot(characterModel.up, frontHit.normal);
             if(stepness > 0.2f) 
                 stepDetected = false;
@@ -121,9 +131,9 @@ public class PlayerGroundedState : PlayerState
             stepDetected = false;
         }
 
-        Vector3 startPos = characterModel.position + characterModel.forward * (player.characterCollider.radius + 0.05f) + characterModel.up;
+        Vector3 startPos = characterModel.position + characterModelForward * (player.characterCollider.radius + 0.05f) + characterModel.up;
         if(Physics.Raycast(startPos, -characterModel.up, out RaycastHit downHit, 2.5f, player.walkableLayers)) {
-            heightOffset = Vector3.Distance(downHit.point, characterModel.position + characterModel.forward * (player.characterCollider.radius + 0.05f));
+            heightOffset = Vector3.Distance(downHit.point, characterModel.position + characterModelForward * (player.characterCollider.radius + 0.05f));
             if(heightOffset > player.maxStepHeight)
                 stepDetected = false;
         } else {
@@ -132,7 +142,8 @@ public class PlayerGroundedState : PlayerState
 
         if(stepDetected) {
             stepTimer = 0f;
-            player.rigid.position += characterModel.up * (heightOffset + 0.02f) + characterModel.forward * 0.067f;
+            Vector3 pos = player.rigid.position + characterModel.up * (heightOffset + 0.02f) + characterModelForward * 0.067f;
+            player.rigid.position = Vector3.Lerp(player.rigid.position, pos, Time.fixedDeltaTime / 0.1f);
         }
     }
 }

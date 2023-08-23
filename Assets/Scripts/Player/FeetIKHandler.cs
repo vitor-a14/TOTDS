@@ -3,105 +3,95 @@ using UnityEngine;
 public class FeetIKHandler : MonoBehaviour
 {
     public static FeetIKHandler Instance { get; private set; }
+    
+    [SerializeField] private Vector3 footIkOffset;
+    [SerializeField] private LayerMask layerMask;
+    [SerializeField] private float ikSpeed;
+    [SerializeField] private float ikWeightSpeed;
 
-    public Animator characterAnimation;
-    [Range(0, 2f)] public float raycastHeightFromGround = 1.14f;
-    [Range(0, 2f)] public float raycastDistance = 1.5f;
-    public bool enableFeetIK;
+    public float normalRootYMin, slopeRootYMin;
+    public float currentRootYHeight;
 
-    private Vector3 rightFootPosition, leftFootPosition, leftFootIKPosition, rightFootIKPosition;
-    private Quaternion leftFootIKRotation, rightFootIKRotation;
-    private float lastPelvisPositionY, lastRightFootPositionY, lastLeftFootPositionY;
-    private PlayerController player;
+    [Range(0, 1)] public float weight;
+
+    private Animator anim;
+
+    private float rightCurrentWeight; 
+    private float leftCurrentWeight;
+
+    private Vector3 currentRootPos;
+
+    private Vector3 lLegCurrentPos;
+    private Vector3 rLegCurrentPos;
+    private Quaternion lLegCurrentRot;
+    private Quaternion rLegCurrentRot;
 
     private void Awake() {
-        if(Instance == null) 
+        //Setup instance to be called from other scripts
+        if (Instance == null) 
             Instance = this;
         else
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
     }
 
     private void Start() {
-        player = PlayerController.Instance;
+        anim = GetComponent<Animator>();
+        currentRootPos = transform.localPosition;
     }
 
-    private void FixedUpdate() {
-        if(!enableFeetIK || characterAnimation == null) return;    
+    private void OnAnimatorIK(int layerIndex) {
+        Transform leftFootTransf = anim.GetBoneTransform(HumanBodyBones.LeftFoot);
+        Transform rightFootTransf = anim.GetBoneTransform(HumanBodyBones.RightFoot);
 
-        leftFootPosition = characterAnimation.GetBoneTransform(HumanBodyBones.LeftFoot).transform.position + raycastHeightFromGround * transform.up;
-        rightFootPosition = characterAnimation.GetBoneTransform(HumanBodyBones.RightFoot).transform.position + raycastHeightFromGround * transform.up; 
-   
-        FeetPositionSolver(rightFootPosition, ref rightFootIKPosition, ref rightFootIKRotation, characterAnimation.GetBoneTransform(HumanBodyBones.RightFoot).transform);
-        FeetPositionSolver(leftFootPosition, ref leftFootIKPosition, ref leftFootIKRotation, characterAnimation.GetBoneTransform(HumanBodyBones.LeftFoot).transform);
+        Vector3 leftFootPos = leftFootTransf.position;
+        Vector3 rightFootPos = rightFootTransf.position;
+
+        RaycastHit lFootHit = GetHitPoint(leftFootPos + Vector3.up, leftFootPos - Vector3.up * 5);
+        RaycastHit rFootHit = GetHitPoint(rightFootPos + Vector3.up, rightFootPos - Vector3.up * 5);
+
+        leftFootPos = lFootHit.point + footIkOffset;
+        rightFootPos = rFootHit.point + footIkOffset;
+
+        Quaternion alignFootL = Quaternion.LookRotation(transform.forward, lFootHit.normal);
+        Quaternion alignFootR = Quaternion.LookRotation(transform.forward, rFootHit.normal);
+
+        //vertical root Pos
+        var yPosOffset = -Mathf.Abs(leftFootPos.y - rightFootPos.y);
+        Vector3 targetRootPos = new Vector3(0, yPosOffset < currentRootYHeight ? currentRootYHeight : yPosOffset, 0);
+
+        currentRootPos = Vector3.Lerp(currentRootPos, targetRootPos, Time.deltaTime * ikSpeed);
+
+        transform.localPosition = currentRootPos;
+        SetWeights();
+
+        //pos
+        lLegCurrentPos = Vector3.Lerp(lLegCurrentPos, leftFootPos, Time.deltaTime * ikSpeed);
+        rLegCurrentPos = Vector3.Lerp(rLegCurrentPos, rightFootPos, Time.deltaTime * ikSpeed);
+
+        anim.SetIKPosition(AvatarIKGoal.LeftFoot, lLegCurrentPos);
+        anim.SetIKPosition(AvatarIKGoal.RightFoot, rLegCurrentPos);
+
+        //rot
+        lLegCurrentRot = Quaternion.Lerp(lLegCurrentRot, alignFootL, Time.deltaTime * ikSpeed);
+        rLegCurrentRot = Quaternion.Lerp(rLegCurrentRot, alignFootR, Time.deltaTime * ikSpeed);
+
+        anim.SetIKRotation(AvatarIKGoal.LeftFoot, lLegCurrentRot);
+        anim.SetIKRotation(AvatarIKGoal.RightFoot, rLegCurrentRot);
     }
 
-    private void OnAnimatorIK() {
-        if(!enableFeetIK || characterAnimation == null) return;     
+    private void SetWeights() {
+        leftCurrentWeight = Mathf.Lerp(leftCurrentWeight, anim.GetFloat("LeftFootCurve"), Time.deltaTime * ikWeightSpeed);
+        rightCurrentWeight = Mathf.Lerp(rightCurrentWeight, anim.GetFloat("RightFootCurve"), Time.deltaTime * ikWeightSpeed);
 
-        MovePelvisHeight();
+        anim.SetIKPositionWeight(AvatarIKGoal.LeftFoot, leftCurrentWeight);
+        anim.SetIKPositionWeight(AvatarIKGoal.RightFoot, rightCurrentWeight);
 
-        characterAnimation.SetIKPositionWeight(AvatarIKGoal.LeftFoot, 1);
-        characterAnimation.SetIKPositionWeight(AvatarIKGoal.RightFoot, 1);
-
-        characterAnimation.SetIKRotationWeight(AvatarIKGoal.LeftFoot, 1f - player.processedInput.sqrMagnitude);
-        characterAnimation.SetIKRotationWeight(AvatarIKGoal.RightFoot, 1f - player.processedInput.sqrMagnitude);
-
-        MoveFeetToIKPoint(AvatarIKGoal.LeftFoot, leftFootIKPosition, leftFootIKRotation, ref lastLeftFootPositionY);
-        MoveFeetToIKPoint(AvatarIKGoal.RightFoot, rightFootIKPosition, rightFootIKRotation, ref lastRightFootPositionY);
-    }  
-
-    private void MoveFeetToIKPoint(AvatarIKGoal foot, Vector3 positionIKHolder, Quaternion rotationIKHolder, ref float lastFootPositionY) {
-        Vector3 targetIKPosition = characterAnimation.GetIKPosition(foot);
-
-        if(positionIKHolder != Vector3.zero) {
-            positionIKHolder = transform.InverseTransformPoint(positionIKHolder); 
-            targetIKPosition = transform.InverseTransformPoint(targetIKPosition);
-
-            float variable = Mathf.Lerp(lastFootPositionY, positionIKHolder.y, Time.fixedDeltaTime / 0.1f);
-            targetIKPosition.y += variable;
-            lastFootPositionY = variable;
-
-            targetIKPosition = transform.TransformPoint(targetIKPosition);
-            characterAnimation.SetIKRotation(foot, rotationIKHolder);
-        }
-
-        characterAnimation.SetIKPosition(foot, targetIKPosition);
+        anim.SetIKRotationWeight(AvatarIKGoal.LeftFoot, leftCurrentWeight);
+        anim.SetIKRotationWeight(AvatarIKGoal.RightFoot, rightCurrentWeight);
     }
 
-    private void FeetPositionSolver(Vector3 upPosition, ref Vector3 feetIKPositions, ref Quaternion feetIKRotations, Transform foot) {
+    private RaycastHit GetHitPoint(Vector3 start, Vector3 end) {
         RaycastHit hit;
-
-        if(Physics.Raycast(upPosition, -transform.up, out hit, raycastDistance + raycastHeightFromGround, player.walkableLayers) && player.onGround) {
-            feetIKPositions = upPosition;
-            feetIKPositions = hit.point; 
-            feetIKRotations = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-
-            return;
-        }
-
-        feetIKPositions = Vector3.zero;
-    }
-
-    private void MovePelvisHeight() {
-        if(rightFootIKPosition == Vector3.zero || leftFootIKPosition == Vector3.zero || lastPelvisPositionY == 0) {
-            lastPelvisPositionY = transform.InverseTransformPoint(characterAnimation.bodyPosition).y;
-            return;
-        }
-
-        Vector3 relativeBodyPosition = transform.InverseTransformPoint(characterAnimation.bodyPosition);
-        Vector3 relativeTransform = transform.InverseTransformPoint(transform.position);
-        Vector3 relativeLeftFootOffset = transform.InverseTransformPoint(leftFootIKPosition);
-        Vector3 relativeRightFootOffset = transform.InverseTransformPoint(rightFootIKPosition);
-
-        float leftOffsetPosition = relativeLeftFootOffset.y - relativeTransform.y;
-        float rightOffsetPosition = relativeRightFootOffset.y - relativeTransform.y;
-
-        float totalOffset = (leftOffsetPosition < rightOffsetPosition) ? leftOffsetPosition : rightOffsetPosition;
-        Vector3 newPelvisPosition = relativeBodyPosition + Vector3.up * totalOffset; 
-
-        relativeBodyPosition.y = Mathf.Lerp(lastPelvisPositionY, newPelvisPosition.y, Time.fixedDeltaTime / 0.1f);
-        relativeBodyPosition = transform.TransformPoint(relativeBodyPosition);
-        characterAnimation.bodyPosition = transform.TransformPoint(newPelvisPosition);
-        lastPelvisPositionY = relativeBodyPosition.y;
+        return Physics.Linecast(start, end, out hit, layerMask) ? hit : hit;
     }
 }

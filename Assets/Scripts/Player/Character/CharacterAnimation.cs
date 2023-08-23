@@ -21,6 +21,7 @@ public class CharacterAnimation : MonoBehaviour
     private static readonly int edge_hash = Animator.StringToHash("OnEdge");
 
     //Animation states
+    private static readonly int movement_hash = Animator.StringToHash("Movement");
     private static readonly int jump_idle_hash = Animator.StringToHash("Jump Idle");
     private static readonly int jump_moving_hash = Animator.StringToHash("Jump Moving");
     private static readonly int fall_hash = Animator.StringToHash("Fall");
@@ -69,18 +70,22 @@ public class CharacterAnimation : MonoBehaviour
         return anim.GetCurrentAnimatorClipInfo(0).Length;
     }
 
+    public void PlayMovementAnim() {
+        anim.Play(movement_hash);
+    }
+
     public void PlayIdleJumpAnim() {
         anim.Play(jump_idle_hash);
     }
 
     public void PlayRunningJumpAnim() {
         if(anim.IsInTransition(0)) return;
-        anim.CrossFadeInFixedTime(jump_moving_hash, 0.2f);
+        anim.CrossFadeInFixedTime(jump_moving_hash, 0.12f);
     }
 
     public void PlayFallAnim() {
         if(anim.IsInTransition(0)) return;
-        anim.CrossFadeInFixedTime(fall_hash, 0.2f);
+        anim.CrossFadeInFixedTime(fall_hash, 0.12f);
     }
 
     public void PlaySmallLandMoving() {

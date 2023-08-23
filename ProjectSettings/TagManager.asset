@@ -13,6 +13,7 @@ TagManager:
   - Stone
   - Sand
   - Trigger Zone
+  - SpaceShip
   layers:
   - Default
   - TransparentFX

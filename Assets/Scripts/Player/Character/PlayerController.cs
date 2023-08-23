@@ -60,7 +60,7 @@ public class PlayerController : PhysicsObject
 
     [HideInInspector] public CommunicationHandler communicationHandler;
 
-    private RaycastHit hit; 
+    private RaycastHit hit, feetPlacementHit; 
     private Vector2 clampedInput;
 
     private void Awake() {
@@ -133,12 +133,17 @@ public class PlayerController : PhysicsObject
     }
 
     private void CheckGround() {
+        //better to detect grounded state
         if (Physics.SphereCast(transform.position + transform.up * 0.5f, 0.15f, -transform.up, out hit, groundDistanceCheck, walkableLayers)) {
-            surfaceNormal = hit.normal;
-            floorTag = hit.collider.transform.tag;
             onGround = true;
         } else {
             onGround = false;
+        }
+
+        //better to get the floor properties
+        if(Physics.Raycast(transform.position + transform.up * 0.5f, -transform.up, out feetPlacementHit, groundDistanceCheck * 3f, walkableLayers)) {
+            floorTag = feetPlacementHit.collider.transform.tag;
+            surfaceNormal = feetPlacementHit.normal;
         }
     }
 
@@ -155,7 +160,6 @@ public class PlayerController : PhysicsObject
     }
 
     public void DisablePlayer() {
-        FeetIKHandler.Instance.enableFeetIK = false;
         characterModel.gameObject.SetActive(false);
         inputs.Disable();
         
@@ -167,7 +171,6 @@ public class PlayerController : PhysicsObject
 
     public void EnablePlayer() {
         characterModel.gameObject.SetActive(true);
-        FeetIKHandler.Instance.enableFeetIK = true;
         AdjustModelRotation(); 
         SetRotationToGravityDirection();  
         characterCape.ClearTransformMotion();
