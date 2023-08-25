@@ -5649,6 +5649,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2156368940567612425, guid: 4f6f73c63986d2e4c999e46ae3d768f5,
+        type: 3}
+      propertyPath: footIkOffset.y
+      value: 0.07
+      objectReference: {fileID: 0}
     - target: {fileID: 2429615437108190100, guid: 4f6f73c63986d2e4c999e46ae3d768f5,
         type: 3}
       propertyPath: m_Name

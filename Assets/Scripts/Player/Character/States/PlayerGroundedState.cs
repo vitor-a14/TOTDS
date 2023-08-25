@@ -36,12 +36,12 @@ public class PlayerGroundedState : PlayerState
 
             //handle feet placement IK animation
             //If the player is in a step, the character heep will be more higher
-            FeetIKHandler.Instance.currentRootYHeight = FeetIKHandler.Instance.slopeRootYMin;
+            FeetIKHandler.Instance.currentRootYMin = FeetIKHandler.Instance.slopeRootYMin;
         } else {
             movementMultiplier = player.movementSpeed;
 
             //If not in slope, the heep will get in a lower position
-            FeetIKHandler.Instance.currentRootYHeight = FeetIKHandler.Instance.normalRootYMin;
+            FeetIKHandler.Instance.currentRootYMin = FeetIKHandler.Instance.normalRootYMin;
         }
 
         //Calculate movement direction
