@@ -134,7 +134,7 @@ MonoBehaviour:
   movementSpeed: 3.5
   movementSpeedOnSlope: 3
   movementSpeedOnAir: 4
-  slopeAngleTrigger: 0.9
+  slopeAngleTrigger: 0.96
   maxStepHeight: 0.54
   jumpForce: 6
   groundDistanceCheck: 0.45
@@ -3401,16 +3401,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30ede8330f4c79044814fd97e85857bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  footIkOffset: {x: 0, y: 0.05, z: 0}
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 8
+  footIkOffset: 0.07
   ikSpeed: 15
   ikWeightSpeed: 15
+  teest: 0
   normalRootYMin: -0.34
   slopeRootYMin: -0.03
-  currentRootYHeight: 0
-  weight: 0
+  currentRootYMin: 0
 --- !u!114 &1988948430582881267
 MonoBehaviour:
   m_ObjectHideFlags: 0

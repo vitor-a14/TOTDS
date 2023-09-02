@@ -6,9 +6,10 @@ public class FeetIKHandler : MonoBehaviour
 {
     public static FeetIKHandler Instance { get; private set; }
     
-    [SerializeField] private Vector3 footIkOffset;
+    [SerializeField] private float footIkOffset;
     [SerializeField] private float ikSpeed;
     [SerializeField] private float ikWeightSpeed;
+    [SerializeField] private float maxHitDistance;
 
     public float normalRootYMin, slopeRootYMin;
     [HideInInspector] public float currentRootYMin;
@@ -48,11 +49,11 @@ public class FeetIKHandler : MonoBehaviour
         leftFootPos = anim.GetBoneTransform(HumanBodyBones.LeftFoot).position;
         rightFootPos = anim.GetBoneTransform(HumanBodyBones.RightFoot).position;
 
-        lFootHit = GetHitPoint(leftFootPos + Vector3.up, leftFootPos - Vector3.up * 0.7f);
-        rFootHit = GetHitPoint(rightFootPos + Vector3.up, rightFootPos - Vector3.up * 0.7f);
+        lFootHit = GetHitPoint(leftFootPos + transform.up, leftFootPos - transform.up * maxHitDistance);
+        rFootHit = GetHitPoint(rightFootPos + transform.up, rightFootPos - transform.up * maxHitDistance);
 
-        leftFootPos = lFootHit.point != Vector3.zero ? lFootHit.point + footIkOffset : leftFootPos;
-        rightFootPos = rFootHit.point != Vector3.zero ? rFootHit.point + footIkOffset : rightFootPos;
+        leftFootPos = lFootHit.point != Vector3.zero ? lFootHit.point + (lFootHit.normal * footIkOffset) : leftFootPos;
+        rightFootPos = rFootHit.point != Vector3.zero ? rFootHit.point + (rFootHit.normal * footIkOffset): rightFootPos;
 
         alignFootL = Quaternion.FromToRotation(transform.up, lFootHit.normal) * transform.rotation;
         alignFootR = Quaternion.FromToRotation(transform.up, rFootHit.normal) * transform.rotation;
@@ -76,22 +77,15 @@ public class FeetIKHandler : MonoBehaviour
     }
 
     private void SetRootPos() {
-        float footHeightDifference = -Mathf.Abs(lFootHit.point.y - rFootHit.point.y);
+        Vector3 relativeLeftFoot = transform.InverseTransformPoint(lLegCurrentPos);
+        Vector3 relativeRightFoot = transform.InverseTransformPoint(rLegCurrentPos);
 
-        //If the feet difference is too low, make the rootY position small
-        //Otherwise, if the difference is normal or high, keep it at the default value
-        float processedYPos = currentRootYMin;
-        if(footHeightDifference > currentRootYMin / 2)
-            processedYPos = 0.07f;
+        float footHeightDifference = -Mathf.Abs(relativeLeftFoot.y - relativeRightFoot.y);
+        Vector3 targetRootPos = new Vector3(0, footHeightDifference, 0);
 
-        //Keep the root pos clamped to the minimum value calculated above
-        float yPosOffset = -Mathf.Abs(leftFootPos.y - rightFootPos.y);
-        yPosOffset = Mathf.Clamp(yPosOffset, processedYPos, yPosOffset);
-        Vector3 targetRootPos = new Vector3(0, yPosOffset, 0);
-
-        //If the foot placement don't find a place to land, just keep the root position in it's place
-        if(lFootHit.point == Vector3.zero || rFootHit.point == Vector3.zero)
-            targetRootPos = new Vector3(0, 0, 0);
+        if(player.onSlope && (player.processedInput.sqrMagnitude > 0.2f || footHeightDifference > -0.3f)) {
+            targetRootPos = Vector3.zero;
+        }
 
         //Set root position
         currentRootPos = Vector3.Lerp(currentRootPos, targetRootPos, Time.deltaTime * ikSpeed);
