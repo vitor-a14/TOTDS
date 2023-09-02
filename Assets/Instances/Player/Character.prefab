@@ -3404,10 +3404,7 @@ MonoBehaviour:
   footIkOffset: 0.07
   ikSpeed: 15
   ikWeightSpeed: 15
-  teest: 0
-  normalRootYMin: -0.34
-  slopeRootYMin: -0.03
-  currentRootYMin: 0
+  maxHitDistance: 0.5
 --- !u!114 &1988948430582881267
 MonoBehaviour:
   m_ObjectHideFlags: 0

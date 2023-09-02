@@ -3,7 +3,6 @@ using UnityEngine;
 public class PlayerGroundedState : PlayerState
 {
     private Vector3 direction;
-    private Vector3 processedDirection;
 
     private float durationOffGround;
     private float maxOffGroundDuration = 0.18f;
@@ -31,18 +30,10 @@ public class PlayerGroundedState : PlayerState
 
         HandleSlopes();
 
-        if (player.onSlope) {
+        if (player.onSlope) 
             movementMultiplier = player.movementSpeedOnSlope;
-
-            //handle feet placement IK animation
-            //If the player is in a step, the character heep will be more higher
-            FeetIKHandler.Instance.currentRootYMin = FeetIKHandler.Instance.slopeRootYMin;
-        } else {
+        else 
             movementMultiplier = player.movementSpeed;
-
-            //If not in slope, the heep will get in a lower position
-            FeetIKHandler.Instance.currentRootYMin = FeetIKHandler.Instance.normalRootYMin;
-        }
 
         //Calculate movement direction
         direction = (forward * player.processedInput.y + right * player.processedInput.x) * movementMultiplier;

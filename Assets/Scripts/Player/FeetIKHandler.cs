@@ -10,9 +10,7 @@ public class FeetIKHandler : MonoBehaviour
     [SerializeField] private float ikSpeed;
     [SerializeField] private float ikWeightSpeed;
     [SerializeField] private float maxHitDistance;
-
-    public float normalRootYMin, slopeRootYMin;
-    [HideInInspector] public float currentRootYMin;
+    [SerializeField] private float rootY;
 
     private Animator anim;
     private PlayerController player;
@@ -80,12 +78,15 @@ public class FeetIKHandler : MonoBehaviour
         Vector3 relativeLeftFoot = transform.InverseTransformPoint(lLegCurrentPos);
         Vector3 relativeRightFoot = transform.InverseTransformPoint(rLegCurrentPos);
 
-        float footHeightDifference = -Mathf.Abs(relativeLeftFoot.y - relativeRightFoot.y);
-        Vector3 targetRootPos = new Vector3(0, footHeightDifference, 0);
+        float footHeightDifference = -Mathf.Abs(relativeLeftFoot.y - relativeRightFoot.y) + rootY;
 
-        if(player.onSlope && (player.processedInput.sqrMagnitude > 0.2f || footHeightDifference > -0.3f)) {
-            targetRootPos = Vector3.zero;
+        if(player.onSlope && (player.processedInput.sqrMagnitude > 0.1f || footHeightDifference > -0.3f)) {
+            footHeightDifference = 0f;
+        } else if(player.processedInput.sqrMagnitude > 0.1f) {
+            footHeightDifference = Mathf.Clamp(footHeightDifference, 0f, rootY);
         }
+
+        Vector3 targetRootPos = new Vector3(0, footHeightDifference, 0);
 
         //Set root position
         currentRootPos = Vector3.Lerp(currentRootPos, targetRootPos, Time.deltaTime * ikSpeed);
