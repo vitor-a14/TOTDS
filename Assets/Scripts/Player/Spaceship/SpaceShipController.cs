@@ -16,6 +16,9 @@ public class SpaceShipController : PhysicsObject, Interactable
     public float torque;
     public float acceleration;
 
+    public float boostMultiplier;
+    public float boostTorqueFriction;
+
     [Header("Avoid Collisions")]
     public float avoidanceForce;
     public float avoidanceDistance;

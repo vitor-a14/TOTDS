@@ -3403,8 +3403,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   footIkOffset: 0.07
   ikSpeed: 15
-  ikWeightSpeed: 15
+  ikWeightSpeed: 45
   maxHitDistance: 0.5
+  rootY: 0.05
 --- !u!114 &1988948430582881267
 MonoBehaviour:
   m_ObjectHideFlags: 0
