@@ -41,6 +41,7 @@ public class SpaceShipOnPlanet : SpaceShipState
     public override void StateFixedUpdate() {
         spaceShip.rigid.AddForce(processedDirection * spaceShip.maxSpeed, ForceMode.Acceleration);
         spaceShip.rigid.AddRelativeTorque(torque * spaceShip.torque * 10f);
+        spaceShip.ProcessCameraMovement();
         spaceShip.AvoidCollisions();
     }
 

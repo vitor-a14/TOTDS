@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public class SpaceShipController : PhysicsObject, Interactable
@@ -24,10 +25,12 @@ public class SpaceShipController : PhysicsObject, Interactable
     public float avoidanceDistance;
     
     [Header("Camera")]
+    public CinemachineVirtualCamera cam;
     public Transform cameraPivot;
     public Vector3 cameraOffset;
     public Vector3 cameraRadius;
     public LayerMask cameraCollisionLayers;
+    public float cameraVelocity;
 
     [Header("Effects")]
     public Animator coreAnimator;
@@ -121,8 +124,13 @@ public class SpaceShipController : PhysicsObject, Interactable
             camPos = offsetPosition - cameraPivot.forward * cameraOffset.z;
         }
 
-        cameraPivot.rotation = cameraPivot.rotation;
-        cameraPivot.position = camPos;
+        //cameraPivot.rotation = cameraPivot.rotation;
+        //cameraPivot.position = camPos;
+
+        //cam.transform.position = camPos;
+        cam.transform.rotation = cameraPivot.rotation;
+        
+        cam.transform.position = Vector3.Lerp(cam.transform.position, camPos, cameraVelocity * Time.fixedDeltaTime);
     }
 
     public Vector3 FindPlayerTeleportPoint() {
