@@ -83,7 +83,7 @@ public class DebugManager : MonoBehaviour
             yield return new WaitForSeconds(0.12f);
             frameRateText.text = "FPS: " + Mathf.RoundToInt(1.0f / Time.deltaTime);
 
-            if(BirdController.Instance.piloting) {
+            if(SpaceshipController.Instance.StateMachine.CurrentState.GetType() != typeof(SpaceshipIdle)) {
                 posText.text = "Universal position: " + birdTransform.position;
             } else {
                 posText.text = "Universal position: " + playerTransform.position;
