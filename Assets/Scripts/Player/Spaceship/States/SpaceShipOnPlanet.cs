@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SpaceShipOnPlanet : SpaceShipState
+public class SpaceshipOnPlanet : SpaceshipState
 {
     private Vector3 processedDirection;
     private Vector3 direction;
@@ -8,16 +8,16 @@ public class SpaceShipOnPlanet : SpaceShipState
 
     private bool boostMode = false;
 
-    public SpaceShipOnPlanet(SpaceShipController spaceShip, SpaceShipStateMachine stateMachine) : base(spaceShip, stateMachine) { }
+    public SpaceshipOnPlanet(SpaceshipController spaceship, SpaceshipStateMachine stateMachine) : base(spaceship, stateMachine) { }
 
     public override void Interact() {
-        spaceShip.playerTeleportPoint = spaceShip.FindPlayerTeleportPoint();
-        if(spaceShip.playerTeleportPoint == Vector3.zero) {
+        spaceship.playerTeleportPoint = spaceship.FindPlayerTeleportPoint();
+        if(spaceship.playerTeleportPoint == Vector3.zero) {
             Debug.Log("Non valid teleport point was found.");
             return;
         }
 
-        spaceShip.StateMachine.ChangeState(spaceShip.IdleState);
+        spaceship.StateMachine.ChangeState(spaceship.IdleState);
     }
 
     public override void StateUpdate() { 
@@ -25,24 +25,25 @@ public class SpaceShipOnPlanet : SpaceShipState
         float boostFriction = 1f;
 
         if(boostMode) {
-            if(spaceShip.movementInput.y < 0.3f)
+            if(spaceship.movementInput.y < 0.3f)
                 boostMode = false;
 
-            boostMultiplier = spaceShip.boostMultiplier;
-            boostFriction = spaceShip.boostTorqueFriction;
+            boostMultiplier = spaceship.boostMultiplier;
+            boostFriction = spaceship.boostTorqueFriction;
         }
 
-        torque = (Vector3.up * spaceShip.rotationInput.x + Vector3.forward * -spaceShip.inputRoll * 0.5f + Vector3.right * -spaceShip.rotationInput.y) * boostFriction;
-        //direction = spaceShip.transform.TransformDirection(spaceShip.movementInput.x * 0.5f, spaceShip.inputAltitude * 0.5f, spaceShip.movementInput.y * boostMultiplier);
-        direction = spaceShip.transform.forward * spaceShip.movementInput.y * boostMultiplier + (spaceShip.transform.right * spaceShip.movementInput.x + spaceShip.transform.up * spaceShip.inputAltitude) * 0.5f;
-        processedDirection = Vector3.Lerp(processedDirection, direction, spaceShip.acceleration * Time.deltaTime);
+        torque = (Vector3.up * spaceship.rotationInput.x + Vector3.forward * -spaceship.inputRoll * 0.5f + Vector3.right * -spaceship.rotationInput.y) * boostFriction;
+        direction = spaceship.transform.forward * spaceship.movementInput.y * boostMultiplier + (spaceship.transform.right * spaceship.movementInput.x + spaceship.transform.up * spaceship.inputAltitude) * 0.5f;
+        processedDirection = Vector3.Lerp(processedDirection, direction, spaceship.acceleration * Time.deltaTime);
+
+        spaceship.audioHandler.HandleEngineSound();
     } 
 
     public override void StateFixedUpdate() {
-        spaceShip.rigid.AddForce(processedDirection * spaceShip.maxSpeed, ForceMode.Acceleration);
-        spaceShip.rigid.AddRelativeTorque(torque * spaceShip.torque * 10f);
-        spaceShip.ProcessCameraMovement();
-        spaceShip.AvoidCollisions();
+        spaceship.rigid.AddForce(processedDirection * spaceship.maxSpeed, ForceMode.Acceleration);
+        spaceship.rigid.AddRelativeTorque(torque * spaceship.torque * 10f);
+        spaceship.ProcessCameraMovement(true);
+        spaceship.AvoidCollisions();
     }
 
     public override void Boost() { 

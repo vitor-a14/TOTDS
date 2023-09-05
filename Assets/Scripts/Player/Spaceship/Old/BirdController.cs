@@ -184,7 +184,7 @@ public class BirdController : MonoBehaviour, Interactable
         piloting = true;
         canFreezeRigid = false;
         player.inputs.Disable();
-        CameraManager.Instance.ChangeToBirdCamera();
+        CameraManager.Instance.ChangeToSpaceshipCamera();
         inputs.Enable();
         audioManager.EnterShip();
         playerTransform.SetParent(transform);

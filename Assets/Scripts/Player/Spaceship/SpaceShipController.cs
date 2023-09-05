@@ -2,15 +2,15 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 
-public class SpaceShipController : PhysicsObject, Interactable
+public class SpaceshipController : PhysicsObject, Interactable
 {
-    public SpaceShipStateMachine StateMachine { get; private set; }
-    public static SpaceShipController Instance { get; private set; }
+    public SpaceshipStateMachine StateMachine { get; private set; }
+    public static SpaceshipController Instance { get; private set; }
 
     //Finite player states declarations
-    public SpaceShipIdle IdleState { get; private set; }
-    public SpaceShipOnPlanet OnPlanetState { get; private set; }
-    public SpaceShipOnSpace OnSpaceState { get; private set; }
+    public SpaceshipIdle IdleState { get; private set; }
+    public SpaceshipOnPlanet OnPlanetState { get; private set; }
+    public SpaceshipOnSpace OnSpaceState { get; private set; }
 
     [Header("Movement Settings")]
     public float maxSpeed;
@@ -57,10 +57,10 @@ public class SpaceShipController : PhysicsObject, Interactable
             Debug.LogError("Instance failed to setup because is already setted. Something is wrong.");
 
         //Setup character finite states - code new states here
-        StateMachine = new SpaceShipStateMachine(); //Handle state changes
-        IdleState = new SpaceShipIdle(this, StateMachine);
-        OnPlanetState = new SpaceShipOnPlanet(this, StateMachine);
-        OnSpaceState = new SpaceShipOnSpace(this, StateMachine);
+        StateMachine = new SpaceshipStateMachine(); //Handle state changes
+        IdleState = new SpaceshipIdle(this, StateMachine);
+        OnPlanetState = new SpaceshipOnPlanet(this, StateMachine);
+        OnSpaceState = new SpaceshipOnSpace(this, StateMachine);
 
         //Inputs
         inputs = new Inputs();
@@ -112,7 +112,7 @@ public class SpaceShipController : PhysicsObject, Interactable
         StateMachine.CurrentState.Boost();
     }
 
-    public void ProcessCameraMovement() {
+    public void ProcessCameraMovement(bool useLerp) {
         Vector3 offsetPosition = transform.position + (transform.up * cameraOffset.y);
         Quaternion lookRotation = cameraPivot.transform.rotation;
         Vector3 lookDirection = lookRotation * Vector3.forward;
@@ -124,13 +124,13 @@ public class SpaceShipController : PhysicsObject, Interactable
             camPos = offsetPosition - cameraPivot.forward * cameraOffset.z;
         }
 
-        //cameraPivot.rotation = cameraPivot.rotation;
-        //cameraPivot.position = camPos;
-
-        //cam.transform.position = camPos;
-        cam.transform.rotation = cameraPivot.rotation;
-        
-        cam.transform.position = Vector3.Lerp(cam.transform.position, camPos, cameraVelocity * Time.fixedDeltaTime);
+        if(useLerp) {
+            cam.transform.position = Vector3.Lerp(cam.transform.position, camPos, cameraVelocity * Time.fixedDeltaTime);
+            cam.transform.rotation = Quaternion.Lerp(cam.transform.rotation, cameraPivot.rotation, cameraVelocity * Time.fixedDeltaTime);
+        } else {
+            cam.transform.position = camPos;
+            cam.transform.rotation = cameraPivot.rotation;
+        }
     }
 
     public Vector3 FindPlayerTeleportPoint() {

@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class SpaceShipState : MonoBehaviour
+public class SpaceshipState : MonoBehaviour
 {
-    protected SpaceShipController spaceShip;
-    protected SpaceShipStateMachine stateMachine;
+    protected SpaceshipController spaceship;
+    protected SpaceshipStateMachine stateMachine;
 
-    public SpaceShipState(SpaceShipController spaceShip, SpaceShipStateMachine stateMachine) {
-        this.spaceShip = spaceShip;
+    public SpaceshipState(SpaceshipController spaceship, SpaceshipStateMachine stateMachine) {
+        this.spaceship = spaceship;
         this.stateMachine = stateMachine;
     }
 

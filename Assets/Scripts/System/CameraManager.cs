@@ -6,7 +6,7 @@ public class CameraManager : MonoBehaviour
     public static CameraManager Instance { get; private set; }
 
     public CinemachineVirtualCamera characterCamera;
-    public CinemachineVirtualCamera birdCamera;
+    public CinemachineVirtualCamera spaceshipCamera;
     private CinemachineVirtualCamera currentCamera;
     
     private int secundaryCameraPriority = 1;
@@ -25,15 +25,15 @@ public class CameraManager : MonoBehaviour
 
     public void ChangeWorldPos(Vector3 newOffset, Vector3 translation) {
         characterCamera.OnTargetObjectWarped(characterCamera.Follow, translation);
-        birdCamera.OnTargetObjectWarped(birdCamera.Follow, translation);
+        spaceshipCamera.OnTargetObjectWarped(spaceshipCamera.Follow, translation);
     }
 
     public void ChangeToCharacterCamera() {
         ChangeCamera(characterCamera);
     }
 
-    public void ChangeToBirdCamera() {
-        ChangeCamera(birdCamera);
+    public void ChangeToSpaceshipCamera() {
+        ChangeCamera(spaceshipCamera);
     }
 
     private void ChangeCamera(CinemachineVirtualCamera newCamera) {

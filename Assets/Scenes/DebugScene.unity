@@ -2070,7 +2070,7 @@ GameObject:
   - component: {fileID: 697864652}
   - component: {fileID: 697864653}
   m_Layer: 0
-  m_Name: Bird Camera
+  m_Name: Spaceship Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2592,7 +2592,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterCamera: {fileID: 1510766701}
-  birdCamera: {fileID: 697864653}
+  spaceshipCamera: {fileID: 697864653}
 --- !u!1 &906769598
 GameObject:
   m_ObjectHideFlags: 0
@@ -4456,10 +4456,6 @@ MonoBehaviour:
     type: 2}
   outdoorAudioSource: {fileID: 1504359700}
   indoorAudioSource: {fileID: 1504359699}
-  masterVolume: 10
-  SFXVolume: 1
-  ambienceVolume: 1
-  musicVolume: 1
 --- !u!82 &1504359699
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4999,11 +4995,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2522536652336571721, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
         type: 3}
-      propertyPath: m_RootOrder
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2522536652336571721, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.81
       objectReference: {fileID: 0}
@@ -5057,25 +5048,10 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 697864653}
-    - target: {fileID: 2833768586908653368, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
-        type: 3}
-      propertyPath: cameraVelocity
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2833768586908653368, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
-        type: 3}
-      propertyPath: boostMultiplier
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2833768586908653368, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
-        type: 3}
-      propertyPath: boostTorqueFriction
-      value: 0.4
-      objectReference: {fileID: 0}
     - target: {fileID: 7157900496682030117, guid: d15e3a324dcf0b94eb759344c8c7ffdf,
         type: 3}
       propertyPath: m_Name
-      value: Space Ship
+      value: Spaceship
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6004,18 +5980,6 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 877755529}
         m_TargetAssemblyTypeName: CameraManager, Assembly-CSharp
-        m_MethodName: ChangeWorldPos
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CapeController, Assembly-CSharp
         m_MethodName: ChangeWorldPos
         m_Mode: 0
         m_Arguments:

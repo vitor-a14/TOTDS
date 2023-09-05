@@ -2,41 +2,36 @@ using UnityEngine;
 
 public class SpaceShipAudio : MonoBehaviour
 {
-    private SpaceShipController spaceShipController;
+    private SpaceshipController spaceshipController;
     public AudioSource motorAudioSource;
     public AudioClip enterShipSound;
     public AudioClip shipMotorSound;
     public AudioClip boostSound;
     public float maxVelocity;
     public float pitchMultiplier;
+    public float pitchChangeVelocity;
 
     private void Start() {
-        spaceShipController = SpaceShipController.Instance;
-        motorAudioSource.spatialBlend = 1;
-        motorAudioSource.pitch = 1;
+        spaceshipController = SpaceshipController.Instance;
     }
 
-    private void Update() { /*
-        if(birdController.piloting) {
-            float velocity = birdController.physics.rigid.velocity.magnitude / maxVelocity;
-            velocity = Mathf.Clamp(velocity, 0, 1);
-            motorAudioSource.pitch = 1 + (pitchMultiplier * velocity);
-        } */
+    public void HandleEngineSound() { 
+        float velocity = spaceshipController.rigid.velocity.sqrMagnitude / maxVelocity;
+        float newPitch = Mathf.Clamp(pitchMultiplier * velocity, 1f, 2f);
+        motorAudioSource.pitch = Mathf.Lerp(motorAudioSource.pitch, newPitch, pitchChangeVelocity * Time.deltaTime);
     }
 
     public void EnterShip() {
-        motorAudioSource.spatialBlend = 0;
+        AudioManager.Instance.PlayOneShot2D(enterShipSound, gameObject, 1); //debug
         motorAudioSource.Play();
-        AudioManager.Instance.PlayOneShot2D(enterShipSound, gameObject, AudioType.SFX, 1);
     }
 
     public void ExitShip() {
-        motorAudioSource.spatialBlend = 1;
-        motorAudioSource.pitch = 1;
-        motorAudioSource.Play();
+        motorAudioSource.pitch = 0f;
+        motorAudioSource.Pause();
     }
 
     public void Boost() {
-        AudioManager.Instance.PlayOneShot2D(boostSound, gameObject, AudioType.SFX, 0.05f);
+        AudioManager.Instance.PlayOneShot2D(boostSound, gameObject, 0.05f); //debug
     }
 }

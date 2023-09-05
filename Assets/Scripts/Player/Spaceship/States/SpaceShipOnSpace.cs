@@ -1,23 +1,23 @@
 using UnityEngine;
 
-public class SpaceShipOnSpace : SpaceShipState
+public class SpaceshipOnSpace : SpaceshipState
 {
-    public SpaceShipOnSpace(SpaceShipController spaceShip, SpaceShipStateMachine stateMachine) : base(spaceShip, stateMachine) { }
+    public SpaceshipOnSpace(SpaceshipController spaceship, SpaceshipStateMachine stateMachine) : base(spaceship, stateMachine) { }
 
     public override void Interact() {
-        spaceShip.playerTeleportPoint = spaceShip.FindPlayerTeleportPoint();
-        if(spaceShip.playerTeleportPoint == Vector3.zero) {
+        spaceship.playerTeleportPoint = spaceship.FindPlayerTeleportPoint();
+        if(spaceship.playerTeleportPoint == Vector3.zero) {
             Debug.Log("Non valid teleport point was found.");
             return;
         }
 
-        spaceShip.StateMachine.ChangeState(spaceShip.IdleState);
+        spaceship.StateMachine.ChangeState(spaceship.IdleState);
     }
 
     public override void StateUpdate() { } 
 
     public override void StateFixedUpdate() { 
-        spaceShip.AvoidCollisions();
+        spaceship.AvoidCollisions();
     } 
 
     public override void Boost() {
