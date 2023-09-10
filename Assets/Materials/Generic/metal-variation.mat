@@ -81,6 +81,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _TopTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -95,6 +99,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _3dNoiseSizeA: 0
+    - _3dNoiseSizeB: 0
+    - _3dNoiseSizeC: 0
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
@@ -109,10 +116,15 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _Fallof: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _MaxTessDistance: 20
     - _Metallic: 0
+    - _NoiseStrengthA: 0
+    - _NoiseStrengthB: 0
+    - _NoiseStrengthC: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
     - _QueueOffset: 0
@@ -120,14 +132,30 @@ Material:
     - _Smoothness: 0.341
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpeedA: 0
+    - _SpeedB: 0
+    - _SpeedC: 0
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _Tess: 20
+    - _VertexColorMult: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
+    - _textureDetail: 0
     m_Colors:
     - _BaseColor: {r: 0.21867211, g: 0.24127105, b: 0.24528301, a: 1}
     - _Color: {r: 0.21867204, g: 0.24127099, b: 0.24528295, a: 1}
+    - _DirectionA: {r: 1, g: 0, b: 0, a: 0}
+    - _DirectionB: {r: 1, g: 0, b: 0, a: 0}
+    - _DirectionC: {r: 1, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _FresnelBSP: {r: 0, g: 0, b: 0, a: 0}
+    - _NoiseScaleA: {r: 1, g: 1, b: 1, a: 0}
+    - _NoiseScaleB: {r: 1, g: 1, b: 1, a: 0}
+    - _NoiseScaleC: {r: 1, g: 1, b: 1, a: 0}
+    - _RimColor: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _TextureColor: {r: 0, g: 0, b: 0, a: 0}
+    - _Tiling: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
